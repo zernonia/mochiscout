@@ -41,3 +41,6 @@ BETTER_AUTH_SECRET=change-me-to-a-long-random-string
 # POLAR_SERVER=sandbox
 # POLAR_PRODUCT_SOLO=
 # POLAR_PRODUCT_PRO=
+
+# Hosted edition: NUXT_PUBLIC_EDITION=cloud. Before launch, NUXT_PUBLIC_WAITLIST=true
+# shows a waitlist on the landing page and closes open sign-ups.

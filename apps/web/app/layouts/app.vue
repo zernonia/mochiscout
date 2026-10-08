@@ -3,6 +3,7 @@ import { authClient } from '~/lib/auth-client'
 
 const { data: session } = await useAuthSession()
 const edition = useRuntimeConfig().public.edition
+useSeoMeta({ robots: 'noindex' })
 
 async function signOut() {
   await authClient.signOut()

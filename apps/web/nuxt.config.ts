@@ -20,6 +20,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       edition: 'selfhost' as 'selfhost' | 'cloud',
+      /** Hosted edition before launch: landing collects emails and open sign-ups are closed. */
+      waitlist: false,
     },
   },
 

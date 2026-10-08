@@ -16,8 +16,12 @@ function createAuth(event: RequestEvent) {
   }
 
   // Self-host is single-user: only the first sign-up (or ALLOWED_EMAILS) gets in.
+  const waitlist = Boolean(useRuntimeConfig(event).public.waitlist)
+
+  // Self-host: first user, then invited or ALLOWED_EMAILS only.
+  // Cloud in waitlist mode: invited or ALLOWED_EMAILS only.
   async function assertCanSignUp(email: string) {
-    if (edition !== 'selfhost') return
+    if (edition !== 'selfhost' && !waitlist) return
     const allowed = (env.ALLOWED_EMAILS ?? '')
       .split(',')
       .map(e => e.trim().toLowerCase())
@@ -27,8 +31,10 @@ function createAuth(event: RequestEvent) {
       .where(eq(schema.orgInvites.email, email.toLowerCase())).get()
     if (invited) return
     const [row] = await db.select({ n: count() }).from(schema.users)
-    if ((row?.n ?? 0) > 0) {
-      throw new APIError('FORBIDDEN', { message: 'Sign-ups are closed on this instance.' })
+    if (edition !== 'selfhost' || (row?.n ?? 0) > 0) {
+      throw new APIError('FORBIDDEN', {
+        message: edition === 'selfhost' ? 'Sign-ups are closed on this instance.' : 'We are in private beta. Join the waitlist on the home page.',
+      })
     }
   }
 
