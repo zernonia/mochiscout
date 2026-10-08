@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { sql } from '@social-radar/db'
 
 export default defineEventHandler(async (event) => {
   const env = getEnv(event)

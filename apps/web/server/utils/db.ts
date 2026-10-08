@@ -1,6 +1,6 @@
-import type { H3Event } from 'h3'
+import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
 import { createDb } from '@social-radar/db'
 
-export function getDb(event: H3Event) {
+export function getDb(event: RequestEvent) {
   return createDb(getEnv(event).DB)
 }
