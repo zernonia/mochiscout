@@ -4,12 +4,12 @@ import { and, desc, eq, gte, inArray, schema, sql } from '@social-radar/db'
 import { z } from '@social-radar/llm'
 import { cleanRedditTitle, HttpDeferredError, parseRedditThreadUrl } from '@social-radar/sources'
 import { upsertSearchResults } from '../jobs/discovery'
+import { PLANS } from '../plans'
 import { recordUsage } from '../usage'
 
 const MAX_THREADS = 60
 const MAX_SEARCHES = 6
 const SNIPPET_CHARS = 400
-const WEEK_MS = 7 * 86_400_000
 
 export const PainPointClusters = z.object({
   pain_points: z.array(z.object({
@@ -156,16 +156,21 @@ export async function runResearch(ctx: JobContext, projectId: string) {
   return { runId, points: points.length, snippets: snippets.length }
 }
 
-/** Weekly job: re-run research for projects whose latest run is over a week old (a few per tick). */
+/** Scheduled job: re-run research for projects whose latest run is older than their plan's interval (a few per tick). */
 export async function runWeeklyResearch(ctx: JobContext, maxProjects = 2) {
   if (!ctx.llm) return { skipped: 'no LLM configured' }
-  const cutoff = Math.floor((ctx.now().getTime() - WEEK_MS) / 1000)
+  const nowS = Math.floor(ctx.now().getTime() / 1000)
+  // Interval per plan in days; plans without automatic research are skipped.
+  const intervalDays = sql`case ${schema.orgs.plan}
+    ${sql.join(Object.entries(PLANS).map(([plan, l]) => sql`when ${plan} then ${l.researchEveryDays ?? -1}`), sql` `)}
+    else -1 end`
   const due = await ctx.db
     .select({ id: schema.projects.id })
     .from(schema.projects)
-    .where(sql`not exists (
+    .innerJoin(schema.orgs, eq(schema.orgs.id, schema.projects.orgId))
+    .where(sql`${intervalDays} > 0 and not exists (
       select 1 from ${schema.painPoints} p
-      where p.project_id = ${schema.projects.id} and p.created_at > ${cutoff}
+      where p.project_id = ${schema.projects.id} and p.created_at > ${nowS} - ${intervalDays} * 86400
     )`)
     .limit(maxProjects)
   const results = []

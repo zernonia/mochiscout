@@ -50,7 +50,7 @@ async function save() {
     await navigateTo(`/app/${project!.id}/today`)
   }
   catch (error) {
-    toast.error(errorMessage(error))
+    if (!isPlanLimit(error)) toast.error(errorMessage(error))
   }
   finally {
     saving.value = false

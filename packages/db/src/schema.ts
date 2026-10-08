@@ -12,8 +12,46 @@ export const orgs = sqliteTable('orgs', {
   ownerId: text('owner_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   plan: text('plan', { enum: ['selfhost', 'free', 'solo', 'pro'] }).notNull().default('selfhost'),
   polarCustomerId: text('polar_customer_id'),
+  polarSubscriptionId: text('polar_subscription_id'),
+  /** Polar subscription status (active, past_due, canceled, …). */
+  planStatus: text('plan_status'),
+  currentPeriodEnd: integer('current_period_end', { mode: 'timestamp' }),
   createdAt: createdAt(),
 }, t => [index('orgs_owner_id_idx').on(t.ownerId)])
+
+/** Team seats: who can use an org. The owner is a member too. */
+export const orgMembers = sqliteTable(
+  'org_members',
+  {
+    orgId: text('org_id').notNull().references(() => orgs.id, { onDelete: 'cascade' }),
+    userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    role: text('role', { enum: ['owner', 'member'] }).notNull().default('member'),
+    createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  },
+  t => [
+    primaryKey({ columns: [t.orgId, t.userId] }),
+    index('org_members_user_idx').on(t.userId),
+  ],
+)
+
+export const orgInvites = sqliteTable(
+  'org_invites',
+  {
+    id: text('id').primaryKey(),
+    orgId: text('org_id').notNull().references(() => orgs.id, { onDelete: 'cascade' }),
+    email: text('email').notNull(),
+    invitedBy: text('invited_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  },
+  t => [index('org_invites_email_idx').on(t.email)],
+)
+
+/** Cloud landing-page waitlist. */
+export const waitlist = sqliteTable('waitlist', {
+  email: text('email').primaryKey(),
+  source: text('source'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+})
 
 export const projects = sqliteTable('projects', {
   id: text('id').primaryKey(),

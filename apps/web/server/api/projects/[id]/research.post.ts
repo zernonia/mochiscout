@@ -1,11 +1,13 @@
-import { runResearch } from '@social-radar/core'
+import { assertCanRunResearch, runResearch } from '@social-radar/core'
 
 /** Start a research run in the background. */
 export default defineEventHandler(async (event) => {
-  const { project } = await requireProject(event)
+  const { org, project } = await requireProject(event)
   const env = getEnv(event)
   const ctx = createJobContext(env)
   if (!ctx.llm) throw createError({ statusCode: 503, statusMessage: 'No LLM key configured. Set ANTHROPIC_API_KEY.' })
+
+  await quota(assertCanRunResearch(getDb(event), org))
 
   const lock = researchLockKey(project.id)
   if (await env.CACHE.get(lock)) throw createError({ statusCode: 409, statusMessage: 'Research is already running.' })

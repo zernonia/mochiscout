@@ -5,6 +5,38 @@ definePageMeta({ layout: 'app' })
 useHead({ title: 'Settings · social-radar' })
 
 const { data: settings, refresh } = await useFetch('/api/settings')
+const { data: team, refresh: refreshTeam } = await useFetch('/api/org')
+const { data: myInvites, refresh: refreshMyInvites } = await useFetch('/api/org/invites/mine')
+
+const inviteEmail = ref('')
+function errorText(error: unknown, fallback: string) {
+  return (error as { data?: { statusMessage?: string } }).data?.statusMessage ?? fallback
+}
+async function invite() {
+  try {
+    await $fetch('/api/org/invites', { method: 'POST', body: { email: inviteEmail.value } })
+    inviteEmail.value = ''
+    await refreshTeam()
+    toast.success('Invite sent')
+  }
+  catch (error) {
+    if ((error as { statusCode?: number }).statusCode !== 402) toast.error(errorText(error, 'Could not invite'))
+  }
+}
+async function cancelInvite(id: string) {
+  await $fetch(`/api/org/invites/${id}`, { method: 'DELETE' })
+  await refreshTeam()
+}
+async function removeMember(userId: string) {
+  if (!confirm('Remove this teammate?')) return
+  await $fetch(`/api/org/members/${userId}`, { method: 'DELETE' })
+  await refreshTeam()
+}
+async function acceptInvites() {
+  await $fetch('/api/org/invites/accept', { method: 'POST' })
+  await Promise.all([refreshMyInvites(), refreshTeam()])
+  toast.success('Joined the team')
+}
 
 const timezones = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : ['UTC']
 const hours = Array.from({ length: 24 }, (_, h) => h)
@@ -64,6 +96,14 @@ const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px
   <form class="mx-auto flex max-w-2xl flex-col gap-6" @submit.prevent="save">
     <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
 
+    <Alert v-if="myInvites?.length">
+      <AlertTitle>You're invited to a team</AlertTitle>
+      <AlertDescription class="flex flex-wrap items-center gap-3">
+        {{ myInvites.map(i => i.invitedBy).filter(Boolean).join(', ') || 'Someone' }} invited you.
+        <Button size="sm" type="button" @click="acceptInvites">Join</Button>
+      </AlertDescription>
+    </Alert>
+
     <Card>
       <CardHeader>
         <CardTitle>Daily digest</CardTitle>
@@ -109,6 +149,27 @@ const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px
           <Label for="created">Account created</Label>
           <Input id="created" v-model="form.redditAccountCreatedAt" type="date" />
         </div>
+      </CardContent>
+    </Card>
+
+    <Card v-if="team">
+      <CardHeader>
+        <CardTitle>Team</CardTitle>
+        <CardDescription>Teammates share projects, the inbox and drafts.</CardDescription>
+      </CardHeader>
+      <CardContent class="flex flex-col gap-3 text-sm">
+        <div v-for="m in team.members" :key="m.userId" class="flex items-center justify-between gap-3">
+          <div class="min-w-0 truncate">{{ m.email }} <span class="text-muted-foreground">· {{ m.role }}</span></div>
+          <button v-if="team.role === 'owner' && m.userId !== team.me" type="button" class="text-xs text-muted-foreground underline" @click="removeMember(m.userId)">Remove</button>
+        </div>
+        <div v-for="i in team.invites" :key="i.id" class="flex items-center justify-between gap-3 text-muted-foreground">
+          <div class="min-w-0 truncate">{{ i.email }} · invited</div>
+          <button v-if="team.role === 'owner'" type="button" class="text-xs underline" @click="cancelInvite(i.id)">Cancel</button>
+        </div>
+        <form v-if="team.role === 'owner'" class="flex gap-2 pt-1" @submit.prevent="invite">
+          <Input v-model="inviteEmail" type="email" placeholder="teammate@example.com" required class="flex-1" />
+          <Button type="submit" variant="secondary">Invite</Button>
+        </form>
       </CardContent>
     </Card>
 

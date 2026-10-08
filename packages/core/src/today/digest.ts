@@ -1,6 +1,7 @@
 import type { JobContext } from '../jobs/context'
 import type { TodayPlan } from './today'
-import { eq, schema } from '@social-radar/db'
+import { desc, eq, schema } from '@social-radar/db'
+import { digestDueToday } from '../plans'
 import { buildToday } from './today'
 
 export interface DigestEmail {
@@ -8,6 +9,17 @@ export interface DigestEmail {
   subject: string
   html: string
   text: string
+}
+
+/** Day of week (0 = Sunday) in a time zone. */
+export function localWeekday(now: Date, timeZone: string): number {
+  try {
+    const day = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short' }).format(now)
+    return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(day)
+  }
+  catch {
+    return now.getUTCDay()
+  }
 }
 
 /** The hour (0-23) it is now in a time zone. */
@@ -65,8 +77,13 @@ export async function runDigest(ctx: JobContext) {
     if (user.digestHour < 0 || localHour(now, user.timezone) !== user.digestHour) continue
     if (user.lastDigestAt && now.getTime() - user.lastDigestAt.getTime() < 20 * 3_600_000) continue
 
-    const org = await ctx.db.select().from(schema.orgs).where(eq(schema.orgs.ownerId, user.id)).get()
-    if (!org) continue
+    const membership = await ctx.db.select({ org: schema.orgs }).from(schema.orgMembers)
+      .innerJoin(schema.orgs, eq(schema.orgs.id, schema.orgMembers.orgId))
+      .where(eq(schema.orgMembers.userId, user.id))
+      .orderBy(desc(schema.orgMembers.createdAt))
+      .get()
+    const org = membership?.org
+    if (!org || !digestDueToday(org.plan, localWeekday(now, user.timezone))) continue
     const projects = await ctx.db.select().from(schema.projects).where(eq(schema.projects.orgId, org.id))
     const sections = []
     for (const project of projects) {

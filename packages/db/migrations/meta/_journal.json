@@ -15,6 +15,13 @@
       "when": 1791461857656,
       "tag": "0001_phase2",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791464170258,
+      "tag": "0002_teams",
+      "breakpoints": true
     }
   ]
 }

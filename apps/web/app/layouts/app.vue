@@ -2,6 +2,7 @@
 import { authClient } from '~/lib/auth-client'
 
 const { data: session } = await useAuthSession()
+const edition = useRuntimeConfig().public.edition
 
 async function signOut() {
   await authClient.signOut()
@@ -16,6 +17,9 @@ async function signOut() {
         <NuxtLink to="/app" class="font-semibold tracking-tight">social-radar</NuxtLink>
         <div class="flex items-center gap-3 text-sm">
           <span class="hidden text-muted-foreground sm:inline">{{ session?.user.email }}</span>
+          <Button v-if="edition === 'cloud'" as-child variant="ghost" size="sm">
+            <NuxtLink to="/app/billing">Billing</NuxtLink>
+          </Button>
           <Button as-child variant="ghost" size="sm">
             <NuxtLink to="/app/settings">Settings</NuxtLink>
           </Button>
@@ -26,5 +30,6 @@ async function signOut() {
     <main class="mx-auto max-w-5xl px-4 py-6">
       <slot />
     </main>
+    <UpgradeSheet />
   </div>
 </template>

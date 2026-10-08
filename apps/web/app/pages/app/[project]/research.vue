@@ -30,7 +30,7 @@ async function run() {
     watchRun()
   }
   catch (error) {
-    toast.error((error as { data?: { statusMessage?: string } }).data?.statusMessage ?? 'Could not start research')
+    if (!isPlanLimit(error)) toast.error(apiErrorMessage(error, 'Could not start research'))
   }
   finally {
     starting.value = false

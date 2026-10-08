@@ -31,7 +31,7 @@ async function setWatching(name: string, watching: boolean) {
     await refresh()
   }
   catch (error) {
-    toast.error(errorMessage(error))
+    if (!isPlanLimit(error)) toast.error(errorMessage(error))
   }
 }
 

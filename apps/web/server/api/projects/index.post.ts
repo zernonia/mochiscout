@@ -1,9 +1,10 @@
-import { runDiscovery } from '@social-radar/core'
+import { assertCanCreateProject, runDiscovery } from '@social-radar/core'
 import { schema } from '@social-radar/db'
 
 export default defineEventHandler(async (event) => {
   const { org } = await requireUser(event)
   const input = await readValidatedBody(event, ProjectInput.parse)
+  await quota(assertCanCreateProject(getDb(event), org))
   const [project] = await getDb(event)
     .insert(schema.projects)
     .values({ id: crypto.randomUUID(), orgId: org.id, ...input })

@@ -23,6 +23,9 @@ function createAuth(event: RequestEvent) {
       .map(e => e.trim().toLowerCase())
       .filter(Boolean)
     if (allowed.includes(email.toLowerCase())) return
+    const invited = await db.select({ id: schema.orgInvites.id }).from(schema.orgInvites)
+      .where(eq(schema.orgInvites.email, email.toLowerCase())).get()
+    if (invited) return
     const [row] = await db.select({ n: count() }).from(schema.users)
     if ((row?.n ?? 0) > 0) {
       throw new APIError('FORBIDDEN', { message: 'Sign-ups are closed on this instance.' })
@@ -78,16 +81,36 @@ function createAuth(event: RequestEvent) {
             await assertCanSignUp(user.email)
           },
           async after(user) {
-            await db.insert(schema.orgs).values({
-              id: crypto.randomUUID(),
-              ownerId: user.id,
-              plan: edition === 'selfhost' ? 'selfhost' : 'free',
-            })
+            await setUpMembership(db, edition, user)
           },
         },
       },
     },
   })
+}
+
+/**
+ * New users join the org that invited them; on a self-hosted instance extra
+ * users join the single existing org; everyone else gets their own org.
+ */
+async function setUpMembership(db: ReturnType<typeof getDb>, edition: string, user: { id: string, email: string }) {
+  const email = user.email.toLowerCase()
+  const invite = await db.select().from(schema.orgInvites).where(eq(schema.orgInvites.email, email)).get()
+  const existingOrg = edition === 'selfhost' ? await db.select({ id: schema.orgs.id }).from(schema.orgs).get() : undefined
+  const joinOrgId = invite?.orgId ?? existingOrg?.id
+
+  if (joinOrgId) {
+    await db.batch([
+      db.insert(schema.orgMembers).values({ orgId: joinOrgId, userId: user.id, role: 'member' }).onConflictDoNothing(),
+      db.delete(schema.orgInvites).where(eq(schema.orgInvites.email, email)),
+    ])
+    return
+  }
+  const orgId = crypto.randomUUID()
+  await db.batch([
+    db.insert(schema.orgs).values({ id: orgId, ownerId: user.id, plan: edition === 'selfhost' ? 'selfhost' : 'free' }),
+    db.insert(schema.orgMembers).values({ orgId, userId: user.id, role: 'owner' }),
+  ])
 }
 
 export type Auth = ReturnType<typeof createAuth>
