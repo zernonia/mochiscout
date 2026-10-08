@@ -119,6 +119,15 @@ pnpm run deploy
   YAML file per subreddit you post in (see `packages/rules/README.md`), run
   `pnpm rules:build` from the repo root, and redeploy.
 
+## Running the hosted edition
+
+The same code runs the paid cloud: set `NUXT_PUBLIC_EDITION=cloud` (as a build-time
+variable in your Workers Build, or a Worker variable). That turns on the landing page,
+plans and quotas, and billing. Billing needs `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`,
+`POLAR_PRODUCT_SOLO` and `POLAR_PRODUCT_PRO` (`POLAR_SERVER=sandbox` for testing); point a
+Polar webhook at `<APP_URL>/api/webhooks/polar` with the `subscription.*` events. Before
+launch, `NUXT_PUBLIC_WAITLIST=true` replaces sign-up with a waitlist.
+
 ## Local development
 
 See the README: `pnpm dev` runs the app against local D1/KV with secrets from

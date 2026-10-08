@@ -403,22 +403,22 @@ Track actuals from day one in `usage` + AI Gateway; alert if any org exceeds 2×
 - [ ] Self-host deploy docs; repo public; README with real results — deploy docs done (docs/self-host.md)
 
 ### Phase 3 — Weeks 4–6: "cloud"
-- [ ] Multi-tenant org model, quotas, Polar billing
-- [ ] Landing page + "GummySearch alternative" pages
-- [ ] MCP endpoint + Claude Code skill
-- [ ] Waitlist → launch (Show HN, r/selfhosted, r/SideProject, X)
+- [x] Multi-tenant org model, quotas, Polar billing
+- [x] Landing page + "GummySearch alternative" pages
+- [x] MCP endpoint + Claude Code skill
+- [ ] Waitlist → launch (Show HN, r/selfhosted, r/SideProject, X) — waitlist mode built (`NUXT_PUBLIC_WAITLIST`); launch is yours
 
 ### Phase 3.5 — "multi-source feed"
-- [ ] `packages/sources` adapter interface; refactor Reddit into an adapter
-- [ ] Hacker News adapter (Algolia) + Bluesky adapter
-- [ ] Unified feed view (`/app/[project]/inbox` becomes a timeline with platform filters)
-- [ ] Auto-generated ~30 search terms per project at onboarding
+- [x] `packages/sources` adapter interface (Reddit keeps its own RSS + search jobs)
+- [x] Hacker News adapter (Algolia) + Bluesky adapter
+- [x] Unified feed view (`/app/[project]/inbox` becomes a timeline with platform filters)
+- [x] Auto-generated ~30 search terms per project at onboarding
 
 ### Phase 4 — later
-- [ ] X adapter (Pro plan only, priced to cover API cost)
-- [ ] Browser extension fallback (WXT)
-- [ ] Weekly research reports, team seats polish
-- [ ] Rules DB contributor flow from inside the app ("suggest a rule change")
+- [x] X adapter (Pro plan only, priced to cover API cost)
+- [x] Browser extension fallback (WXT)
+- [x] Weekly research reports, team seats polish
+- [x] Rules DB contributor flow from inside the app ("suggest a rule change")
 
 ---
 
