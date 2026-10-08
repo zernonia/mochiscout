@@ -3,6 +3,7 @@ import type { JobContext } from './context'
 import type { Job } from './types'
 import { HttpDeferredError } from '@social-radar/sources'
 import { dueJobs } from '../schedule'
+import { runWeeklyResearch } from '../research/research'
 import { runScoring } from '../scoring/score'
 import { runDiscovery } from './discovery'
 import { planFetch, runFetchGroup } from './fetch'
@@ -56,6 +57,7 @@ const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> 
   'plan-fetch': planFetchTick,
   'search-discovery': ctx => runDiscovery(ctx),
   'score': runScoring,
+  'research': ctx => runWeeklyResearch(ctx),
   'retention': runRetention,
 }
 

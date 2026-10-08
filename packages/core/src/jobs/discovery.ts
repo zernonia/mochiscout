@@ -51,7 +51,7 @@ export async function runDiscovery(
 }
 
 /** Insert unseen threads; mark already-known ones as ranking in search when found by an evergreen query. */
-async function upsertSearchResults(
+export async function upsertSearchResults(
   ctx: JobContext,
   results: { title: string, url: string, snippet: string }[],
   mode: DiscoveryMode,

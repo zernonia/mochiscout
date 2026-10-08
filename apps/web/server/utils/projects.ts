@@ -26,3 +26,7 @@ export async function requireProject(event: RequestEvent, param = 'id') {
   if (!project) throw createError({ statusCode: 404, statusMessage: 'Project not found' })
   return { user, org, project }
 }
+
+export function researchLockKey(projectId: string) {
+  return `research:running:${projectId}`
+}

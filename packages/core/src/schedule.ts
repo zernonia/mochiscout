@@ -1,4 +1,4 @@
-export type JobName = 'plan-fetch' | 'search-discovery' | 'score' | 'digest' | 'tracker' | 'retention'
+export type JobName = 'plan-fetch' | 'search-discovery' | 'score' | 'digest' | 'tracker' | 'research' | 'retention'
 
 /**
  * One Cloudflare cron trigger fires every 15 minutes; this decides which jobs
@@ -10,6 +10,7 @@ export type JobName = 'plan-fetch' | 'search-discovery' | 'score' | 'digest' | '
  *   :00 /6h      search-discovery
  *   :00 hourly   digest (per-user local hour is checked inside the job)
  *   :30 /12h     tracker
+ *   04:00 /4h    research (weekly per project; a few projects per run)
  *   03:00        retention
  */
 export function dueJobs(at: Date): JobName[] {
@@ -20,6 +21,7 @@ export function dueJobs(at: Date): JobName[] {
   jobs.push('score')
   if (slot === 0) jobs.push('digest')
   if (slot === 30 && hour % 12 === 0) jobs.push('tracker')
+  if (slot === 0 && hour % 4 === 0) jobs.push('research')
   if (slot === 0 && hour === 3) jobs.push('retention')
   return jobs
 }
