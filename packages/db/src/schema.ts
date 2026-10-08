@@ -129,6 +129,8 @@ export const drafts = sqliteTable('drafts', {
   title: text('title').notNull(),
   body: text('body').notNull(),
   angle: text('angle', { enum: ['story', 'lesson', 'question', 'showcase'] }).notNull(),
+  /** Mentions the product: counts toward promo pacing. */
+  promo: integer('promo', { mode: 'boolean' }).notNull().default(true),
   check: text('check_json', { mode: 'json' }),
   createdAt: createdAt(),
 })
@@ -137,11 +139,19 @@ export const trackedPosts = sqliteTable('tracked_posts', {
   id: text('id').primaryKey(),
   projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
   url: text('url').notNull(),
+  /** reddit:t3_<id> */
+  threadId: text('thread_id'),
   subreddit: text('subreddit'),
+  title: text('title'),
+  draftId: text('draft_id'),
+  /** Promo posts count toward cooldowns and the daily cap. */
+  promo: integer('promo', { mode: 'boolean' }).notNull().default(true),
   postedAt: integer('posted_at', { mode: 'timestamp' }),
-  status: text('status', { enum: ['live', 'removed_mod', 'removed_spam', 'unknown'] }).notNull().default('unknown'),
+  status: text('status', { enum: ['live', 'removed', 'not_listed', 'unknown'] }).notNull().default('unknown'),
   lastCheckedAt: integer('last_checked_at', { mode: 'timestamp' }),
-})
+}, t => [
+  index('tracked_posts_project_idx').on(t.projectId, t.postedAt),
+])
 
 export const usage = sqliteTable(
   'usage',

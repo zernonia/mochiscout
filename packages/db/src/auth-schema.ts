@@ -17,6 +17,13 @@ export const users = sqliteTable('users', {
   timezone: text('timezone').notNull().default('UTC'),
   digestHour: integer('digest_hour').notNull().default(8),
   redditUsername: text('reddit_username'),
+  /** Self-reported, used by the drafter's karma/age checks. */
+  redditKarma: integer('reddit_karma'),
+  redditAccountCreatedAt: integer('reddit_account_created_at', { mode: 'timestamp' }),
+  /** Last public-profile check: ok, or not_found (suspended, shadowbanned or deleted). */
+  redditAccountStatus: text('reddit_account_status', { enum: ['ok', 'not_found', 'unknown'] }),
+  redditCheckedAt: integer('reddit_checked_at', { mode: 'timestamp' }),
+  lastDigestAt: integer('last_digest_at', { mode: 'timestamp' }),
   ...timestamps,
 })
 

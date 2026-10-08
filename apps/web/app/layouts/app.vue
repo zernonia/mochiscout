@@ -16,6 +16,9 @@ async function signOut() {
         <NuxtLink to="/app" class="font-semibold tracking-tight">social-radar</NuxtLink>
         <div class="flex items-center gap-3 text-sm">
           <span class="hidden text-muted-foreground sm:inline">{{ session?.user.email }}</span>
+          <Button as-child variant="ghost" size="sm">
+            <NuxtLink to="/app/settings">Settings</NuxtLink>
+          </Button>
           <Button variant="ghost" size="sm" @click="signOut">Sign out</Button>
         </div>
       </div>
