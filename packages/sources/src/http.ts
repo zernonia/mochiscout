@@ -95,14 +95,14 @@ export function createHttp(options: HttpOptions) {
     }
   }
 
-  async function get(url: string, conditional: boolean): Promise<HttpResult> {
+  async function get(url: string, conditional: boolean, extraHeaders: Record<string, string>): Promise<HttpResult> {
     const key = `http:validators:${url}`
     const validators = conditional && kv ? await kv.get<Validators>(key, 'json') : null
 
     for (let attempt = 0; ; attempt++) {
       await waitTurn(url)
 
-      const headers: Record<string, string> = { 'User-Agent': userAgent, 'Accept': '*/*' }
+      const headers: Record<string, string> = { 'User-Agent': userAgent, 'Accept': '*/*', ...extraHeaders }
       if (validators?.etag) headers['If-None-Match'] = validators.etag
       if (validators?.lastModified) headers['If-Modified-Since'] = validators.lastModified
 
@@ -138,8 +138,8 @@ export function createHttp(options: HttpOptions) {
 
   return {
     /** Serialized GET. Pass `conditional` to send stored ETag / Last-Modified. */
-    getText(url: string, opts: { conditional?: boolean } = {}): Promise<HttpResult> {
-      const run = queue.then(() => get(url, opts.conditional ?? false))
+    getText(url: string, opts: { conditional?: boolean, headers?: Record<string, string> } = {}): Promise<HttpResult> {
+      const run = queue.then(() => get(url, opts.conditional ?? false, opts.headers ?? {}))
       queue = run.catch(() => {})
       return run
     },

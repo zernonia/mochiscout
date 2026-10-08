@@ -63,7 +63,8 @@ export const threads = sqliteTable(
     title: text('title').notNull(),
     url: text('url').notNull(),
     author: text('author'),
-    createdUtc: integer('created_utc', { mode: 'timestamp' }).notNull(),
+    // Null when only seen in search results (no post date).
+    createdUtc: integer('created_utc', { mode: 'timestamp' }),
     // Keep ≤ 500 chars.
     snippet: text('snippet'),
     engagement: text('engagement_json', { mode: 'json' }),

@@ -1,4 +1,6 @@
 export * from './http'
 export * from './reddit/rss'
+export * from './reddit/url'
+export * from './search'
 export * from './text'
 export * from './types'

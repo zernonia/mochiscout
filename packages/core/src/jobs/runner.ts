@@ -3,6 +3,7 @@ import type { JobContext } from './context'
 import type { Job } from './types'
 import { HttpDeferredError } from '@social-radar/sources'
 import { dueJobs } from '../schedule'
+import { runDiscovery } from './discovery'
 import { planFetch, runFetchGroup } from './fetch'
 import { runRetention } from './retention'
 
@@ -50,6 +51,7 @@ async function planFetchTick(ctx: JobContext) {
 
 const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> = {
   'plan-fetch': planFetchTick,
+  'search-discovery': runDiscovery,
   'retention': runRetention,
 }
 

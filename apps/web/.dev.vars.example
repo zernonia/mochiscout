@@ -19,3 +19,9 @@ BETTER_AUTH_SECRET=change-me-to-a-long-random-string
 
 # Contact URL in the User-Agent sent to reddit.com (use your fork / site)
 # CONTACT_URL=https://github.com/you/social-radar
+
+# Search provider for discovery: tinyfish (default, free key) or brave.
+# The other provider is used as a fallback when its key is set.
+# SEARCH_PROVIDER=tinyfish
+# TINYFISH_API_KEY=
+# BRAVE_API_KEY=

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ce9329a4-2485-4f35-b903-3cee65a06cba",
+  "id": "914e3aba-6999-4712-85c1-6117d5f3c3f8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "api_keys": {
@@ -720,7 +720,7 @@
           "name": "created_utc",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "snippet": {

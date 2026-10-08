@@ -1,7 +1,8 @@
 import type { JobContext } from '@social-radar/core'
 import type { Env } from './env'
 import { createDb } from '@social-radar/db'
-import { createHttp, userAgent } from '@social-radar/sources'
+import type { SearchProvider } from '@social-radar/sources'
+import { brave, createHttp, createSearchClient, tinyfish, userAgent } from '@social-radar/sources'
 
 /** Leave headroom under the Workers cron wall-clock limit (15 min). */
 const RUN_BUDGET_MS = 10 * 60_000
@@ -14,16 +15,26 @@ export function getTaskEnv(context?: { cloudflare?: { env?: unknown } }): Env {
 }
 
 export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): JobContext {
+  const ua = userAgent(env.CONTACT_URL ?? 'https://github.com/zernonia/social-radar')
+  const deadline = Date.now() + (opts.budgetMs ?? RUN_BUDGET_MS)
   return {
     db: createDb(env.DB),
     cache: env.CACHE,
     queue: env.JOBS,
-    http: createHttp({
-      userAgent: userAgent(env.CONTACT_URL ?? 'https://github.com/zernonia/social-radar'),
-      kv: env.CACHE,
-      deadline: Date.now() + (opts.budgetMs ?? RUN_BUDGET_MS),
-    }),
+    http: createHttp({ userAgent: ua, kv: env.CACHE, deadline }),
+    search: createSearch(env, ua, deadline),
     now: () => new Date(),
     log: (message, data) => console.info(`[jobs] ${message}`, data ? JSON.stringify(data) : ''),
   }
+}
+
+/** Primary provider from SEARCH_PROVIDER (default TinyFish); the other is the fallback if its key is set. */
+function createSearch(env: Env, ua: string, deadline: number) {
+  // TinyFish allows 30 req/min per key.
+  const http = createHttp({ userAgent: ua, minDelayMs: 2100, deadline })
+  const available: SearchProvider[] = []
+  if (env.TINYFISH_API_KEY) available.push(tinyfish(http, env.TINYFISH_API_KEY))
+  if (env.BRAVE_API_KEY) available.push(brave(http, env.BRAVE_API_KEY))
+  if (env.SEARCH_PROVIDER === 'brave') available.reverse()
+  return available.length ? createSearchClient({ providers: available, cache: env.CACHE }) : undefined
 }

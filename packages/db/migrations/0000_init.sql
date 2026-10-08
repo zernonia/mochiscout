@@ -101,7 +101,7 @@ CREATE TABLE `threads` (
 	`title` text NOT NULL,
 	`url` text NOT NULL,
 	`author` text,
-	`created_utc` integer NOT NULL,
+	`created_utc` integer,
 	`snippet` text,
 	`engagement_json` text,
 	`source` text NOT NULL,

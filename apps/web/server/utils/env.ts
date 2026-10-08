@@ -16,6 +16,9 @@ export interface Env {
   GOOGLE_CLIENT_SECRET?: string
   RESEND_API_KEY?: string
   EMAIL_FROM?: string
+  SEARCH_PROVIDER?: 'tinyfish' | 'brave'
+  TINYFISH_API_KEY?: string
+  BRAVE_API_KEY?: string
   /** Contact URL in the User-Agent sent to reddit.com and other sources. */
   CONTACT_URL?: string
   /** Self-host: comma-separated emails allowed to sign up after the first user. */
