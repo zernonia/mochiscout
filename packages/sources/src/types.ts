@@ -10,9 +10,12 @@ export interface Post {
   title: string
   url: string
   author: string | null
-  createdAt: Date
+  /** Null when unknown (e.g. only seen in web search results). */
+  createdAt: Date | null
   /** Plain text, ≤ 500 chars. */
   snippet: string | null
+  /** Points, comments, likes… as the platform reports them. */
+  engagement?: Record<string, number>
 }
 
 export const SNIPPET_MAX = 500

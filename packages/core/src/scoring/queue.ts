@@ -57,6 +57,6 @@ export async function queueRssThreads(ctx: JobContext, threadIds: string[]) {
 }
 
 /** Threads found by a project's own searches skip the prefilter. */
-export async function queueSearchThreads(ctx: JobContext, projectId: string, threadIds: string[]) {
-  return enqueue(ctx, threadIds.map(threadId => ({ projectId, threadId, matched: ['search'] })))
+export async function queueSearchThreads(ctx: JobContext, projectId: string, threadIds: string[], matched = ['search']) {
+  return enqueue(ctx, threadIds.map(threadId => ({ projectId, threadId, matched })))
 }

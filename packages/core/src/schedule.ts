@@ -1,4 +1,4 @@
-export type JobName = 'plan-fetch' | 'search-discovery' | 'score' | 'digest' | 'tracker' | 'research' | 'retention'
+export type JobName = 'plan-fetch' | 'search-discovery' | 'feeds' | 'score' | 'digest' | 'tracker' | 'research' | 'retention'
 
 /**
  * One Cloudflare cron trigger fires every 15 minutes; this decides which jobs
@@ -6,6 +6,7 @@ export type JobName = 'plan-fetch' | 'search-discovery' | 'score' | 'digest' | '
  * is floored to its 15-minute slot.
  *
  *   every tick   plan-fetch
+ *   :00 hourly   feeds (HN, Bluesky, X searches)
  *   every tick   score (after fetch and discovery)
  *   :00 /6h      search-discovery
  *   :00 hourly   digest (per-user local hour is checked inside the job)
@@ -18,6 +19,7 @@ export function dueJobs(at: Date): JobName[] {
   const slot = Math.floor(at.getUTCMinutes() / 15) * 15
   const jobs: JobName[] = ['plan-fetch']
   if (slot === 0 && hour % 6 === 0) jobs.push('search-discovery')
+  if (slot === 0) jobs.push('feeds')
   jobs.push('score')
   if (slot === 0) jobs.push('digest')
   if (slot === 30 && hour % 12 === 0) jobs.push('tracker')

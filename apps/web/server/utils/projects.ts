@@ -12,6 +12,8 @@ export const ProjectInput = z.object({
   problems: list(12),
   keywords: list(30),
   competitors: list(12),
+  searchTerms: list(40),
+  sources: z.array(z.enum(['hn', 'bluesky', 'x'])).max(3).default([]),
 })
 
 /** The project in the route, if it belongs to the signed-in user's org; 404 otherwise. */

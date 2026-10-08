@@ -7,14 +7,27 @@ export interface ProjectProfile {
   problems: string[]
   keywords: string[]
   competitors: string[]
+  searchTerms: string[]
+  sources: ('hn' | 'bluesky' | 'x')[]
 }
 
 const profile = defineModel<ProjectProfile>({ required: true })
+
+const sourceOptions = [
+  { id: 'hn', label: 'Hacker News', hint: 'Stories and comments' },
+  { id: 'bluesky', label: 'Bluesky', hint: 'Public posts' },
+  { id: 'x', label: 'X', hint: 'Pro plan; the server needs an X API key' },
+] as const
+
+function toggleSource(id: 'hn' | 'bluesky' | 'x', on: boolean) {
+  profile.value.sources = on ? [...new Set([...profile.value.sources, id])] : profile.value.sources.filter(s => s !== id)
+}
 
 const lists = [
   { key: 'problems', label: 'Problems it solves', hint: 'How a frustrated user would describe them.' },
   { key: 'keywords', label: 'Keywords', hint: 'What buyers type when looking for a tool like yours.' },
   { key: 'competitors', label: 'Competitors', hint: 'Used for "alternative to …" searches.' },
+  { key: 'searchTerms', label: 'Search terms', hint: 'Phrases people write when they need you. Searched on Hacker News, Bluesky and X every hour.' },
 ] as const
 </script>
 
@@ -48,6 +61,14 @@ const lists = [
         <TagsInputInput :id="list.key" placeholder="Type and press Enter" />
       </TagsInput>
       <p class="text-xs text-muted-foreground">{{ list.hint }}</p>
+    </div>
+    <div class="flex flex-col gap-2">
+      <Label>Also watch</Label>
+      <p class="text-xs text-muted-foreground">Reddit is always on.</p>
+      <label v-for="s in sourceOptions" :key="s.id" class="flex items-center gap-2 text-sm">
+        <Switch :model-value="profile.sources.includes(s.id)" @update:model-value="(v: boolean) => toggleSource(s.id, v)" />
+        {{ s.label }} <span class="text-xs text-muted-foreground">{{ s.hint }}</span>
+      </label>
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 export * from './jobs/context'
 export * from './jobs/discovery'
+export * from './jobs/feeds'
 export * from './jobs/fetch'
 export * from './jobs/retention'
 export * from './jobs/runner'

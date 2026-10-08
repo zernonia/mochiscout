@@ -8,6 +8,7 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
   status?: ThreadStatus
   minIntent?: number
   limit?: number
+  platform?: 'reddit' | 'hn' | 'bluesky' | 'x' | 'web'
 } = {}) {
   const s = schema.threadScores
   const t = schema.threads
@@ -35,6 +36,7 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
       eq(s.projectId, project.id),
       eq(s.status, opts.status ?? 'new'),
       gte(s.intent, opts.minIntent ?? project.intentThreshold),
+      opts.platform ? eq(t.platform, opts.platform) : undefined,
     ))
     .orderBy(desc(s.intent), desc(sql`coalesce(${t.createdUtc}, ${t.ingestedAt})`))
     .limit(Math.min(opts.limit ?? 50, 100))

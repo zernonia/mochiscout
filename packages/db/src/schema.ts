@@ -63,6 +63,10 @@ export const projects = sqliteTable('projects', {
   problems: text('problems_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
   keywords: text('keywords_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
   competitors: text('competitors_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
+  /** ~30 phrases buyers use, generated at onboarding; queried on HN, Bluesky and other feed sources. */
+  searchTerms: text('search_terms_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
+  /** Feed sources besides Reddit: hn, bluesky, x. */
+  sources: text('sources_json', { mode: 'json' }).$type<('hn' | 'bluesky' | 'x')[]>().notNull().default(sql`'[]'`),
   intentThreshold: integer('intent_threshold').notNull().default(60),
   createdAt: createdAt(),
 })

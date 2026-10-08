@@ -4,6 +4,7 @@ type Status = 'new' | 'saved' | 'replied' | 'dismissed'
 defineProps<{
   thread: {
     id: string
+    platform?: string
     channel: string | null
     title: string
     url: string
@@ -27,6 +28,8 @@ const kindLabel: Record<string, string> = {
   other: 'Other',
 }
 
+const platformLabel: Record<string, string> = { hn: 'Hacker News', bluesky: 'Bluesky', x: 'X', web: 'Web' }
+
 const actions: { status: Status, label: string }[] = [
   { status: 'replied', label: 'Replied' },
   { status: 'saved', label: 'Save' },
@@ -49,6 +52,7 @@ function age(date: string | Date | null) {
       <Badge>{{ thread.intent }}</Badge>
       <Badge variant="outline">{{ kindLabel[thread.kind] ?? thread.kind }}</Badge>
       <span v-if="thread.channel">r/{{ thread.channel }}</span>
+      <span v-else-if="thread.platform && platformLabel[thread.platform]">{{ platformLabel[thread.platform] }}</span>
       <span v-if="age(thread.createdUtc)">· {{ age(thread.createdUtc) }}</span>
       <span v-if="thread.searchRankFlag">· ranks in search</span>
     </div>

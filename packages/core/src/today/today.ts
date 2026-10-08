@@ -20,6 +20,7 @@ export interface PostSuggestion {
 export interface TodayPlan {
   threads: {
     id: string
+    platform: string
     channel: string | null
     title: string
     url: string
@@ -51,6 +52,7 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
   const [threads, [newCount], [pending], history, painPoints, drafted, map] = await Promise.all([
     db.select({
       id: t.id,
+      platform: t.platform,
       channel: t.channel,
       title: t.title,
       url: t.url,

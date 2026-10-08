@@ -8,10 +8,18 @@ type Status = 'new' | 'saved' | 'replied' | 'dismissed'
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
 const status = ref<Status>('new')
+const platform = ref<'reddit' | 'hn' | 'bluesky' | 'x' | undefined>(undefined)
+const platforms = [
+  { value: undefined, label: 'All' },
+  { value: 'reddit', label: 'Reddit' },
+  { value: 'hn', label: 'Hacker News' },
+  { value: 'bluesky', label: 'Bluesky' },
+  { value: 'x', label: 'X' },
+] as const
 
 const { data: project } = await useFetch(() => `/api/projects/${projectId.value}`)
 const { data: inbox, refresh } = await useFetch(() => `/api/projects/${projectId.value}/inbox`, {
-  query: { status },
+  query: { status, platform },
 })
 useHead({ title: () => `Inbox · ${project.value?.name ?? 'Project'}` })
 
@@ -52,6 +60,19 @@ async function setStatus(threadId: string, next: Status) {
         {{ tab.label }}
         <span v-if="inbox?.counts[tab.value]" class="text-muted-foreground">{{ inbox.counts[tab.value] }}</span>
       </Button>
+    </div>
+
+    <div class="flex gap-1 overflow-x-auto">
+      <button
+        v-for="p in platforms"
+        :key="p.label"
+        type="button"
+        class="shrink-0 rounded-full border px-3 py-1 text-xs"
+        :class="platform === p.value ? 'border-foreground bg-foreground text-background' : 'text-muted-foreground'"
+        @click="platform = p.value"
+      >
+        {{ p.label }}
+      </button>
     </div>
 
     <Alert v-if="inbox && inbox.pendingScoring > 0">

@@ -11,7 +11,7 @@ const saving = ref(false)
 const profile = ref<ProjectProfile | null>(null)
 
 function blank(u = ''): ProjectProfile {
-  return { url: u, name: '', category: '', icp: '', problems: [], keywords: [], competitors: [] }
+  return { url: u, name: '', category: '', icp: '', problems: [], keywords: [], competitors: [], searchTerms: [], sources: [] }
 }
 
 function errorMessage(error: unknown) {
@@ -31,6 +31,8 @@ async function analyse() {
       problems: res.profile.problems_solved,
       keywords: res.profile.keywords,
       competitors: res.profile.competitors,
+      searchTerms: res.profile.search_terms,
+      sources: [],
     }
   }
   catch (error) {

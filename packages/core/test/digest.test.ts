@@ -18,7 +18,7 @@ describe('renderDigest', () => {
     const { html, text } = renderDigest('https://app.test', [{
       project: { id: 'p1', name: 'Acme <script>' },
       plan: {
-        threads: [{ id: 't', channel: 'saas', title: 'Need a <b>CRM</b>', url: 'https://www.reddit.com/r/saas/comments/t/', snippet: null, createdUtc: null, intent: 88, kind: 'seeking_tool', reason: null, replyAngle: 'Share your setup' }],
+        threads: [{ id: 't', platform: 'reddit', channel: 'saas', title: 'Need a <b>CRM</b>', url: 'https://www.reddit.com/r/saas/comments/t/', snippet: null, createdUtc: null, intent: 88, kind: 'seeking_tool', reason: null, replyAngle: 'Share your setup' }],
         newCount: 3,
         pendingScoring: 0,
         suggestion: { subreddit: 'saas', angle: 'story', promo: true, topic: 'Pricing', why: 'Fits best.' },

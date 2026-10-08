@@ -30,13 +30,14 @@ export interface ScoringProject {
 }
 
 export interface ScoringThread {
+  platform?: string
   channel: string | null
   title: string
   snippet: string | null
 }
 
 export function scoringSystemPrompt(p: ScoringProject) {
-  return `You find Reddit threads where a founder could genuinely help someone, and where their product may be relevant. You never write the reply yourself.
+  return `You find threads and posts (Reddit, Hacker News, Bluesky, X) where a founder could genuinely help someone, and where their product may be relevant. You never write the reply yourself.
 
 Product: ${p.name} (${p.url})
 Category: ${p.category ?? 'unknown'}
@@ -57,9 +58,16 @@ For each thread, return:
 Score every thread exactly once, using its number as id.`
 }
 
+const PLATFORM_LABEL: Record<string, string> = { hn: 'Hacker News', bluesky: 'Bluesky', x: 'X', web: 'Web' }
+
+function sourceLabel(t: ScoringThread) {
+  if (t.channel) return `r/${t.channel} · `
+  return t.platform && PLATFORM_LABEL[t.platform] ? `${PLATFORM_LABEL[t.platform]} · ` : ''
+}
+
 export function scoringUserPrompt(threads: ScoringThread[]) {
   return threads
-    .map((t, i) => `<thread id="${i + 1}">\n${t.channel ? `r/${t.channel} · ` : ''}${t.title}\n${t.snippet ?? ''}\n</thread>`)
+    .map((t, i) => `<thread id="${i + 1}">\n${sourceLabel(t)}${t.title}\n${t.snippet ?? ''}\n</thread>`)
     .join('\n\n')
 }
 
@@ -105,6 +113,7 @@ export async function runScoring(ctx: JobContext, opts: { maxBatches?: number } 
     const items = await ctx.db
       .select({
         threadId: schema.threads.id,
+        platform: schema.threads.platform,
         channel: schema.threads.channel,
         title: schema.threads.title,
         snippet: schema.threads.snippet,

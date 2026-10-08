@@ -80,7 +80,8 @@ export async function runFetchGroup(ctx: JobContext, job: FetchGroupJob): Promis
   // fetch may be missing; the busy sub then gets a short interval and a
   // smaller group next time.
   const truncated = posts.length >= FEED_LIMIT
-  const windowStart = posts.length ? Math.min(...posts.map(p => p.createdAt.getTime())) : now.getTime()
+  const times = posts.flatMap(p => (p.createdAt ? [p.createdAt.getTime()] : []))
+  const windowStart = times.length ? Math.min(...times) : now.getTime()
   const windowHours = Math.max((now.getTime() - windowStart) / 3_600_000, 0.25)
 
   const updates = job.subreddits.map((name) => {

@@ -8,6 +8,7 @@ import { runScoring } from '../scoring/score'
 import { runDigest } from '../today/digest'
 import { runTracker } from '../tracker/tracker'
 import { runDiscovery } from './discovery'
+import { runFeedDiscovery } from './feeds'
 import { planFetch, runFetchGroup } from './fetch'
 import { runRetention } from './retention'
 
@@ -58,6 +59,7 @@ async function planFetchTick(ctx: JobContext) {
 const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> = {
   'plan-fetch': planFetchTick,
   'search-discovery': ctx => runDiscovery(ctx),
+  'feeds': runFeedDiscovery,
   'score': runScoring,
   'research': ctx => runWeeklyResearch(ctx),
   'tracker': runTracker,

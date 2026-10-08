@@ -39,6 +39,7 @@ export class QuotaError extends Error {
     readonly plan: Plan,
     readonly limit: number | boolean,
     message: string,
+    private readonly upgradeOverride?: Plan | null,
   ) {
     super(message)
     this.name = 'QuotaError'
@@ -46,6 +47,7 @@ export class QuotaError extends Error {
 
   /** The cheapest plan that lifts this limit. */
   get upgradeTo(): Plan | null {
+    if (this.upgradeOverride !== undefined) return this.upgradeOverride
     return (['solo', 'pro'] as const).find(p => PLANS[p].price! > (PLANS[this.plan].price ?? 0) && lifts(p, this.feature, this.limit)) ?? null
   }
 }
@@ -121,6 +123,15 @@ export async function assertCanAddSeat(db: Db, org: Org) {
   if ((members?.n ?? 0) + (invites?.n ?? 0) >= limit) {
     throw new QuotaError('seats', org.plan, limit, `The ${PLANS[org.plan].label} plan includes ${limit} seat${limit === 1 ? '' : 's'}.`)
   }
+}
+
+/** Feed sources the plan includes; asking for others is a quota error. */
+export function assertSources(org: Org, sources: Platform[]) {
+  const missing = sources.filter(s => !PLANS[org.plan].sources.includes(s))
+  if (!missing.length) return
+  const to = (['solo', 'pro'] as const).find(p => missing.every(s => PLANS[p].sources.includes(s))) ?? null
+  const names: Record<string, string> = { hn: 'Hacker News', bluesky: 'Bluesky', x: 'X', web: 'Web', reddit: 'Reddit' }
+  throw new QuotaError('source', org.plan, false, `${missing.map(s => names[s]).join(' and ')} ${missing.length > 1 ? 'are' : 'is'} not part of the ${PLANS[org.plan].label} plan.`, to)
 }
 
 export function assertMcp(org: Org) {

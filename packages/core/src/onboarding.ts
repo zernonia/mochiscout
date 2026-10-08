@@ -10,6 +10,7 @@ export const ProductProfile = z.object({
   problems_solved: z.array(z.string()).describe('3-8 problems the product solves, phrased the way a frustrated user would describe them'),
   keywords: z.array(z.string()).describe('5-15 short search phrases buyers use when looking for this kind of product'),
   competitors: z.array(z.string()).describe('Up to 8 well-known competing products or common alternatives, by name only'),
+  search_terms: z.array(z.string()).describe('20-30 short phrases (2-5 words) people would write in a post when they have the problem or want a tool like this, e.g. "looking for a crm", "spreadsheet crm hell". Varied, specific, no brand names'),
 })
 export type ProductProfile = z.infer<typeof ProductProfile>
 
@@ -80,7 +81,7 @@ export async function extractProductProfile(llm: Llm, page: ProductPage) {
     '</page>',
   ].filter(line => line !== '').join('\n')
 
-  const res = await llm.generate({ tier: 'fast', system: SYSTEM, prompt, schema: ProductProfile, maxTokens: 4000 })
+  const res = await llm.generate({ tier: 'fast', system: SYSTEM, prompt, schema: ProductProfile, maxTokens: 6000 })
   const clean = (items: string[], max: number) =>
     [...new Set(items.map(s => s.trim()).filter(Boolean))].slice(0, max)
   return {
@@ -90,6 +91,7 @@ export async function extractProductProfile(llm: Llm, page: ProductPage) {
       problems_solved: clean(res.data.problems_solved, 8),
       keywords: clean(res.data.keywords, 15),
       competitors: clean(res.data.competitors, 8),
+      search_terms: clean(res.data.search_terms, 30),
     },
   }
 }

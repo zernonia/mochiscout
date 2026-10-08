@@ -2,7 +2,7 @@ import type { JobContext } from '@social-radar/core'
 import type { Env } from './env'
 import { createDb } from '@social-radar/db'
 import type { SearchProvider } from '@social-radar/sources'
-import { brave, createHttp, createSearchClient, tinyfish, userAgent } from '@social-radar/sources'
+import { blueskyAdapter, brave, createHttp, createSearchClient, hnAdapter, tinyfish, userAgent } from '@social-radar/sources'
 
 /** Leave headroom under the Workers cron wall-clock limit (15 min). */
 const RUN_BUDGET_MS = 10 * 60_000
@@ -27,6 +27,7 @@ export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): Jo
     queue: env.JOBS,
     http: createHttp({ userAgent: ua, kv: env.CACHE, deadline }),
     search: createSearch(env, ua, deadline),
+    adapters: createAdapters(ua, deadline),
     llm: getLlm(env) ?? undefined,
     // Without a Resend key, emails are only logged, which is useful in dev only.
     sendEmail: env.RESEND_API_KEY || import.meta.dev ? email => sendEmail(env, email) : undefined,
@@ -45,4 +46,10 @@ function createSearch(env: Env, ua: string, deadline: number) {
   if (env.BRAVE_API_KEY) available.push(brave(http, env.BRAVE_API_KEY))
   if (env.SEARCH_PROVIDER === 'brave') available.reverse()
   return available.length ? createSearchClient({ providers: available, cache: env.CACHE }) : undefined
+}
+
+/** Feed sources besides Reddit. Both are public, keyless APIs. */
+function createAdapters(ua: string, deadline: number) {
+  const http = createHttp({ userAgent: ua, minDelayMs: 1000, deadline })
+  return { hn: hnAdapter(http), bluesky: blueskyAdapter(http) }
 }
