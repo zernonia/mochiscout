@@ -108,6 +108,10 @@ pnpm run deploy
   per IP. Watched subreddits are fetched together as combined feeds, and fetching
   pauses until the next tick when the limit is hit. Busy subs are checked every
   15 minutes and quiet ones every 1-6 hours.
+- **If Reddit blocks your Worker.** Set `READ_MODE=extension` to stop server-side RSS
+  reads and use the [browser extension](../apps/extension/README.md), which sends the
+  posts you browse to `/api/ingest`. `READ_MODE=search_only` relies on search discovery
+  alone.
 - **Workers plan.** The free plan allows 10 ms of CPU per invocation, which large
   feeds and scoring batches can exceed. The Workers Paid plan ($5/month) is the
   safe choice for reliable scheduled jobs.

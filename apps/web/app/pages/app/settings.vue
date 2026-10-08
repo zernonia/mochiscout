@@ -9,7 +9,7 @@ const { data: team, refresh: refreshTeam } = await useFetch('/api/org')
 const { data: myInvites, refresh: refreshMyInvites } = await useFetch('/api/org/invites/mine')
 
 const { data: apiKeys, refresh: refreshKeys } = await useFetch('/api/api-keys')
-const keyLabel = ref('Claude Code')
+const keyLabel = ref('Browser extension')
 const newKey = ref<string | null>(null)
 const mcpUrl = computed(() => (import.meta.client ? `${location.origin}/mcp` : '/mcp'))
 const mcpCommand = computed(() => `claude mcp add --transport http social-radar ${mcpUrl.value} --header "Authorization: Bearer ${newKey.value}"`)
@@ -200,29 +200,31 @@ const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px
 
     <Card v-if="apiKeys">
       <CardHeader>
-        <CardTitle>API keys (MCP)</CardTitle>
-        <CardDescription>Let AI agents like Claude Code read your plan, threads and subreddits, and draft posts. Agents never post for you.</CardDescription>
+        <CardTitle>API keys</CardTitle>
+        <CardDescription>For the browser extension and for AI agents like Claude Code (MCP). Neither ever posts for you.</CardDescription>
       </CardHeader>
       <CardContent class="flex flex-col gap-3 text-sm">
         <div v-if="newKey" class="flex flex-col gap-2 rounded-md border bg-muted p-3">
           <div class="font-medium">Copy this key now. It won't be shown again.</div>
           <code class="break-all text-xs">{{ newKey }}</code>
-          <div class="text-xs text-muted-foreground">Add it to Claude Code:</div>
-          <code class="break-all text-xs">{{ mcpCommand }}</code>
+          <template v-if="apiKeys.mcpAllowed">
+            <div class="text-xs text-muted-foreground">Add it to Claude Code:</div>
+            <code class="break-all text-xs">{{ mcpCommand }}</code>
+          </template>
           <div class="flex gap-2">
             <Button size="sm" type="button" variant="outline" @click="copyText(newKey)">Copy key</Button>
-            <Button size="sm" type="button" variant="outline" @click="copyText(mcpCommand)">Copy command</Button>
+            <Button v-if="apiKeys.mcpAllowed" size="sm" type="button" variant="outline" @click="copyText(mcpCommand)">Copy command</Button>
           </div>
         </div>
         <div v-for="k in apiKeys.keys" :key="k.id" class="flex items-center justify-between gap-3">
           <div class="min-w-0 truncate">{{ k.label }} <code class="text-xs text-muted-foreground">{{ k.prefix }}…</code></div>
           <button type="button" class="text-xs text-muted-foreground underline" @click="revokeKey(k.id)">Revoke</button>
         </div>
-        <form v-if="apiKeys.mcpAllowed" class="flex gap-2 pt-1" @submit.prevent="createKey">
+        <form class="flex gap-2 pt-1" @submit.prevent="createKey">
           <Input v-model="keyLabel" placeholder="Label" required class="flex-1" />
           <Button type="submit" variant="secondary">Create key</Button>
         </form>
-        <p v-else class="text-muted-foreground">The MCP server is part of the Pro plan. <NuxtLink to="/app/billing?plan=pro" class="underline">Upgrade</NuxtLink></p>
+        <p v-if="!apiKeys.mcpAllowed" class="text-xs text-muted-foreground">The MCP server for AI agents is part of the Pro plan. <NuxtLink to="/app/billing?plan=pro" class="underline">Upgrade</NuxtLink></p>
       </CardContent>
     </Card>
 

@@ -1,13 +1,11 @@
-import { assertMcp } from '@social-radar/core'
 import { schema } from '@social-radar/db'
 import { z } from 'zod'
 
 const Body = z.object({ label: z.string().trim().min(1).max(60) })
 
-/** Create an API key for the MCP server. The key is returned once. */
+/** Create an API key (browser extension on any plan; MCP on Pro). The key is returned once. */
 export default defineEventHandler(async (event) => {
   const { user, org } = await requireUser(event)
-  await quota(() => assertMcp(org))
   const { label } = await readValidatedBody(event, Body.parse)
   const key = generateApiKey()
   await getDb(event).insert(schema.apiKeys).values({

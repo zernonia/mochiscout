@@ -13,6 +13,11 @@ export interface JobContext {
   http: Http
   /** Search providers (TinyFish, Brave). Undefined when no key is configured. */
   search?: SearchClient
+  /**
+   * How Reddit is read (arch §5): server (RSS from the Worker), extension
+   * (only what users' browser extensions send) or search_only.
+   */
+  readMode?: 'server' | 'extension' | 'search_only'
   /** Feed sources besides Reddit (HN, Bluesky, X). */
   adapters?: Partial<Record<Platform, SourceAdapter>>
   /** Undefined when no LLM key is configured; scoring then waits. */

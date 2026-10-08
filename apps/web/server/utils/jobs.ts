@@ -28,6 +28,7 @@ export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): Jo
     http: createHttp({ userAgent: ua, kv: env.CACHE, deadline }),
     search: createSearch(env, ua, deadline),
     adapters: createAdapters(env, ua, deadline),
+    readMode: env.READ_MODE ?? 'server',
     llm: getLlm(env) ?? undefined,
     // Without a Resend key, emails are only logged, which is useful in dev only.
     sendEmail: env.RESEND_API_KEY || import.meta.dev ? email => sendEmail(env, email) : undefined,

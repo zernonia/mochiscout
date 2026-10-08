@@ -27,6 +27,7 @@ export async function runJob(ctx: JobContext, job: Job) {
 }
 
 async function planFetchTick(ctx: JobContext) {
+  if (ctx.readMode && ctx.readMode !== 'server') return { skipped: `READ_MODE=${ctx.readMode}` }
   const groups = await planFetch(ctx)
   if (ctx.queue) {
     if (groups.length) await ctx.queue.sendBatch(groups.map(body => ({ body })))

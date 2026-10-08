@@ -35,6 +35,8 @@ export interface Env {
   POLAR_SERVER?: 'sandbox' | 'production'
   POLAR_PRODUCT_SOLO?: string
   POLAR_PRODUCT_PRO?: string
+  /** server (default) | extension | search_only — see docs/arch.md §5. */
+  READ_MODE?: 'server' | 'extension' | 'search_only'
   /** Contact URL in the User-Agent sent to reddit.com and other sources. */
   CONTACT_URL?: string
   /** Self-host: comma-separated emails allowed to sign up after the first user. */
