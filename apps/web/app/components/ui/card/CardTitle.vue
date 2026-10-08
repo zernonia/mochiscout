@@ -1,17 +1,24 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue"
-import { cn } from "@/lib/utils"
+import { Primitive, type PrimitiveProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
+import { cn } from "@/lib/utils";
 
-const props = defineProps<{
-  class?: HTMLAttributes["class"]
-}>()
+interface CardTitleProps extends PrimitiveProps {
+  class?: HTMLAttributes["class"];
+}
+
+const props = withDefaults(defineProps<CardTitleProps>(), {
+  as: "div",
+});
 </script>
 
 <template>
-  <h3
+  <Primitive
+    :as="as"
+    :as-child="asChild"
+    :class="cn('font-heading font-semibold text-lg leading-none', props.class)"
     data-slot="card-title"
-    :class="cn('leading-none font-semibold', props.class)"
   >
     <slot />
-  </h3>
+  </Primitive>
 </template>

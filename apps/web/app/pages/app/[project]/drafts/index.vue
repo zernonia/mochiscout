@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toast } from 'vue-sonner'
+import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
 
@@ -33,7 +33,6 @@ const busy = ref<'generate' | 'empty' | null>(null)
 
 const watched = computed(() => map.value?.subreddits.filter(s => s.watching).map(s => s.name) ?? [])
 const topics = computed(() => research.value?.points.map(p => p.title) ?? [])
-const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs'
 
 async function create(generate: boolean) {
   busy.value = generate ? 'generate' : 'empty'
@@ -76,9 +75,12 @@ const levelBadge = { pass: 'secondary', warn: 'outline', fail: 'destructive' } a
             </div>
             <div class="flex flex-col gap-2">
               <Label for="angle">Angle</Label>
-              <select id="angle" v-model="form.angle" :class="selectClass">
-                <option v-for="a in angles" :key="a.value" :value="a.value">{{ a.label }}: {{ a.hint }}</option>
-              </select>
+              <Select v-model="form.angle">
+                <SelectTrigger id="angle"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="a in angles" :key="a.value" :value="a.value">{{ a.label }}: {{ a.hint }}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div class="flex flex-col gap-2">

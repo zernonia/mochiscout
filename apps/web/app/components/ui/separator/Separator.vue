@@ -1,29 +1,32 @@
 <script setup lang="ts">
-import type { SeparatorProps } from "reka-ui"
-import type { HTMLAttributes } from "vue"
-import { reactiveOmit } from "@vueuse/core"
-import { Separator } from "reka-ui"
-import { cn } from "@/lib/utils"
+import {
+  Separator as SeparatorPrimitive,
+  type SeparatorProps as SeparatorPrimitiveProps,
+} from "reka-ui";
+import type { HTMLAttributes } from "vue";
+import { cn } from "@/lib/utils";
 
-const props = withDefaults(defineProps<
-  SeparatorProps & { class?: HTMLAttributes["class"] }
->(), {
+interface SeparatorProps extends SeparatorPrimitiveProps {
+  class?: HTMLAttributes["class"];
+}
+
+const props = withDefaults(defineProps<SeparatorProps>(), {
   orientation: "horizontal",
-  decorative: true,
-})
-
-const delegatedProps = reactiveOmit(props, "class")
+});
 </script>
 
 <template>
-  <Separator
-    data-slot="separator"
-    v-bind="delegatedProps"
+  <SeparatorPrimitive
+    :as="as"
+    :as-child="asChild"
     :class="
       cn(
-        'bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px',
+        `shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:not-[[class^='h-']]:not-[[class*='_h-']]:self-stretch`,
         props.class,
       )
     "
+    data-slot="separator"
+    :decorative="decorative"
+    :orientation="orientation"
   />
 </template>

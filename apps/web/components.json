@@ -17,5 +17,7 @@
     "ui": "@/components/ui",
     "lib": "@/lib"
   },
-  "registries": {}
+  "registries": {
+    "@coss": "https://coss-ui-vue.zernonia.workers.dev/r/{name}.json"
+  }
 }

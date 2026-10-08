@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import type { DialogTriggerProps } from "reka-ui"
-import { DialogTrigger } from "reka-ui"
+import { DialogTrigger } from "reka-ui";
+import type { HTMLAttributes } from "vue";
 
-const props = defineProps<DialogTriggerProps>()
+const props = defineProps<{
+  asChild?: boolean;
+  as?: string;
+  class?: HTMLAttributes["class"];
+}>();
 </script>
 
 <template>
   <DialogTrigger
+    :as="as"
+    :as-child="asChild"
+    :class="props.class"
     data-slot="sheet-trigger"
-    v-bind="props"
   >
     <slot />
   </DialogTrigger>

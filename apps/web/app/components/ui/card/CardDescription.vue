@@ -1,17 +1,24 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue"
-import { cn } from "@/lib/utils"
+import { Primitive, type PrimitiveProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
+import { cn } from "@/lib/utils";
 
-const props = defineProps<{
-  class?: HTMLAttributes["class"]
-}>()
+interface CardDescriptionProps extends PrimitiveProps {
+  class?: HTMLAttributes["class"];
+}
+
+const props = withDefaults(defineProps<CardDescriptionProps>(), {
+  as: "div",
+});
 </script>
 
 <template>
-  <p
-    data-slot="card-description"
+  <Primitive
+    :as="as"
+    :as-child="asChild"
     :class="cn('text-muted-foreground text-sm', props.class)"
+    data-slot="card-description"
   >
     <slot />
-  </p>
+  </Primitive>
 </template>

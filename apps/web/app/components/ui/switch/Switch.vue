@@ -1,38 +1,51 @@
 <script setup lang="ts">
-import type { SwitchRootEmits, SwitchRootProps } from "reka-ui"
-import type { HTMLAttributes } from "vue"
-import { reactiveOmit } from "@vueuse/core"
 import {
   SwitchRoot,
   SwitchThumb,
   useForwardPropsEmits,
-} from "reka-ui"
-import { cn } from "@/lib/utils"
+  type SwitchRootEmits,
+  type SwitchRootProps,
+} from "reka-ui";
+import { computed, type HTMLAttributes } from "vue";
+import { cn } from "@/lib/utils";
+import { injectField } from "@/components/ui/field/context";
 
-const props = defineProps<SwitchRootProps & { class?: HTMLAttributes["class"] }>()
+interface SwitchProps extends SwitchRootProps {
+  class?: HTMLAttributes["class"];
+}
 
-const emits = defineEmits<SwitchRootEmits>()
+const props = defineProps<SwitchProps>();
+const emits = defineEmits<SwitchRootEmits>();
 
-const delegatedProps = reactiveOmit(props, "class")
+const field = injectField();
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits)
+const delegatedProps = computed(() => {
+  const { class: _, ...delegated } = props;
+  return delegated;
+});
+
+const forwarded = useForwardPropsEmits(delegatedProps, emits);
 </script>
 
 <template>
   <SwitchRoot
-    v-slot="slotProps"
-    data-slot="switch"
     v-bind="forwarded"
-    :class="cn(
-      'peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50',
-      props.class,
-    )"
+    :aria-invalid="field?.invalid.value ? 'true' : undefined"
+    :class="
+      cn(
+        'inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(5)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-[state=checked]:bg-primary data-[state=unchecked]:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(4)]',
+        props.class,
+      )
+    "
+    data-slot="switch"
   >
     <SwitchThumb
+      :class="
+        cn(
+          'pointer-events-none block aspect-square h-full origin-left in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.1)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] data-[state=checked]:origin-[var(--thumb-size)_50%] data-[state=checked]:translate-x-[calc(var(--thumb-size)-4px)]',
+        )
+      "
       data-slot="switch-thumb"
-      :class="cn('bg-background dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')"
-    >
-      <slot name="thumb" v-bind="slotProps" />
-    </SwitchThumb>
+    />
   </SwitchRoot>
 </template>

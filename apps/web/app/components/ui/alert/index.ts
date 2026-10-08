@@ -1,24 +1,28 @@
-import type { VariantProps } from "class-variance-authority"
-import { cva } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority";
 
-export { default as Alert } from "./Alert.vue"
-export { default as AlertDescription } from "./AlertDescription.vue"
-export { default as AlertTitle } from "./AlertTitle.vue"
+export { default as Alert } from "./Alert.vue";
+export { default as AlertAction } from "./AlertAction.vue";
+export { default as AlertDescription } from "./AlertDescription.vue";
+export { default as AlertTitle } from "./AlertTitle.vue";
 
 export const alertVariants = cva(
-  "relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  "relative grid w-full items-start gap-x-2 gap-y-0.5 rounded-xl border px-3.5 py-3 text-card-foreground text-sm has-[>svg]:has-data-[slot=alert-action]:grid-cols-[calc(var(--spacing)*4)_1fr_auto] has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-data-[slot=alert-action]:grid-cols-[1fr_auto] has-[>svg]:gap-x-2 [&>svg]:h-lh [&>svg]:w-4",
   {
-    variants: {
-      variant: {
-        default: "bg-card text-card-foreground",
-        destructive:
-          "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
-      },
-    },
     defaultVariants: {
       variant: "default",
     },
+    variants: {
+      variant: {
+        default:
+          "bg-transparent dark:bg-input/32 [&>svg]:text-muted-foreground",
+        error:
+          "border-destructive/32 bg-destructive/4 [&>svg]:text-destructive",
+        info: "border-info/32 bg-info/4 [&>svg]:text-info",
+        success: "border-success/32 bg-success/4 [&>svg]:text-success",
+        warning: "border-warning/32 bg-warning/4 [&>svg]:text-warning",
+      },
+    },
   },
-)
+);
 
-export type AlertVariants = VariantProps<typeof alertVariants>
+export type AlertVariants = VariantProps<typeof alertVariants>;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toast } from 'vue-sonner'
+import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
 
@@ -49,7 +49,7 @@ function when(d: string | null) {
   <div class="flex flex-col gap-5">
     <ProjectNav :project-id="projectId" :name="project?.name" />
 
-    <Alert v-if="tracker?.account?.status === 'not_found'" variant="destructive">
+    <Alert v-if="tracker?.account?.status === 'not_found'" variant="error">
       <AlertTitle>u/{{ tracker.account.username }} is not publicly visible</AlertTitle>
       <AlertDescription>The account may be suspended or shadowbanned, so nobody sees your posts. Check reddit.com/appeals.</AlertDescription>
     </Alert>

@@ -13,5 +13,5 @@ const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <template>
-  <TagsInputInput v-bind="forwardedProps" :class="cn('text-sm min-h-5 focus:outline-none flex-1 bg-transparent px-1', props.class)" />
+  <TagsInputInput v-bind="forwardedProps" :class="cn('min-h-5 min-w-24 flex-1 bg-transparent px-1 text-foreground outline-none placeholder:text-muted-foreground/72', props.class)" />
 </template>

@@ -79,10 +79,12 @@ const faqs = [
 
       <section class="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-14">
         <h2 class="text-2xl font-semibold tracking-tight">Questions</h2>
-        <details v-for="f in faqs" :key="f.q" class="rounded-lg border p-4">
-          <summary class="cursor-pointer font-medium">{{ f.q }}</summary>
-          <p class="mt-2 text-sm text-muted-foreground">{{ f.a }}</p>
-        </details>
+        <Accordion type="single" collapsible>
+          <AccordionItem v-for="f in faqs" :key="f.q" :value="f.q">
+            <AccordionTrigger>{{ f.q }}</AccordionTrigger>
+            <AccordionContent><p class="text-muted-foreground">{{ f.a }}</p></AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </section>
 
       <section class="mx-auto flex max-w-5xl flex-col items-start gap-4 px-4 pb-24">

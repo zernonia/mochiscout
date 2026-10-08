@@ -1,26 +1,29 @@
 <script setup lang="ts">
-import type { LabelProps } from "reka-ui"
-import type { HTMLAttributes } from "vue"
-import { reactiveOmit } from "@vueuse/core"
-import { Label } from "reka-ui"
-import { cn } from "@/lib/utils"
+import { Primitive, type PrimitiveProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
+import { cn } from "@/lib/utils";
 
-const props = defineProps<LabelProps & { class?: HTMLAttributes["class"] }>()
+interface LabelProps extends PrimitiveProps {
+  class?: HTMLAttributes["class"];
+}
 
-const delegatedProps = reactiveOmit(props, "class")
+const props = withDefaults(defineProps<LabelProps>(), {
+  as: "label",
+});
 </script>
 
 <template>
-  <Label
-    data-slot="label"
-    v-bind="delegatedProps"
+  <Primitive
+    :as="as"
+    :as-child="asChild"
     :class="
       cn(
-        'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
+        'inline-flex items-center gap-2 font-medium text-base/4.5 text-foreground sm:text-sm/4',
         props.class,
       )
     "
+    data-slot="label"
   >
     <slot />
-  </Label>
+  </Primitive>
 </template>

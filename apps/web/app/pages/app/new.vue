@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ProjectProfile } from '~/components/ProjectProfileForm.vue'
-import { toast } from 'vue-sonner'
+import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
 useHead({ title: 'New project · social-radar' })

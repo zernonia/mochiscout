@@ -1,7 +1,7 @@
 # Architecture — Open-Source Reddit Research + Marketing Loop
 
 > Codename: `social-radar` (working name)
-> Stack: Nuxt 4 · shadcn-vue · Tailwind v4 · Cloudflare (one Worker + D1, KV, Cron; Queues optional; AI Gateway)
+> Stack: Nuxt 4 · coss ui (Vue) · Tailwind v4 · Cloudflare (one Worker + D1, KV, Cron; Queues optional; AI Gateway)
 > Editions: **Self-host** (free, AGPL) and **Cloud** (paid, hosted by us). Same codebase.
 
 ---
@@ -55,10 +55,10 @@ flowchart LR
 ```
 .
 ├─ apps/
-│  ├─ web/                 # Nuxt 4 (app/ dir) + shadcn-vue
+│  ├─ web/                 # Nuxt 4 (app/ dir) + coss ui (Vue)
 │  │  ├─ app/
 │  │  │  ├─ pages/
-│  │  │  ├─ components/ui/ # shadcn-vue generated
+│  │  │  ├─ components/ui/ # coss ui components (@coss registry)
 │  │  │  ├─ components/    # feature components
 │  │  │  └─ composables/
 │  │  ├─ server/
@@ -83,12 +83,12 @@ flowchart LR
 
 ---
 
-## 4. Frontend — Nuxt 4 + shadcn-vue
+## 4. Frontend — Nuxt 4 + coss ui
 
 - Nuxt 4 (≥ 4.6) with the `app/` directory; Nitro preset `cloudflare_module`.
 - Server builder: **Nitro** (default). Do not use the experimental `@nuxt/vite-server` yet: it has no tasks or server plugins, which the scheduled jobs and queue hook rely on.
 - Import server utilities from `nuxt/server` (not `h3`/`nitropack` directly) so server code carries over unchanged to Nuxt 5 / Nitro v3.
-- `shadcn-nuxt` module + Tailwind v4. Generate only the components you use.
+- [coss ui vue](https://coss-ui-vue.zernonia.workers.dev/) components (Reka UI), added with `npx shadcn-vue@latest add @coss/<name>` (registry in `components.json`), auto-imported by the `shadcn-nuxt` module. Tailwind v4 with the coss theme tokens. Add only the components you use.
 - Data fetching: `useFetch` / `$fetch` against `server/api`. No separate API client.
 - Bindings in server code via `event.context.cloudflare.env` (D1, KV, optional JOBS queue). Wrap in `server/utils/env.ts`.
 - Local dev against real bindings with `wrangler` (Nitro's Cloudflare dev integration / `nitro-cloudflare-dev`, whichever your Nitro version supports).
@@ -385,7 +385,7 @@ Track actuals from day one in `usage` + AI Gateway; alert if any org exceeds 2×
 ## 15. Build roadmap (ship before GummySearch's Dec 1 shutdown)
 
 ### Phase 1 — Weeks 1–2: "works for me"
-- [x] Monorepo, Nuxt 4 + shadcn-vue, D1 + Drizzle, auth (nuxt-auth-utils)
+- [x] Monorepo, Nuxt 4 + coss ui, D1 + Drizzle, auth (nuxt-auth-utils)
 - [x] Onboarding from URL
 - [ ] Rules package with first ~50 subreddits (YAML + validator) — package, validator and CI done; rule files still to write
 - [x] Scheduled tasks: cron dispatcher → fetch jobs (inline) → RSS via shared HTTP helper

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toast } from 'vue-sonner'
+import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
 useHead({ title: 'Settings · social-radar' })
@@ -119,11 +119,10 @@ const keyRows = computed(() => settings.value
     ]
   : [])
 
-const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs'
 </script>
 
 <template>
-  <form class="mx-auto flex max-w-2xl flex-col gap-6" @submit.prevent="save">
+  <div class="mx-auto flex max-w-2xl flex-col gap-6">
     <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
 
     <Alert v-if="myInvites?.length">
@@ -134,53 +133,66 @@ const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px
       </AlertDescription>
     </Alert>
 
-    <Card>
-      <CardHeader>
-        <CardTitle>Daily digest</CardTitle>
-        <CardDescription>Sent to {{ settings?.email }} at this hour, your time.</CardDescription>
-      </CardHeader>
-      <CardContent class="grid gap-4 sm:grid-cols-2">
-        <div class="flex flex-col gap-2">
-          <Label for="tz">Time zone</Label>
-          <select id="tz" v-model="form.timezone" :class="selectClass">
-            <option v-for="tz in timezones" :key="tz" :value="tz">{{ tz }}</option>
-          </select>
-          <button type="button" class="self-start text-xs text-muted-foreground underline" @click="useBrowserTimezone">Use this device's time zone</button>
-        </div>
-        <div class="flex flex-col gap-2">
-          <Label for="hour">Digest hour</Label>
-          <select id="hour" v-model="form.digestHour" :class="selectClass">
-            <option :value="-1">Off</option>
-            <option v-for="h in hours" :key="h" :value="h">{{ String(h).padStart(2, '0') }}:00</option>
-          </select>
-        </div>
-      </CardContent>
-    </Card>
+    <!-- Team and API key cards hold their own forms, so this form ends before them. -->
+    <form class="flex flex-col gap-6" @submit.prevent="save">
+      <Card>
+        <CardHeader>
+          <CardTitle>Daily digest</CardTitle>
+          <CardDescription>Sent to {{ settings?.email }} at this hour, your time.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4 sm:grid-cols-2">
+          <div class="flex flex-col gap-2">
+            <Label for="tz">Time zone</Label>
+            <Select v-model="form.timezone">
+              <SelectTrigger id="tz"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="tz in timezones" :key="tz" :value="tz">{{ tz }}</SelectItem>
+              </SelectContent>
+            </Select>
+            <button type="button" class="self-start text-xs text-muted-foreground underline" @click="useBrowserTimezone">Use this device's time zone</button>
+          </div>
+          <div class="flex flex-col gap-2">
+            <Label for="hour">Digest hour</Label>
+            <Select v-model="form.digestHour">
+              <SelectTrigger id="hour"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem :value="-1">Off</SelectItem>
+                <SelectItem v-for="h in hours" :key="h" :value="h">{{ String(h).padStart(2, '0') }}:00</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
 
-    <Card>
-      <CardHeader>
-        <CardTitle>Your Reddit account</CardTitle>
-        <CardDescription>Never your password. The username is checked publicly for suspensions and shadowbans; karma and age are checked against each subreddit's minimums.</CardDescription>
-      </CardHeader>
-      <CardContent class="grid gap-4 sm:grid-cols-3">
-        <div class="flex flex-col gap-2">
-          <Label for="username">Username</Label>
-          <Input id="username" v-model="form.redditUsername" placeholder="u/yourname" />
-          <p v-if="settings?.redditAccountStatus === 'not_found'" class="text-xs text-destructive">
-            Profile not publicly visible: the account may be suspended or shadowbanned.
-          </p>
-          <p v-else-if="settings?.redditAccountStatus === 'ok'" class="text-xs text-muted-foreground">Profile visible.</p>
-        </div>
-        <div class="flex flex-col gap-2">
-          <Label for="karma">Karma</Label>
-          <Input id="karma" v-model="form.redditKarma" type="number" inputmode="numeric" placeholder="e.g. 1200" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <Label for="created">Account created</Label>
-          <Input id="created" v-model="form.redditAccountCreatedAt" type="date" />
-        </div>
-      </CardContent>
-    </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Reddit account</CardTitle>
+          <CardDescription>Never your password. The username is checked publicly for suspensions and shadowbans; karma and age are checked against each subreddit's minimums.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4 sm:grid-cols-3">
+          <div class="flex flex-col gap-2">
+            <Label for="username">Username</Label>
+            <Input id="username" v-model="form.redditUsername" placeholder="u/yourname" />
+            <p v-if="settings?.redditAccountStatus === 'not_found'" class="text-xs text-destructive">
+              Profile not publicly visible: the account may be suspended or shadowbanned.
+            </p>
+            <p v-else-if="settings?.redditAccountStatus === 'ok'" class="text-xs text-muted-foreground">Profile visible.</p>
+          </div>
+          <div class="flex flex-col gap-2">
+            <Label for="karma">Karma</Label>
+            <Input id="karma" v-model="form.redditKarma" type="number" inputmode="numeric" placeholder="e.g. 1200" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <Label for="created">Account created</Label>
+            <Input id="created" v-model="form.redditAccountCreatedAt" type="date" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <div>
+        <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save settings' }}</Button>
+      </div>
+    </form>
 
     <Card v-if="team">
       <CardHeader>
@@ -250,8 +262,5 @@ const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px
       </CardContent>
     </Card>
 
-    <div>
-      <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save settings' }}</Button>
-    </div>
-  </form>
+  </div>
 </template>

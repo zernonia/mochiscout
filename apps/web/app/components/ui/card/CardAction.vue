@@ -1,17 +1,29 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue"
-import { cn } from "@/lib/utils"
+import { Primitive, type PrimitiveProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
+import { cn } from "@/lib/utils";
 
-const props = defineProps<{
-  class?: HTMLAttributes["class"]
-}>()
+interface CardActionProps extends PrimitiveProps {
+  class?: HTMLAttributes["class"];
+}
+
+const props = withDefaults(defineProps<CardActionProps>(), {
+  as: "div",
+});
 </script>
 
 <template>
-  <div
+  <Primitive
+    :as="as"
+    :as-child="asChild"
+    :class="
+      cn(
+        'col-start-2 row-span-2 row-start-1 inline-flex self-start justify-self-end',
+        props.class,
+      )
+    "
     data-slot="card-action"
-    :class="cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', props.class)"
   >
     <slot />
-  </div>
+  </Primitive>
 </template>

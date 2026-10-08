@@ -21,7 +21,7 @@
 
 ## Stack
 
-Nuxt 4 · shadcn-vue · Tailwind v4 · Cloudflare Workers (D1, KV, Cron) · TinyFish Search
+Nuxt 4 · coss ui (Vue) · Tailwind v4 · Cloudflare Workers (D1, KV, Cron) · TinyFish Search
 
 ## Local development
 

@@ -3,8 +3,8 @@ const { user, clear } = useUserSession()
 const edition = useRuntimeConfig().public.edition
 const { data: orgs } = await useFetch('/api/orgs')
 
-async function switchOrg(event: Event) {
-  await $fetch('/api/orgs/active', { method: 'POST', body: { orgId: (event.target as HTMLSelectElement).value } })
+async function switchOrg(orgId: unknown) {
+  await $fetch('/api/orgs/active', { method: 'POST', body: { orgId: String(orgId) } })
   // Projects belong to teams: start from the project list of the new team.
   window.location.href = '/app'
 }
@@ -22,15 +22,16 @@ async function signOut() {
       <div class="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4">
         <div class="flex min-w-0 items-center gap-3">
           <NuxtLink to="/app" class="font-semibold tracking-tight">social-radar</NuxtLink>
-          <select
+          <Select
             v-if="orgs && orgs.length > 1"
-            aria-label="Team"
-            class="h-8 max-w-40 truncate rounded-md border border-input bg-transparent px-2 text-sm"
-            :value="orgs.find(o => o.active)?.id"
-            @change="switchOrg"
+            :model-value="orgs.find(o => o.active)?.id"
+            @update:model-value="switchOrg"
           >
-            <option v-for="o in orgs" :key="o.id" :value="o.id">{{ o.label }}</option>
-          </select>
+            <SelectTrigger aria-label="Team" size="sm" class="max-w-44 min-w-0"><SelectValue class="truncate" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="o in orgs" :key="o.id" :value="o.id">{{ o.label }}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div class="flex items-center gap-3 text-sm">
           <span class="hidden text-muted-foreground sm:inline">{{ user?.email }}</span>

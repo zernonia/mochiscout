@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RulesSuggestion } from '~/utils/rules-yaml'
-import { toast } from 'vue-sonner'
+import { toast } from '@/lib/toast'
 
 const props = defineProps<{
   subreddit: string
@@ -37,8 +37,6 @@ const form = reactive<RulesSuggestion>({
 })
 const yaml = computed(() => rulesYaml(form))
 const issueUrl = computed(() => rulesIssueUrl(rulesRepo, form, yaml.value))
-const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm'
-
 async function copy() {
   await navigator.clipboard.writeText(yaml.value)
   toast.success('YAML copied')
@@ -58,13 +56,16 @@ async function copy() {
       <div class="flex flex-col gap-3 px-4 pb-6 text-sm">
         <div class="flex flex-col gap-1.5">
           <Label for="rp">Self-promotion</Label>
-          <select id="rp" v-model="form.promo_policy" :class="selectClass">
-            <option value="none">Not allowed</option>
-            <option value="weekly_thread_only">Only in a promo thread</option>
-            <option value="flair_only">Only with promo flair</option>
-            <option value="allowed_with_value">Allowed if the post is valuable</option>
-            <option value="allowed">Allowed</option>
-          </select>
+          <Select v-model="form.promo_policy">
+            <SelectTrigger id="rp"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">Not allowed</SelectItem>
+              <SelectItem value="weekly_thread_only">Only in a promo thread</SelectItem>
+              <SelectItem value="flair_only">Only with promo flair</SelectItem>
+              <SelectItem value="allowed_with_value">Allowed if the post is valuable</SelectItem>
+              <SelectItem value="allowed">Allowed</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div v-if="form.promo_policy === 'weekly_thread_only'" class="flex flex-col gap-1.5">
           <Label for="rt">Promo thread name</Label>
@@ -77,20 +78,26 @@ async function copy() {
         </div>
         <div class="flex flex-col gap-1.5">
           <Label for="rl">Links</Label>
-          <select id="rl" v-model="form.links_allowed" :class="selectClass">
-            <option value="">Not stated</option>
-            <option value="none">Not allowed</option>
-            <option value="in_comments_only">Only in comments</option>
-            <option value="yes">Allowed</option>
-          </select>
+          <Select
+            :model-value="form.links_allowed || 'unstated'"
+            @update:model-value="v => form.links_allowed = v === 'unstated' ? '' : v as typeof form.links_allowed"
+          >
+            <SelectTrigger id="rl"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="unstated">Not stated</SelectItem>
+              <SelectItem value="none">Not allowed</SelectItem>
+              <SelectItem value="in_comments_only">Only in comments</SelectItem>
+              <SelectItem value="yes">Allowed</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div class="flex flex-col gap-1.5">
           <Label>Post formats</Label>
-          <div class="flex flex-wrap gap-3">
-            <label v-for="f in ['text', 'link', 'image', 'video']" :key="f" class="flex items-center gap-1.5">
-              <input v-model="form.post_formats" type="checkbox" :value="f"> {{ f }}
-            </label>
-          </div>
+          <CheckboxGroup v-model="form.post_formats" class="flex flex-row flex-wrap gap-3">
+            <Label v-for="f in ['text', 'link', 'image', 'video']" :key="f" class="font-normal">
+              <Checkbox :value="f" /> {{ f }}
+            </Label>
+          </CheckboxGroup>
         </div>
         <div class="flex flex-col gap-1.5"><Label for="rg">Tags</Label><Input id="rg" v-model="form.tags" placeholder="saas, startups, b2b" /></div>
         <div class="flex flex-col gap-1.5"><Label for="rn">Notes for posters</Label><Textarea id="rn" v-model="form.notes" rows="3" placeholder="What mods remove, what does well" /></div>
