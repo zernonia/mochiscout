@@ -27,6 +27,7 @@ export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): Jo
     queue: env.JOBS,
     http: createHttp({ userAgent: ua, kv: env.CACHE, deadline }),
     search: createSearch(env, ua, deadline),
+    llm: getLlm(env) ?? undefined,
     now: () => new Date(),
     log: (message, data) => console.info(`[jobs] ${message}`, data ? JSON.stringify(data) : ''),
   }

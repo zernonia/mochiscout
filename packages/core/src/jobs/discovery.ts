@@ -2,6 +2,7 @@ import type { DiscoveryMode } from '../search/queries'
 import type { JobContext } from './context'
 import { eq, inArray, schema } from '@social-radar/db'
 import { cleanRedditTitle, HttpDeferredError, parseRedditThreadUrl, SNIPPET_MAX, truncate } from '@social-radar/sources'
+import { queueSearchThreads } from '../scoring/queue'
 import { buildDiscoveryQueries } from '../search/queries'
 
 export interface DiscoveryResult {
@@ -31,12 +32,14 @@ export async function runDiscovery(ctx: JobContext): Promise<DiscoveryResult | {
           ctx.log('discovery deferred', { project: project.id, retryAt: new Date(error.retryAt).toISOString() })
           result.deferred = true
           result.newThreadIds[project.id] = found
+          await queueSearchThreads(ctx, project.id, [...new Set(found)])
           return result
         }
         ctx.log('discovery query failed', { project: project.id, query: q.search.query, error: String(error) })
       }
     }
     result.newThreadIds[project.id] = [...new Set(found)]
+    await queueSearchThreads(ctx, project.id, result.newThreadIds[project.id]!)
   }
   ctx.log('discovery', { queries: result.queries, projects: projects.length })
   return result

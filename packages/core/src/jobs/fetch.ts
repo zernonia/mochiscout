@@ -2,6 +2,7 @@ import type { JobContext } from './context'
 import type { FetchGroupJob } from './types'
 import { and, eq, schema, sql } from '@social-radar/db'
 import { FEED_LIMIT, newPostsFeedUrl, parseRedditFeed } from '@social-radar/sources'
+import { queueRssThreads } from '../scoring/queue'
 
 /** Busy subs share a feed with fewer others so 100 entries still cover the gap since last fetch. */
 const BUSY_INTERVAL_MIN = 15
@@ -43,6 +44,8 @@ export async function planFetch(ctx: JobContext): Promise<FetchGroupJob[]> {
 export interface FetchGroupResult {
   fetched: number
   newThreadIds: string[]
+  /** New threads that passed a watching project's prefilter. */
+  queued: number
 }
 
 /** Fetch one combined feed, upsert threads, and adapt each sub's refresh interval. */
@@ -89,8 +92,9 @@ export async function runFetchGroup(ctx: JobContext, job: FetchGroupJob): Promis
   })
   if (nonEmpty(updates)) await ctx.db.batch(updates)
 
-  ctx.log('fetch-group', { subreddits: job.subreddits, fetched: posts.length, new: newThreadIds.length, truncated })
-  return { fetched: posts.length, newThreadIds }
+  const queued = await queueRssThreads(ctx, newThreadIds)
+  ctx.log('fetch-group', { subreddits: job.subreddits, fetched: posts.length, new: newThreadIds.length, queued, truncated })
+  return { fetched: posts.length, newThreadIds, queued }
 }
 
 /** Busy subs every 15 min, quiet subs every 1–6 h. */

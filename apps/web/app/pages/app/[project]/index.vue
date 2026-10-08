@@ -15,10 +15,8 @@ const lists = computed(() => [
 
 <template>
   <div v-if="project" class="flex flex-col gap-6">
-    <div>
-      <h1 class="text-2xl font-semibold tracking-tight">{{ project.name }}</h1>
-      <a :href="project.url" target="_blank" rel="noopener" class="text-sm text-muted-foreground underline">{{ project.url }}</a>
-    </div>
+    <ProjectNav :project-id="project.id" :name="project.name" />
+    <a :href="project.url" target="_blank" rel="noopener" class="text-sm text-muted-foreground underline">{{ project.url }}</a>
     <Card>
       <CardHeader>
         <CardTitle>Profile</CardTitle>

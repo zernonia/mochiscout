@@ -70,6 +70,17 @@ CREATE TABLE `projects` (
 	FOREIGN KEY (`org_id`) REFERENCES `orgs`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE TABLE `score_queue` (
+	`project_id` text NOT NULL,
+	`thread_id` text NOT NULL,
+	`matched_json` text DEFAULT '[]' NOT NULL,
+	`queued_at` integer DEFAULT (unixepoch()) NOT NULL,
+	PRIMARY KEY(`project_id`, `thread_id`),
+	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`thread_id`) REFERENCES `threads`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `score_queue_queued_idx` ON `score_queue` (`queued_at`);--> statement-breakpoint
 CREATE TABLE `subreddits` (
 	`name` text PRIMARY KEY NOT NULL,
 	`subscribers` integer,

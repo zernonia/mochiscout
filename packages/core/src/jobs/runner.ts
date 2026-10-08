@@ -3,6 +3,7 @@ import type { JobContext } from './context'
 import type { Job } from './types'
 import { HttpDeferredError } from '@social-radar/sources'
 import { dueJobs } from '../schedule'
+import { runScoring } from '../scoring/score'
 import { runDiscovery } from './discovery'
 import { planFetch, runFetchGroup } from './fetch'
 import { runRetention } from './retention'
@@ -31,11 +32,13 @@ async function planFetchTick(ctx: JobContext) {
   // Inline: one group after another through the shared HTTP client. If Reddit
   // rate-limits us past the run's deadline, stop; the rest stay due next tick.
   let done = 0
-  const newThreadIds: string[] = []
+  let newThreads = 0
+  let queued = 0
   for (const group of groups) {
     try {
       const result = await runFetchGroup(ctx, group)
-      newThreadIds.push(...result.newThreadIds)
+      newThreads += result.newThreadIds.length
+      queued += result.queued
       done++
     }
     catch (error) {
@@ -46,12 +49,13 @@ async function planFetchTick(ctx: JobContext) {
       ctx.log('fetch-group failed', { subreddits: group.subreddits, error: String(error) })
     }
   }
-  return { groups: groups.length, done, newThreads: newThreadIds.length }
+  return { groups: groups.length, done, newThreads, queued }
 }
 
 const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> = {
   'plan-fetch': planFetchTick,
   'search-discovery': runDiscovery,
+  'score': runScoring,
   'retention': runRetention,
 }
 

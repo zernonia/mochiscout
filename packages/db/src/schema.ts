@@ -94,6 +94,22 @@ export const threadScores = sqliteTable(
   ],
 )
 
+/** Threads that passed a project's prefilter and wait for LLM scoring. */
+export const scoreQueue = sqliteTable(
+  'score_queue',
+  {
+    projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+    threadId: text('thread_id').notNull().references(() => threads.id, { onDelete: 'cascade' }),
+    /** Terms that matched, or ['search'] for threads found by the project's own searches. */
+    matched: text('matched_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
+    queuedAt: integer('queued_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  },
+  t => [
+    primaryKey({ columns: [t.projectId, t.threadId] }),
+    index('score_queue_queued_idx').on(t.queuedAt),
+  ],
+)
+
 export const painPoints = sqliteTable('pain_points', {
   id: text('id').primaryKey(),
   projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
