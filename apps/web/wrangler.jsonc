@@ -1,0 +1,43 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "social-radar",
+  "main": "./.output/server/index.mjs",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./.output/public",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "social-radar",
+      // Replace with the id from `wrangler d1 create social-radar` before deploying.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../packages/db/migrations"
+    }
+  ],
+
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      // Replace with the id from `wrangler kv namespace create CACHE` before deploying.
+      "id": "00000000000000000000000000000000"
+    }
+  ],
+
+  // Single cron trigger; Nitro's scheduledTasks + the `dispatch` task decide what runs.
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  }
+
+  // Optional (cloud): JOBS queue, consumer max_concurrency 1.
+  // "queues": {
+  //   "producers": [{ "binding": "JOBS", "queue": "social-radar-jobs" }],
+  //   "consumers": [{ "queue": "social-radar-jobs", "max_concurrency": 1 }]
+  // }
+}

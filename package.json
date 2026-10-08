@@ -1,0 +1,18 @@
+{
+  "name": "social-radar",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @social-radar/web dev",
+    "build": "pnpm --filter @social-radar/web build",
+    "preview": "pnpm --filter @social-radar/web preview",
+    "deploy": "pnpm --filter @social-radar/web deploy",
+    "typecheck": "pnpm -r typecheck",
+    "db:generate": "pnpm --filter @social-radar/db generate",
+    "db:migrate:local": "pnpm --filter @social-radar/web db:migrate:local"
+  }
+}
