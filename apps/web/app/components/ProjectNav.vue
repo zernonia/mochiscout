@@ -7,6 +7,7 @@ const links = computed(() => [
   { to: `/app/${props.projectId}/research`, label: 'Research' },
   { to: `/app/${props.projectId}/subreddits`, label: 'Subreddits' },
   { to: `/app/${props.projectId}/drafts`, label: 'Drafts' },
+  { to: `/app/${props.projectId}/tracker`, label: 'Tracker' },
   { to: `/app/${props.projectId}/profile`, label: 'Profile' },
 ])
 </script>

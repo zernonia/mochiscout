@@ -1,3 +1,4 @@
+import { checkRedditAccount } from '@social-radar/core'
 import { eq, schema } from '@social-radar/db'
 import { normalizeRedditUsername } from '@social-radar/sources'
 import { z } from 'zod'
@@ -39,6 +40,10 @@ export default defineEventHandler(async (event) => {
   }
   if (Object.keys(update).length) {
     await getDb(event).update(schema.users).set({ ...update, updatedAt: new Date() }).where(eq(schema.users.id, user.id))
+  }
+  if (update.redditUsername) {
+    const ctx = createJobContext(getEnv(event), { budgetMs: 90_000 })
+    event.waitUntil(checkRedditAccount(ctx, user.id, update.redditUsername).catch(error => ctx.log('account check failed', { error: String(error) })))
   }
   return { ok: true }
 })

@@ -54,6 +54,25 @@ async function remove() {
   await navigateTo(`/app/${projectId.value}/drafts`)
 }
 
+const postedUrl = ref('')
+async function markPosted() {
+  busy.value = 'save'
+  try {
+    await $fetch(`/api/projects/${projectId.value}/tracker`, {
+      method: 'POST',
+      body: { url: postedUrl.value, promo: form.promo, draftId },
+    })
+    toast.success('Tracking the post. Removals show up on the Tracker.')
+    await navigateTo(`/app/${projectId.value}/tracker`)
+  }
+  catch (e) {
+    toast.error(message(e, 'Could not track the post'))
+  }
+  finally {
+    busy.value = null
+  }
+}
+
 async function copy(text: string, what: string) {
   await navigator.clipboard.writeText(text)
   toast.success(`${what} copied`)
@@ -101,7 +120,11 @@ async function copy(text: string, what: string) {
           <Button as-child size="sm">
             <a :href="`https://www.reddit.com/r/${draft.subreddit}/submit`" target="_blank" rel="noopener">Open r/{{ draft.subreddit }} submit page</a>
           </Button>
-          <p class="text-xs text-muted-foreground">After posting, add the post on the Tracker to watch for removals.</p>
+          <form class="mt-2 flex flex-col gap-2 border-t pt-3" @submit.prevent="markPosted">
+            <Label for="posted-url" class="text-xs">Posted? Paste the link to track it</Label>
+            <Input id="posted-url" v-model="postedUrl" placeholder="https://www.reddit.com/r/…/comments/…" required />
+            <Button type="submit" size="sm" variant="secondary" :disabled="!!busy">Mark as posted</Button>
+          </form>
         </div>
       </div>
     </div>
