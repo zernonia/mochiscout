@@ -34,3 +34,10 @@ BETTER_AUTH_SECRET=change-me-to-a-long-random-string
 
 # Public URL used in digest emails (defaults to BETTER_AUTH_URL)
 # APP_URL=https://radar.example.com
+
+# Hosted edition only (NUXT_PUBLIC_EDITION=cloud): Polar billing
+# POLAR_ACCESS_TOKEN=
+# POLAR_WEBHOOK_SECRET=
+# POLAR_SERVER=sandbox
+# POLAR_PRODUCT_SOLO=
+# POLAR_PRODUCT_PRO=

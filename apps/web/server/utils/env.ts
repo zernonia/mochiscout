@@ -26,6 +26,13 @@ export interface Env {
   SEARCH_PROVIDER?: 'tinyfish' | 'brave'
   TINYFISH_API_KEY?: string
   BRAVE_API_KEY?: string
+  /** Cloud billing (Polar). */
+  POLAR_ACCESS_TOKEN?: string
+  POLAR_WEBHOOK_SECRET?: string
+  /** 'sandbox' to use sandbox-api.polar.sh. */
+  POLAR_SERVER?: 'sandbox' | 'production'
+  POLAR_PRODUCT_SOLO?: string
+  POLAR_PRODUCT_PRO?: string
   /** Contact URL in the User-Agent sent to reddit.com and other sources. */
   CONTACT_URL?: string
   /** Self-host: comma-separated emails allowed to sign up after the first user. */
