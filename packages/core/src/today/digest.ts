@@ -3,6 +3,8 @@ import type { TodayPlan } from './today'
 import { desc, eq, schema } from '@social-radar/db'
 import { digestDueToday } from '../plans'
 import { buildToday } from './today'
+import type { WeeklySummary } from './weekly'
+import { buildWeeklySummary } from './weekly'
 
 export interface DigestEmail {
   to: string
@@ -35,13 +37,18 @@ export function localHour(now: Date, timeZone: string): number {
 
 const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' })[c]!)
 
-export function renderDigest(appUrl: string, sections: { project: { id: string, name: string }, plan: TodayPlan }[]) {
+export function renderDigest(appUrl: string, sections: { project: { id: string, name: string }, plan: TodayPlan, week?: WeeklySummary }[]) {
   const html: string[] = []
   const text: string[] = []
-  for (const { project, plan } of sections) {
+  for (const { project, plan, week } of sections) {
     const todayUrl = `${appUrl}/app/${project.id}/today`
     html.push(`<h2 style="font-size:18px;margin:24px 0 8px">${esc(project.name)}</h2>`)
     text.push(`== ${project.name} ==`)
+    if (week) {
+      const line = `This week: ${week.worthAnswering} of ${week.scored} matching threads were worth answering; you replied to ${week.replied}. ${week.posts} post${week.posts === 1 ? '' : 's'} tracked${week.removed ? `, ${week.removed} removed or hidden` : ''}.`
+      html.push(`<p style="margin:0 0 8px;padding:10px 12px;background:#f5f5f5;border-radius:8px">${esc(line)}${week.painPoints.length ? `<br><span style="color:#555;font-size:14px">Top pain points: ${week.painPoints.map(p => esc(p.title)).join(' · ')}</span>` : ''}</p>`)
+      text.push(line, ...(week.painPoints.length ? [`Top pain points: ${week.painPoints.map(p => p.title).join(' · ')}`] : []))
+    }
     if (plan.threads.length) {
       html.push(`<p style="margin:0 0 8px;color:#555">${plan.newCount} thread${plan.newCount === 1 ? '' : 's'} worth answering. Top ${plan.threads.length}:</p><ol style="padding-left:20px;margin:0">`)
       for (const t of plan.threads) {
@@ -60,7 +67,7 @@ export function renderDigest(appUrl: string, sections: { project: { id: string, 
     text.push(`Today's plan: ${todayUrl}`, '')
   }
   return {
-    subject: 'Your social-radar plan for today',
+    subject: sections.some(s => s.week) ? 'Your social-radar week, and today\'s plan' : 'Your social-radar plan for today',
     html: `<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:560px;margin:0 auto;padding:16px;color:#111;line-height:1.45">${html.join('')}<p style="margin:32px 0 0;color:#888;font-size:12px">You post and reply yourself. Change the digest time or turn it off in <a href="${esc(appUrl)}/app/settings" style="color:#888">Settings</a>.</p></div>`,
     text: `${text.join('\n')}\nSettings: ${appUrl}/app/settings`,
   }
@@ -86,9 +93,11 @@ export async function runDigest(ctx: JobContext) {
     if (!org || !digestDueToday(org.plan, localWeekday(now, user.timezone))) continue
     const projects = await ctx.db.select().from(schema.projects).where(eq(schema.projects.orgId, org.id))
     const sections = []
+    const monday = localWeekday(now, user.timezone) === 1
     for (const project of projects) {
       const plan = await buildToday(ctx.db, project, now)
-      if (plan.threads.length || plan.suggestion) sections.push({ project, plan })
+      const week = monday ? await buildWeeklySummary(ctx.db, project, now) : undefined
+      if (plan.threads.length || plan.suggestion || (week && week.scored)) sections.push({ project, plan, week })
     }
     if (!sections.length) continue
 

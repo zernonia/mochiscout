@@ -110,6 +110,7 @@ async function discover() {
       <p v-else class="text-xs text-muted-foreground">
         Promo rules not in the rules DB yet. Check the sub's rules before posting.
       </p>
+      <SuggestRules :subreddit="s.name" :current="s.rules" />
     </div>
   </div>
 </template>

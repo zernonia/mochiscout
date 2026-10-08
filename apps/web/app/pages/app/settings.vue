@@ -57,6 +57,11 @@ async function removeMember(userId: string) {
   await $fetch(`/api/org/members/${userId}`, { method: 'DELETE' })
   await refreshTeam()
 }
+async function leaveTeam() {
+  if (!confirm('Leave this team? You lose access to its projects.')) return
+  await $fetch('/api/org/leave', { method: 'POST' })
+  window.location.href = '/app'
+}
 async function acceptInvites() {
   await $fetch('/api/org/invites/accept', { method: 'POST' })
   await Promise.all([refreshMyInvites(), refreshTeam()])
@@ -191,6 +196,7 @@ const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px
           <div class="min-w-0 truncate">{{ i.email }} · invited</div>
           <button v-if="team.role === 'owner'" type="button" class="text-xs underline" @click="cancelInvite(i.id)">Cancel</button>
         </div>
+        <button v-if="team.role !== 'owner'" type="button" class="self-start text-xs text-muted-foreground underline" @click="leaveTeam">Leave this team</button>
         <form v-if="team.role === 'owner'" class="flex gap-2 pt-1" @submit.prevent="invite">
           <Input v-model="inviteEmail" type="email" placeholder="teammate@example.com" required class="flex-1" />
           <Button type="submit" variant="secondary">Invite</Button>

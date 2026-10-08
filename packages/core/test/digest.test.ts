@@ -31,4 +31,16 @@ describe('renderDigest', () => {
     expect(text).toContain('Post idea: a story about "Pricing" in r/saas.')
     expect(text).toContain('https://app.test/app/settings')
   })
+
+  it('adds the weekly summary on Mondays', () => {
+    const plan = { threads: [], newCount: 0, pendingScoring: 0, suggestion: null, pacing: { promoToday: 0, promoLimit: 1, nextPromoAt: null, cooldowns: [] } }
+    const { subject, text } = renderDigest('https://app.test', [{
+      project: { id: 'p1', name: 'Acme' },
+      plan,
+      week: { scored: 40, worthAnswering: 9, replied: 4, posts: 2, removed: 1, painPoints: [{ title: 'Late invoices', severity: 5 }] },
+    }])
+    expect(subject).toContain('week')
+    expect(text).toContain('This week: 9 of 40 matching threads were worth answering; you replied to 4. 2 posts tracked, 1 removed or hidden.')
+    expect(text).toContain('Top pain points: Late invoices')
+  })
 })
