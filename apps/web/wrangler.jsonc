@@ -16,8 +16,8 @@
     {
       "binding": "DB",
       "database_name": "social-radar",
-      // Replace with the id from `wrangler d1 create social-radar` before deploying.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Self-hosting your own copy? Use the id from `wrangler d1 create social-radar`.
+      "database_id": "dd243d28-ed8d-4bd3-afa7-b1e6a6a0f02e",
       "migrations_dir": "../../packages/db/migrations"
     }
   ],
@@ -25,8 +25,8 @@
   "kv_namespaces": [
     {
       "binding": "CACHE",
-      // Replace with the id from `wrangler kv namespace create CACHE` before deploying.
-      "id": "00000000000000000000000000000000"
+      // Self-hosting your own copy? Use the id from `wrangler kv namespace create CACHE`.
+      "id": "5de2cc6272c84221be409ad838982cfe"
     }
   ],
 
