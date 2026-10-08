@@ -80,6 +80,7 @@ const selectClass = 'h-9 w-full rounded-md border border-input bg-transparent px
         <div class="flex flex-col gap-2">
           <Label for="hour">Digest hour</Label>
           <select id="hour" v-model="form.digestHour" :class="selectClass">
+            <option :value="-1">Off</option>
             <option v-for="h in hours" :key="h" :value="h">{{ String(h).padStart(2, '0') }}:00</option>
           </select>
         </div>

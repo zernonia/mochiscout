@@ -47,7 +47,7 @@ async function save() {
   saving.value = true
   try {
     const project = await $fetch('/api/projects', { method: 'POST', body: profile.value })
-    await navigateTo(`/app/${project!.id}/inbox`)
+    await navigateTo(`/app/${project!.id}/today`)
   }
   catch (error) {
     toast.error(errorMessage(error))

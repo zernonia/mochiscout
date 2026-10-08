@@ -3,6 +3,7 @@ const props = defineProps<{ projectId: string, name?: string }>()
 const route = useRoute()
 
 const links = computed(() => [
+  { to: `/app/${props.projectId}/today`, label: 'Today' },
   { to: `/app/${props.projectId}/inbox`, label: 'Inbox' },
   { to: `/app/${props.projectId}/research`, label: 'Research' },
   { to: `/app/${props.projectId}/subreddits`, label: 'Subreddits' },

@@ -31,3 +31,6 @@ BETTER_AUTH_SECRET=change-me-to-a-long-random-string
 # ANTHROPIC_BASE_URL=https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic
 # LLM_FAST_MODEL=
 # LLM_QUALITY_MODEL=
+
+# Public URL used in digest emails (defaults to BETTER_AUTH_URL)
+# APP_URL=https://radar.example.com

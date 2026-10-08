@@ -27,7 +27,7 @@ const { data: projects } = await useFetch('/api/projects')
     </Card>
 
     <div v-else class="grid gap-3 sm:grid-cols-2">
-      <NuxtLink v-for="p in projects" :key="p.id" :to="`/app/${p.id}/inbox`" class="rounded-xl border p-4 transition-colors hover:bg-muted">
+      <NuxtLink v-for="p in projects" :key="p.id" :to="`/app/${p.id}/today`" class="rounded-xl border p-4 transition-colors hover:bg-muted">
         <div class="font-medium">{{ p.name }}</div>
         <div class="truncate text-sm text-muted-foreground">{{ p.category || p.url }}</div>
       </NuxtLink>

@@ -13,7 +13,8 @@ const Body = z.object({
       return false
     }
   }, 'Unknown time zone'),
-  digestHour: z.number().int().min(0).max(23),
+  /** -1 turns the digest off. */
+  digestHour: z.number().int().min(-1).max(23),
   redditUsername: z.string().trim().max(40).nullable(),
   redditKarma: z.number().int().min(-100_000).max(100_000_000).nullable(),
   redditAccountCreatedAt: z.iso.date().nullable(),

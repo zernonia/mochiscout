@@ -15,6 +15,10 @@ export interface JobContext {
   search?: SearchClient
   /** Undefined when no LLM key is configured; scoring then waits. */
   llm?: Llm
+  /** Sends email (Resend). Undefined: digests are skipped. */
+  sendEmail?: (email: { to: string, subject: string, html: string, text: string }) => Promise<void>
+  /** Public app URL for links in emails. */
+  appUrl?: string
   now: () => Date
   log: (message: string, data?: Record<string, unknown>) => void
 }

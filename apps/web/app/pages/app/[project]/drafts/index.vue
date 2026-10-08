@@ -20,11 +20,14 @@ const angles = [
   { value: 'showcase', label: 'Showcase', hint: '"I built this", always a promo post' },
 ] as const
 
+// Prefill from Today's post suggestion (?subreddit=&angle=&promo=&topic=).
+const q = route.query
+const queryAngle = angles.find(a => a.value === q.angle)?.value
 const form = reactive({
-  subreddit: map.value?.subreddits.find(s => s.watching)?.name ?? '',
-  angle: 'story' as typeof angles[number]['value'],
-  promo: false,
-  topic: '',
+  subreddit: typeof q.subreddit === 'string' ? q.subreddit : map.value?.subreddits.find(s => s.watching)?.name ?? '',
+  angle: (queryAngle ?? 'story') as typeof angles[number]['value'],
+  promo: q.promo === '1',
+  topic: typeof q.topic === 'string' ? q.topic : '',
 })
 const busy = ref<'generate' | 'empty' | null>(null)
 

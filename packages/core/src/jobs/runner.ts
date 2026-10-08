@@ -5,6 +5,7 @@ import { HttpDeferredError } from '@social-radar/sources'
 import { dueJobs } from '../schedule'
 import { runWeeklyResearch } from '../research/research'
 import { runScoring } from '../scoring/score'
+import { runDigest } from '../today/digest'
 import { runTracker } from '../tracker/tracker'
 import { runDiscovery } from './discovery'
 import { planFetch, runFetchGroup } from './fetch'
@@ -60,6 +61,7 @@ const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> 
   'score': runScoring,
   'research': ctx => runWeeklyResearch(ctx),
   'tracker': runTracker,
+  'digest': runDigest,
   'retention': runRetention,
 }
 
