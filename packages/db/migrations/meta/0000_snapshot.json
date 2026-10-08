@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "914e3aba-6999-4712-85c1-6117d5f3c3f8",
+  "id": "aa4aa64c-b6f7-4c67-a5ef-559a3f40f323",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "api_keys": {
@@ -444,6 +444,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "problems_json": {
+          "name": "problems_json",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'[]'"
         },
         "keywords_json": {
           "name": "keywords_json",

@@ -22,6 +22,7 @@ export const projects = sqliteTable('projects', {
   name: text('name').notNull(),
   category: text('category'),
   icp: text('icp'),
+  problems: text('problems_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
   keywords: text('keywords_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
   competitors: text('competitors_json', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
   intentThreshold: integer('intent_threshold').notNull().default(60),

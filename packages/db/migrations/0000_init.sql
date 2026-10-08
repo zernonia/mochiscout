@@ -62,6 +62,7 @@ CREATE TABLE `projects` (
 	`name` text NOT NULL,
 	`category` text,
 	`icp` text,
+	`problems_json` text DEFAULT '[]' NOT NULL,
 	`keywords_json` text DEFAULT '[]' NOT NULL,
 	`competitors_json` text DEFAULT '[]' NOT NULL,
 	`intent_threshold` integer DEFAULT 60 NOT NULL,

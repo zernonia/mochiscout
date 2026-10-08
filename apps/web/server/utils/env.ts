@@ -16,6 +16,11 @@ export interface Env {
   GOOGLE_CLIENT_SECRET?: string
   RESEND_API_KEY?: string
   EMAIL_FROM?: string
+  ANTHROPIC_API_KEY?: string
+  /** Optional, e.g. a Cloudflare AI Gateway URL ending in /anthropic. */
+  ANTHROPIC_BASE_URL?: string
+  LLM_FAST_MODEL?: string
+  LLM_QUALITY_MODEL?: string
   SEARCH_PROVIDER?: 'tinyfish' | 'brave'
   TINYFISH_API_KEY?: string
   BRAVE_API_KEY?: string

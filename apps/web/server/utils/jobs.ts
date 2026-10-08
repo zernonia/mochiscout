@@ -14,8 +14,12 @@ export function getTaskEnv(context?: { cloudflare?: { env?: unknown } }): Env {
   return env
 }
 
+export function sourcesUserAgent(env: Env) {
+  return userAgent(env.CONTACT_URL ?? 'https://github.com/zernonia/social-radar')
+}
+
 export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): JobContext {
-  const ua = userAgent(env.CONTACT_URL ?? 'https://github.com/zernonia/social-radar')
+  const ua = sourcesUserAgent(env)
   const deadline = Date.now() + (opts.budgetMs ?? RUN_BUDGET_MS)
   return {
     db: createDb(env.DB),
