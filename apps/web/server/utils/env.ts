@@ -1,10 +1,11 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
 import type { D1Database, KVNamespace, Queue } from '@cloudflare/workers-types'
+import type { Job } from '@social-radar/core'
 
 export interface Env {
   DB: D1Database
   CACHE: KVNamespace
-  JOBS?: Queue
+  JOBS?: Queue<Job>
 
   // Secrets / vars (wrangler secrets in production, .dev.vars locally).
   BETTER_AUTH_SECRET?: string
@@ -15,6 +16,8 @@ export interface Env {
   GOOGLE_CLIENT_SECRET?: string
   RESEND_API_KEY?: string
   EMAIL_FROM?: string
+  /** Contact URL in the User-Agent sent to reddit.com and other sources. */
+  CONTACT_URL?: string
   /** Self-host: comma-separated emails allowed to sign up after the first user. */
   ALLOWED_EMAILS?: string
 }

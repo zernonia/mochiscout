@@ -13,6 +13,7 @@
     "deploy": "pnpm --filter @social-radar/web deploy",
     "typecheck": "pnpm -r typecheck",
     "db:generate": "pnpm --filter @social-radar/db generate",
-    "db:migrate:local": "pnpm --filter @social-radar/web db:migrate:local"
+    "db:migrate:local": "pnpm --filter @social-radar/web db:migrate:local",
+    "test": "pnpm -r --if-present test"
   }
 }

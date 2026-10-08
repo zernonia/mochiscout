@@ -16,3 +16,6 @@ BETTER_AUTH_SECRET=change-me-to-a-long-random-string
 
 # Self-host: extra emails allowed to sign up after the first user
 # ALLOWED_EMAILS=
+
+# Contact URL in the User-Agent sent to reddit.com (use your fork / site)
+# CONTACT_URL=https://github.com/you/social-radar
