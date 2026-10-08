@@ -44,3 +44,6 @@ BETTER_AUTH_SECRET=change-me-to-a-long-random-string
 
 # Hosted edition: NUXT_PUBLIC_EDITION=cloud. Before launch, NUXT_PUBLIC_WAITLIST=true
 # shows a waitlist on the landing page and closes open sign-ups.
+
+# X as a feed source (official API, paid; Pro plan on the hosted edition)
+# X_BEARER_TOKEN=

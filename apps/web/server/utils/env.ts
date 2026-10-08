@@ -26,6 +26,8 @@ export interface Env {
   SEARCH_PROVIDER?: 'tinyfish' | 'brave'
   TINYFISH_API_KEY?: string
   BRAVE_API_KEY?: string
+  /** X API v2 bearer token (paid). Enables X as a feed source (Pro plan). */
+  X_BEARER_TOKEN?: string
   /** Cloud billing (Polar). */
   POLAR_ACCESS_TOKEN?: string
   POLAR_WEBHOOK_SECRET?: string
