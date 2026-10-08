@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { authClient } from '~/lib/auth-client'
-
-const { data: session } = await useAuthSession()
+const { user, clear } = useUserSession()
 const edition = useRuntimeConfig().public.edition
 const { data: orgs } = await useFetch('/api/orgs')
 
@@ -13,7 +11,7 @@ async function switchOrg(event: Event) {
 useSeoMeta({ robots: 'noindex' })
 
 async function signOut() {
-  await authClient.signOut()
+  await clear()
   await navigateTo('/login')
 }
 </script>
@@ -35,7 +33,7 @@ async function signOut() {
           </select>
         </div>
         <div class="flex items-center gap-3 text-sm">
-          <span class="hidden text-muted-foreground sm:inline">{{ session?.user.email }}</span>
+          <span class="hidden text-muted-foreground sm:inline">{{ user?.email }}</span>
           <Button v-if="edition === 'cloud'" as-child variant="ghost" size="sm">
             <NuxtLink to="/app/billing">Billing</NuxtLink>
           </Button>

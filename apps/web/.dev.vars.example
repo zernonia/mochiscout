@@ -1,16 +1,17 @@
 # Copy to .dev.vars for local dev (read by wrangler / Nitro's Cloudflare emulation).
 # In production set these with `wrangler secret put <NAME>`.
 
-BETTER_AUTH_SECRET=change-me-to-a-long-random-string
-# BETTER_AUTH_URL=http://localhost:3000
+# Session cookie encryption, 32+ characters (openssl rand -hex 32).
+NUXT_SESSION_PASSWORD=change-me-to-a-long-random-string-of-32-plus-chars
 
 # Optional OAuth providers (buttons appear on /login when set)
-# GITHUB_CLIENT_ID=
-# GITHUB_CLIENT_SECRET=
-# GOOGLE_CLIENT_ID=
-# GOOGLE_CLIENT_SECRET=
+# Callback URLs: http://localhost:3000/auth/github and /auth/google
+# NUXT_OAUTH_GITHUB_CLIENT_ID=
+# NUXT_OAUTH_GITHUB_CLIENT_SECRET=
+# NUXT_OAUTH_GOOGLE_CLIENT_ID=
+# NUXT_OAUTH_GOOGLE_CLIENT_SECRET=
 
-# Magic links and digests. Without a key, emails are printed to the dev server log.
+# Digests and team invites. Without a key, emails are printed to the dev server log.
 # RESEND_API_KEY=
 # EMAIL_FROM="social-radar <hello@example.com>"
 
@@ -32,7 +33,7 @@ BETTER_AUTH_SECRET=change-me-to-a-long-random-string
 # LLM_FAST_MODEL=
 # LLM_QUALITY_MODEL=
 
-# Public URL used in digest emails (defaults to BETTER_AUTH_URL)
+# Public URL of the app: links in emails, Polar checkout redirects
 # APP_URL=https://radar.example.com
 
 # Hosted edition only (NUXT_PUBLIC_EDITION=cloud): Polar billing

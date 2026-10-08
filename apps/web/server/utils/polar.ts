@@ -31,5 +31,5 @@ export function requireCloud(event: RequestEvent) {
 }
 
 export function appUrl(event: RequestEvent, env: Env) {
-  return env.APP_URL ?? env.BETTER_AUTH_URL ?? getRequestURL(event).origin
+  return env.APP_URL ?? getRequestURL(event).origin
 }

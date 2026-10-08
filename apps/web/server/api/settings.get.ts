@@ -3,6 +3,7 @@ import { eq, schema } from '@social-radar/db'
 export default defineEventHandler(async (event) => {
   const { user } = await requireUser(event)
   const env = getEnv(event)
+  const { oauth } = useRuntimeConfig(event)
   const row = await getDb(event).select().from(schema.users).where(eq(schema.users.id, user.id)).get()
   return {
     email: row!.email,
@@ -20,8 +21,8 @@ export default defineEventHandler(async (event) => {
       tinyfish: Boolean(env.TINYFISH_API_KEY),
       brave: Boolean(env.BRAVE_API_KEY),
       resend: Boolean(env.RESEND_API_KEY),
-      github: Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET),
-      google: Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
+      github: Boolean(oauth.github.clientId && oauth.github.clientSecret),
+      google: Boolean(oauth.google.clientId && oauth.google.clientSecret),
     },
   }
 })

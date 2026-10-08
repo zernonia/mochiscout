@@ -3,8 +3,8 @@ const { edition } = useRuntimeConfig().public
 
 // Self-hosted instances have no marketing page.
 if (edition !== 'cloud') {
-  const { data: session } = await useAuthSession()
-  await navigateTo(session.value ? '/app' : '/login', { replace: true })
+  const { loggedIn } = useUserSession()
+  await navigateTo(loggedIn.value ? '/app' : '/login', { replace: true })
 }
 
 const { data: catalogue } = await useFetch('/api/billing/plans', { immediate: edition === 'cloud' })

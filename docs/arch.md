@@ -98,7 +98,7 @@ flowchart LR
 | Route | Purpose |
 |---|---|
 | `/` | Landing (cloud edition only) |
-| `/login` | Better Auth (GitHub, Google, magic link) |
+| `/login` | nuxt-auth-utils (email + password, GitHub, Google) |
 | `/app/new` | Onboarding: paste URL → extracted ICP, keywords, competitors (editable) |
 | `/app/[project]/today` | Daily plan: top threads to answer, 1 post suggestion, pacing status |
 | `/app/[project]/research` | Pain-point clusters with evidence threads |
@@ -266,7 +266,7 @@ Also ship a Claude Code skill in `/skills` that teaches the workflow.
 
 ```
 users            id, email, name, timezone, digest_hour, reddit_username, created_at
-sessions/accounts (Better Auth tables)
+accounts         sign-in methods: credential (password hash), github, google; sessions are sealed cookies
 orgs             id, owner_id, plan, polar_customer_id      # cloud; self-host = single org
 projects         id, org_id, url, name, category, icp, keywords_json, competitors_json,
                  intent_threshold, created_at
@@ -330,9 +330,9 @@ Quota middleware returns `402` with an upgrade payload; UI shows an upsell sheet
 
 ## 11. Auth, billing, email
 
-- **Auth:** Better Auth + Drizzle D1 adapter. GitHub, Google, magic link.
+- **Auth:** nuxt-auth-utils: sealed-cookie sessions, email + password (scrypt), GitHub and Google OAuth.
 - **Billing:** Polar checkout + customer portal; webhook `server/api/webhooks/polar.post.ts` → update `orgs.plan`. Verify signatures.
-- **Email:** Resend for magic links + digests. Plain, mobile-friendly HTML.
+- **Email:** Resend for digests and invites (email verification / password reset to follow). Plain, mobile-friendly HTML.
 - **Product analytics:** PostHog (or your own analytics tool) on the cloud edition only; off by default in self-host.
 
 ---
@@ -351,7 +351,7 @@ One `apps/web/wrangler.jsonc`:
 
 Cron note: Cloudflare limits cron triggers per Worker, so use **one** trigger and let a dispatcher task decide which jobs are due (digest by user timezone, discovery every 6 h, etc.). Keep each cron run within the Worker's time limit by processing in batches and resuming next tick.
 
-Secrets: `SEARCH_PROVIDER` (`tinyfish` | `brave`), `TINYFISH_API_KEY`, `BRAVE_API_KEY` (optional fallback), `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`, `BETTER_AUTH_SECRET`, `RESEND_API_KEY`, `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`.
+Secrets: `SEARCH_PROVIDER` (`tinyfish` | `brave`), `TINYFISH_API_KEY`, `BRAVE_API_KEY` (optional fallback), `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`, `NUXT_SESSION_PASSWORD`, `NUXT_OAUTH_*`, `RESEND_API_KEY`, `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`.
 
 Environments: `dev` (local wrangler), `staging`, `production`. Migrations: `drizzle-kit generate` → `wrangler d1 migrations apply`.
 
@@ -385,7 +385,7 @@ Track actuals from day one in `usage` + AI Gateway; alert if any org exceeds 2×
 ## 15. Build roadmap (ship before GummySearch's Dec 1 shutdown)
 
 ### Phase 1 — Weeks 1–2: "works for me"
-- [x] Monorepo, Nuxt 4 + shadcn-vue, D1 + Drizzle, Better Auth
+- [x] Monorepo, Nuxt 4 + shadcn-vue, D1 + Drizzle, auth (nuxt-auth-utils)
 - [x] Onboarding from URL
 - [ ] Rules package with first ~50 subreddits (YAML + validator) — package, validator and CI done; rule files still to write
 - [x] Scheduled tasks: cron dispatcher → fetch jobs (inline) → RSS via shared HTTP helper

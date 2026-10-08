@@ -29,12 +29,13 @@ Requires Node 22+ and pnpm.
 
 ```sh
 pnpm install
-cp apps/web/.dev.vars.example apps/web/.dev.vars   # set BETTER_AUTH_SECRET, optional API keys
+cp apps/web/.dev.vars.example apps/web/.dev.vars   # set NUXT_SESSION_PASSWORD, optional API keys
 pnpm db:migrate:local                               # create the local D1 database
 pnpm dev                                            # http://localhost:3000
 ```
 
-Without `RESEND_API_KEY`, sign-in links are printed in the dev server log. Without
+Sign in with email and password (GitHub and Google when their OAuth keys are set). Without
+`RESEND_API_KEY`, digest and invite emails are printed in the dev server log. Without
 `ANTHROPIC_API_KEY` or `TINYFISH_API_KEY`, onboarding falls back to a manual form and
 scoring / discovery wait until a key is set. Scheduled jobs can be run by hand at
 `/_nitro/tasks/dispatch` and `/_nitro/tasks/discovery`.

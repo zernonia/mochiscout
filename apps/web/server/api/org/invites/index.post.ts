@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     .returning()
 
   const env = getEnv(event)
-  const appUrl = env.APP_URL ?? env.BETTER_AUTH_URL ?? getRequestURL(event).origin
+  const appUrl = env.APP_URL ?? getRequestURL(event).origin
   event.waitUntil(sendEmail(env, {
     to: email,
     subject: `${user.email} invited you to social-radar`,

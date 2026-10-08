@@ -32,7 +32,7 @@ export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): Jo
     llm: getLlm(env) ?? undefined,
     // Without a Resend key, emails are only logged, which is useful in dev only.
     sendEmail: env.RESEND_API_KEY || import.meta.dev ? email => sendEmail(env, email) : undefined,
-    appUrl: env.APP_URL ?? env.BETTER_AUTH_URL ?? (import.meta.dev ? 'http://localhost:3000' : undefined),
+    appUrl: env.APP_URL ?? (import.meta.dev ? 'http://localhost:3000' : undefined),
     now: () => new Date(),
     log: (message, data) => console.info(`[jobs] ${message}`, data ? JSON.stringify(data) : ''),
   }

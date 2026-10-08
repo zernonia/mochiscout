@@ -8,14 +8,8 @@ export interface Env {
   JOBS?: Queue<Job>
 
   // Secrets / vars (wrangler secrets in production, .dev.vars locally).
-  BETTER_AUTH_SECRET?: string
-  BETTER_AUTH_URL?: string
-  /** Public URL of the app, for links in emails sent by scheduled jobs. Defaults to BETTER_AUTH_URL. */
+  /** Public URL of the app (links in emails, Polar redirects). */
   APP_URL?: string
-  GITHUB_CLIENT_ID?: string
-  GITHUB_CLIENT_SECRET?: string
-  GOOGLE_CLIENT_ID?: string
-  GOOGLE_CLIENT_SECRET?: string
   RESEND_API_KEY?: string
   EMAIL_FROM?: string
   ANTHROPIC_API_KEY?: string

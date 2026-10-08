@@ -1,114 +1,54 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
-import { count, eq, schema } from '@social-radar/db'
-import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { APIError } from 'better-auth/api'
-import { magicLink } from 'better-auth/plugins/magic-link'
+import { and, count, eq, schema } from '@social-radar/db'
 
-function createAuth(event: RequestEvent) {
-  const env = getEnv(event)
-  const db = getDb(event)
-  const edition = useRuntimeConfig(event).public.edition
-  const baseURL = env.BETTER_AUTH_URL ?? getRequestURL(event).origin
+type Db = ReturnType<typeof getDb>
+type User = typeof schema.users.$inferSelect
 
-  if (!env.BETTER_AUTH_SECRET && !import.meta.dev) {
-    throw createError({ statusCode: 500, statusMessage: 'BETTER_AUTH_SECRET is not set' })
+export class AuthError extends Error {
+  constructor(readonly statusCode: number, message: string) {
+    super(message)
   }
+}
 
-  // Self-host is single-user: only the first sign-up (or ALLOWED_EMAILS) gets in.
-  const waitlist = Boolean(useRuntimeConfig(event).public.waitlist)
-
-  // Self-host: first user, then invited or ALLOWED_EMAILS only.
-  // Cloud in waitlist mode: invited or ALLOWED_EMAILS only.
-  async function assertCanSignUp(email: string) {
-    if (edition !== 'selfhost' && !waitlist) return
-    const allowed = (env.ALLOWED_EMAILS ?? '')
-      .split(',')
-      .map(e => e.trim().toLowerCase())
-      .filter(Boolean)
-    if (allowed.includes(email.toLowerCase())) return
-    const invited = await db.select({ id: schema.orgInvites.id }).from(schema.orgInvites)
-      .where(eq(schema.orgInvites.email, email.toLowerCase())).get()
-    if (invited) return
-    const [row] = await db.select({ n: count() }).from(schema.users)
-    if (edition !== 'selfhost' || (row?.n ?? 0) > 0) {
-      throw new APIError('FORBIDDEN', {
-        message: edition === 'selfhost' ? 'Sign-ups are closed on this instance.' : 'We are in private beta. Join the waitlist on the home page.',
-      })
-    }
-  }
-
-  return betterAuth({
-    baseURL,
-    secret: env.BETTER_AUTH_SECRET ?? 'dev-only-secret-do-not-use-in-production',
-    database: drizzleAdapter(db, { provider: 'sqlite', schema }),
-    user: {
-      modelName: 'users',
-      additionalFields: {
-        timezone: { type: 'string', required: false, defaultValue: 'UTC' },
-        digestHour: { type: 'number', required: false, defaultValue: 8 },
-        redditUsername: { type: 'string', required: false },
-      },
-    },
-    session: { modelName: 'sessions' },
-    account: { modelName: 'accounts' },
-    verification: { modelName: 'verifications' },
-    socialProviders: {
-      ...(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET
-        ? { github: { clientId: env.GITHUB_CLIENT_ID, clientSecret: env.GITHUB_CLIENT_SECRET } }
-        : {}),
-      ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
-        ? { google: { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET } }
-        : {}),
-    },
-    plugins: [
-      magicLink({
-        async sendMagicLink({ email, url }) {
-          // Fail before emailing a link that would be rejected on click.
-          const existing = await db
-            .select({ id: schema.users.id })
-            .from(schema.users)
-            .where(eq(schema.users.email, email.toLowerCase()))
-            .get()
-          if (!existing) await assertCanSignUp(email)
-          await sendEmail(env, {
-            to: email,
-            subject: 'Your social-radar sign-in link',
-            text: `Sign in to social-radar:\n\n${url}\n\nThis link expires in 5 minutes. If you didn't ask for it, ignore this email.`,
-            html: `<p>Sign in to social-radar:</p><p><a href="${url}">Sign in</a></p><p style="color:#666">This link expires in 5 minutes. If you didn't ask for it, ignore this email.</p>`,
-          })
-        },
-      }),
-    ],
-    databaseHooks: {
-      user: {
-        create: {
-          async before(user) {
-            await assertCanSignUp(user.email)
-          },
-          async after(user) {
-            await setUpMembership(db, edition, user)
-          },
-        },
-      },
-    },
-  })
+function editionOf(event: RequestEvent) {
+  const config = useRuntimeConfig(event).public
+  return { edition: config.edition, waitlist: Boolean(config.waitlist) }
 }
 
 /**
- * New users join the org that invited them; on a self-hosted instance extra
- * users join the single existing org; everyone else gets their own org.
+ * Who may create an account:
+ * - Self-host: the first user, then invited emails or ALLOWED_EMAILS.
+ * - Cloud: anyone, unless waitlist mode is on (then invited or ALLOWED_EMAILS).
+ * Invites only count for verified emails (GitHub/Google), so nobody can claim
+ * an invite by typing someone else's address into the password form.
  */
-async function setUpMembership(db: ReturnType<typeof getDb>, edition: string, user: { id: string, email: string }) {
-  const email = user.email.toLowerCase()
-  const invite = await db.select().from(schema.orgInvites).where(eq(schema.orgInvites.email, email)).get()
+async function assertCanSignUp(event: RequestEvent, db: Db, email: string, emailVerified: boolean) {
+  const { edition, waitlist } = editionOf(event)
+  if (edition !== 'selfhost' && !waitlist) return
+  const allowed = (getEnv(event).ALLOWED_EMAILS ?? '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean)
+  if (allowed.includes(email)) return
+  if (emailVerified) {
+    const invited = await db.select({ id: schema.orgInvites.id }).from(schema.orgInvites).where(eq(schema.orgInvites.email, email)).get()
+    if (invited) return
+  }
+  const [row] = await db.select({ n: count() }).from(schema.users)
+  if (edition === 'selfhost' && (row?.n ?? 0) === 0) return
+  throw new AuthError(403, edition === 'selfhost' ? 'Sign-ups are closed on this instance.' : 'We are in private beta. Join the waitlist on the home page.')
+}
+
+/** New users join the org that invited them (verified email only), the single self-host org, or get their own. */
+async function setUpMembership(event: RequestEvent, db: Db, user: { id: string, email: string, emailVerified: boolean }) {
+  const { edition } = editionOf(event)
+  const invite = user.emailVerified
+    ? await db.select().from(schema.orgInvites).where(eq(schema.orgInvites.email, user.email)).get()
+    : undefined
   const existingOrg = edition === 'selfhost' ? await db.select({ id: schema.orgs.id }).from(schema.orgs).get() : undefined
   const joinOrgId = invite?.orgId ?? existingOrg?.id
 
   if (joinOrgId) {
     await db.batch([
       db.insert(schema.orgMembers).values({ orgId: joinOrgId, userId: user.id, role: 'member' }).onConflictDoNothing(),
-      db.delete(schema.orgInvites).where(eq(schema.orgInvites.email, email)),
+      db.delete(schema.orgInvites).where(eq(schema.orgInvites.email, user.email)),
     ])
     return
   }
@@ -119,16 +59,122 @@ async function setUpMembership(db: ReturnType<typeof getDb>, edition: string, us
   ])
 }
 
-export type Auth = ReturnType<typeof createAuth>
+async function createUser(event: RequestEvent, db: Db, input: { email: string, name: string, image?: string | null, emailVerified: boolean }) {
+  await assertCanSignUp(event, db, input.email, input.emailVerified)
+  const [user] = await db.insert(schema.users).values({
+    id: crypto.randomUUID(),
+    email: input.email,
+    name: input.name,
+    image: input.image ?? null,
+    emailVerified: input.emailVerified,
+  }).returning()
+  await setUpMembership(event, db, user!)
+  return user!
+}
 
-const instances = new WeakMap<RequestEvent, Auth>()
+export async function startSession(event: RequestEvent, user: User) {
+  await replaceUserSession(event, {
+    user: { id: user.id, email: user.email, name: user.name, image: user.image },
+    loggedInAt: Date.now(),
+  })
+}
 
-/** Better Auth instance for this request (D1 is a per-request binding). */
-export function useAuth(event: RequestEvent): Auth {
-  let auth = instances.get(event)
-  if (!auth) {
-    auth = createAuth(event)
-    instances.set(event, auth)
+export function normalizeEmail(email: string) {
+  return email.trim().toLowerCase()
+}
+
+export async function signUpWithPassword(event: RequestEvent, input: { email: string, password: string, name?: string }) {
+  const db = getDb(event)
+  const email = normalizeEmail(input.email)
+  const existing = await db.select({ id: schema.users.id }).from(schema.users).where(eq(schema.users.email, email)).get()
+  if (existing) throw new AuthError(409, 'An account with this email already exists. Sign in instead.')
+  const user = await createUser(event, db, { email, name: input.name?.trim() || email.split('@')[0]!, emailVerified: false })
+  await db.insert(schema.accounts).values({
+    id: crypto.randomUUID(),
+    accountId: user.id,
+    providerId: 'credential',
+    userId: user.id,
+    password: await hashPassword(input.password),
+  })
+  return user
+}
+
+export async function signInWithPassword(event: RequestEvent, input: { email: string, password: string }) {
+  const db = getDb(event)
+  const email = normalizeEmail(input.email)
+  const row = await db.select({ user: schema.users, password: schema.accounts.password })
+    .from(schema.users)
+    .innerJoin(schema.accounts, and(eq(schema.accounts.userId, schema.users.id), eq(schema.accounts.providerId, 'credential')))
+    .where(eq(schema.users.email, email))
+    .get()
+  // Same message for unknown email and wrong password.
+  if (!row?.password || !(await verifyPassword(row.password, input.password))) {
+    throw new AuthError(401, 'Wrong email or password.')
   }
-  return auth
+  return row.user
+}
+
+/**
+ * Sign in with GitHub or Google. Links to an existing account with the same
+ * email only when the provider says the email is verified; a password set on
+ * an unverified account is removed at that point, so whoever registered the
+ * address first cannot keep a way in.
+ */
+export async function signInWithOAuth(event: RequestEvent, profile: {
+  provider: 'github' | 'google'
+  providerAccountId: string
+  email: string | null | undefined
+  emailVerified: boolean
+  name: string | null | undefined
+  image: string | null | undefined
+}) {
+  const db = getDb(event)
+  const linked = await db.select({ user: schema.users }).from(schema.accounts)
+    .innerJoin(schema.users, eq(schema.users.id, schema.accounts.userId))
+    .where(and(eq(schema.accounts.providerId, profile.provider), eq(schema.accounts.accountId, profile.providerAccountId)))
+    .get()
+  if (linked) return linked.user
+
+  if (!profile.email) throw new AuthError(400, `Your ${profile.provider} account has no email address we can use.`)
+  if (!profile.emailVerified) throw new AuthError(400, `Verify your email with ${profile.provider} first, then try again.`)
+  const email = normalizeEmail(profile.email)
+
+  let user = await db.select().from(schema.users).where(eq(schema.users.email, email)).get()
+  if (user) {
+    const statements = [
+      db.update(schema.users).set({ emailVerified: true, image: user.image ?? profile.image ?? null, updatedAt: new Date() }).where(eq(schema.users.id, user.id)),
+      ...(user.emailVerified ? [] : [db.delete(schema.accounts).where(and(eq(schema.accounts.userId, user.id), eq(schema.accounts.providerId, 'credential')))]),
+    ]
+    await db.batch(statements as [typeof statements[number], ...typeof statements])
+    user = { ...user, emailVerified: true }
+  }
+  else {
+    user = await createUser(event, db, { email, name: profile.name || email.split('@')[0]!, image: profile.image, emailVerified: true })
+  }
+  await db.insert(schema.accounts).values({
+    id: crypto.randomUUID(),
+    accountId: profile.providerAccountId,
+    providerId: profile.provider,
+    userId: user.id,
+  })
+  return user
+}
+
+/** Login attempts per IP + email, to slow down password guessing. */
+export async function rateLimitAuth(event: RequestEvent, email: string) {
+  const env = getEnv(event)
+  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event, { xForwardedFor: true }) ?? 'unknown'
+  const key = `auth:attempts:${ip}:${normalizeEmail(email)}`
+  const n = Number(await env.CACHE.get(key) ?? 0)
+  if (n >= 10) throw new AuthError(429, 'Too many attempts. Try again in 15 minutes.')
+  await env.CACHE.put(key, String(n + 1), { expirationTtl: 900 })
+}
+
+declare module '#auth-utils' {
+  interface User {
+    id: string
+    email: string
+    name: string
+    image: string | null
+  }
 }

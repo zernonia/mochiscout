@@ -39,17 +39,17 @@ Generate a session secret and set it, plus the URL the app will live at
 (`https://social-radar.<your-subdomain>.workers.dev` unless you add a custom domain):
 
 ```sh
-openssl rand -hex 32 | pnpm exec wrangler secret put BETTER_AUTH_SECRET
-pnpm exec wrangler secret put BETTER_AUTH_URL
+openssl rand -hex 32 | pnpm exec wrangler secret put NUXT_SESSION_PASSWORD
+pnpm exec wrangler secret put APP_URL
 ```
 
-**You need at least one way to sign in:**
+**Sign-in methods:**
 
 | Method | Secrets | Notes |
 |---|---|---|
-| Email link | `RESEND_API_KEY`, `EMAIL_FROM` | Verify your sending domain in Resend. `EMAIL_FROM` like `social-radar <radar@yourdomain.com>`. Also used for the daily digest. |
-| GitHub | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | OAuth app callback URL: `<BETTER_AUTH_URL>/api/auth/callback/github` |
-| Google | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google` |
+| Email + password | none | Always on. Email addresses are not verified yet, so password accounts can't accept team invites; use GitHub or Google for that. |
+| GitHub | `NUXT_OAUTH_GITHUB_CLIENT_ID`, `NUXT_OAUTH_GITHUB_CLIENT_SECRET` | OAuth app callback URL: `<APP_URL>/auth/github` |
+| Google | `NUXT_OAUTH_GOOGLE_CLIENT_ID`, `NUXT_OAUTH_GOOGLE_CLIENT_SECRET` | Authorized redirect URI: `<APP_URL>/auth/google` |
 
 **Features and the keys they need:**
 
@@ -58,13 +58,13 @@ pnpm exec wrangler secret put BETTER_AUTH_URL
 | `ANTHROPIC_API_KEY` | Onboarding from URL, intent scoring, research, drafts, tone checks | Manual onboarding and empty drafts only; matching threads wait in the queue unscored |
 | `TINYFISH_API_KEY` | Thread and subreddit discovery, research searches (free key) | Only watched subreddits are read |
 | `BRAVE_API_KEY` | Search fallback when TinyFish fails or rate-limits | No fallback |
-| `RESEND_API_KEY` | Sign-in links, daily digest | No email |
+| `RESEND_API_KEY` | Daily digest, team invites | Emails are skipped |
 
 Optional: `SEARCH_PROVIDER=brave` (use Brave first), `LLM_FAST_MODEL` / `LLM_QUALITY_MODEL`
 (defaults `claude-haiku-5-5` / `claude-opus-5-5`), `ANTHROPIC_BASE_URL` (route through
 Cloudflare AI Gateway: `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic`),
 `CONTACT_URL` (contact link in the User-Agent sent to Reddit; use your fork or site),
-`APP_URL` (links in digest emails; defaults to `BETTER_AUTH_URL`).
+`EMAIL_FROM` (sender for Resend, like `social-radar <radar@yourdomain.com>`; verify the domain in Resend).
 
 Set each with `pnpm exec wrangler secret put NAME`.
 

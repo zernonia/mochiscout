@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-10-01',
   devtools: { enabled: true },
 
-  modules: ['shadcn-nuxt'],
+  modules: ['shadcn-nuxt', 'nuxt-auth-utils'],
   css: ['~/assets/css/main.css'],
 
   shadcn: {
@@ -18,6 +18,15 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Sealed cookie sessions (nuxt-auth-utils): NUXT_SESSION_PASSWORD, 32+ characters.
+    session: {
+      maxAge: 60 * 60 * 24 * 30,
+    },
+    // NUXT_OAUTH_GITHUB_CLIENT_ID / _SECRET and NUXT_OAUTH_GOOGLE_CLIENT_ID / _SECRET.
+    oauth: {
+      github: { clientId: '', clientSecret: '' },
+      google: { clientId: '', clientSecret: '' },
+    },
     public: {
       edition: 'selfhost' as 'selfhost' | 'cloud',
       /** Hosted edition before launch: landing collects emails and open sign-ups are closed. */
