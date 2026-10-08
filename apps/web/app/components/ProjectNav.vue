@@ -4,6 +4,7 @@ const route = useRoute()
 
 const links = computed(() => [
   { to: `/app/${props.projectId}/inbox`, label: 'Inbox' },
+  { to: `/app/${props.projectId}/subreddits`, label: 'Subreddits' },
   { to: `/app/${props.projectId}`, label: 'Profile' },
 ])
 </script>

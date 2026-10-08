@@ -54,7 +54,7 @@ async function planFetchTick(ctx: JobContext) {
 
 const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> = {
   'plan-fetch': planFetchTick,
-  'search-discovery': runDiscovery,
+  'search-discovery': ctx => runDiscovery(ctx),
   'score': runScoring,
   'retention': runRetention,
 }

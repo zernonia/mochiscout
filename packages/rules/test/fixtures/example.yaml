@@ -1,0 +1,13 @@
+# Test fixture only: not real rules data.
+name: ExampleSub
+promo_policy: weekly_thread_only
+self_promo_thread: Weekly Promo Thread
+min_karma: null
+min_account_age_days: 30
+links_allowed: in_comments_only
+post_formats: [text]
+cooldown_days: 7
+tags: [saas, b2b-sales]
+notes: Fixture.
+last_verified: 2026-10-08
+source: https://www.reddit.com/r/ExampleSub/about/rules

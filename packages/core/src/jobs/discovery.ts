@@ -13,10 +13,15 @@ export interface DiscoveryResult {
 }
 
 /** Run search-provider queries per project and upsert the Reddit threads found (source=search). */
-export async function runDiscovery(ctx: JobContext): Promise<DiscoveryResult | { skipped: string }> {
+export async function runDiscovery(
+  ctx: JobContext,
+  opts: { projectIds?: string[] } = {},
+): Promise<DiscoveryResult | { skipped: string }> {
   if (!ctx.search) return { skipped: 'no search provider configured' }
 
-  const projects = await ctx.db.select().from(schema.projects)
+  const projects = opts.projectIds
+    ? await ctx.db.select().from(schema.projects).where(inArray(schema.projects.id, opts.projectIds))
+    : await ctx.db.select().from(schema.projects)
   const result: DiscoveryResult = { queries: 0, newThreadIds: {} }
 
   for (const project of projects) {

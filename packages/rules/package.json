@@ -1,0 +1,26 @@
+{
+  "name": "@social-radar/rules",
+  "version": "0.0.0",
+  "private": true,
+  "license": "CC-BY-SA-4.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsx scripts/build.ts",
+    "validate": "tsx scripts/build.ts --check",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3",
+    "yaml": "^2.9.1"
+  }
+}

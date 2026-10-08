@@ -19,6 +19,7 @@
     "@social-radar/core": "workspace:*",
     "@social-radar/db": "workspace:*",
     "@social-radar/llm": "workspace:*",
+    "@social-radar/rules": "workspace:*",
     "@social-radar/sources": "workspace:*",
     "@vueuse/core": "^15.0.0",
     "better-auth": "^1.7.7",

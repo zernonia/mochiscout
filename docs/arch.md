@@ -385,14 +385,14 @@ Track actuals from day one in `usage` + AI Gateway; alert if any org exceeds 2×
 ## 15. Build roadmap (ship before GummySearch's Dec 1 shutdown)
 
 ### Phase 1 — Weeks 1–2: "works for me"
-- [ ] Monorepo, Nuxt 4 + shadcn-vue, D1 + Drizzle, Better Auth
-- [ ] Onboarding from URL
-- [ ] Rules package with first ~50 subreddits (YAML + validator)
-- [ ] Scheduled tasks: cron dispatcher → fetch jobs (inline) → RSS via shared HTTP helper
-- [ ] Prefilter + LLM scoring → Inbox page
-- [ ] `SearchProvider` interface + TinyFish adapter (default) + Brave adapter (fallback) + discovery job
+- [x] Monorepo, Nuxt 4 + shadcn-vue, D1 + Drizzle, Better Auth
+- [x] Onboarding from URL
+- [ ] Rules package with first ~50 subreddits (YAML + validator) — package, validator and CI done; rule files still to write
+- [x] Scheduled tasks: cron dispatcher → fetch jobs (inline) → RSS via shared HTTP helper
+- [x] Prefilter + LLM scoring → Inbox page
+- [x] `SearchProvider` interface + TinyFish adapter (default) + Brave adapter (fallback) + discovery job
 - [ ] Email TinyFish sales about commercial/multi-tenant use
-- [ ] Subreddit map page
+- [x] Subreddit map page
 - [ ] Use it daily on own projects
 
 ### Phase 2 — Week 3: "full loop"
