@@ -1,0 +1,121 @@
+# Self-hosting on Cloudflare
+
+social-radar runs as one Cloudflare Worker with a D1 database, a KV namespace and
+one cron trigger. You need a Cloudflare account, Node 22+ and pnpm.
+
+## 1. Install
+
+```sh
+git clone https://github.com/zernonia/social-radar.git
+cd social-radar
+pnpm install
+cd apps/web
+pnpm exec wrangler login
+```
+
+All commands below run from `apps/web`.
+
+## 2. Create the database and cache
+
+```sh
+pnpm exec wrangler d1 create social-radar
+pnpm exec wrangler kv namespace create CACHE
+```
+
+Copy the two ids they print into `wrangler.jsonc`:
+
+- `d1_databases[0].database_id`
+- `kv_namespaces[0].id`
+
+Then create the tables:
+
+```sh
+pnpm db:migrate:remote
+```
+
+## 3. Set secrets
+
+Generate a session secret and set it, plus the URL the app will live at
+(`https://social-radar.<your-subdomain>.workers.dev` unless you add a custom domain):
+
+```sh
+openssl rand -hex 32 | pnpm exec wrangler secret put BETTER_AUTH_SECRET
+pnpm exec wrangler secret put BETTER_AUTH_URL
+```
+
+**You need at least one way to sign in:**
+
+| Method | Secrets | Notes |
+|---|---|---|
+| Email link | `RESEND_API_KEY`, `EMAIL_FROM` | Verify your sending domain in Resend. `EMAIL_FROM` like `social-radar <radar@yourdomain.com>`. Also used for the daily digest. |
+| GitHub | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | OAuth app callback URL: `<BETTER_AUTH_URL>/api/auth/callback/github` |
+| Google | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google` |
+
+**Features and the keys they need:**
+
+| Secret | Used for | Without it |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | Onboarding from URL, intent scoring, research, drafts, tone checks | Manual onboarding and empty drafts only; matching threads wait in the queue unscored |
+| `TINYFISH_API_KEY` | Thread and subreddit discovery, research searches (free key) | Only watched subreddits are read |
+| `BRAVE_API_KEY` | Search fallback when TinyFish fails or rate-limits | No fallback |
+| `RESEND_API_KEY` | Sign-in links, daily digest | No email |
+
+Optional: `SEARCH_PROVIDER=brave` (use Brave first), `LLM_FAST_MODEL` / `LLM_QUALITY_MODEL`
+(defaults `claude-haiku-5-5` / `claude-opus-5-5`), `ANTHROPIC_BASE_URL` (route through
+Cloudflare AI Gateway: `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic`),
+`CONTACT_URL` (contact link in the User-Agent sent to Reddit; use your fork or site),
+`APP_URL` (links in digest emails; defaults to `BETTER_AUTH_URL`).
+
+Set each with `pnpm exec wrangler secret put NAME`.
+
+## 4. Deploy
+
+```sh
+pnpm run deploy
+```
+
+Open the URL and sign in. **The first account to sign up owns the instance**; later
+sign-ups are refused unless their email is in `ALLOWED_EMAILS` (comma-separated).
+
+## 5. Check the scheduled jobs
+
+`wrangler.jsonc` defines one cron trigger (`*/15 * * * *`). Each tick the dispatcher
+decides what is due: RSS fetch and scoring every tick, the digest hourly, discovery
+every 6 hours, research every 4 hours for projects whose last run is over a week old,
+the tracker every 12 hours and cleanup daily.
+
+Watch them run:
+
+```sh
+pnpm exec wrangler tail
+```
+
+Lines starting with `[jobs]` show each job's result.
+
+## Updating
+
+```sh
+git pull
+pnpm install
+cd apps/web
+pnpm db:migrate:remote
+pnpm run deploy
+```
+
+## Things to know
+
+- **Reddit rate limits.** Logged-out requests are limited to roughly one per minute
+  per IP. Watched subreddits are fetched together as combined feeds, and fetching
+  pauses until the next tick when the limit is hit. Busy subs are checked every
+  15 minutes and quiet ones every 1-6 hours.
+- **Workers plan.** The free plan allows 10 ms of CPU per invocation, which large
+  feeds and scoring batches can exceed. The Workers Paid plan ($5/month) is the
+  safe choice for reliable scheduled jobs.
+- **Subreddit rules.** The rules database in `packages/rules` starts empty. Add a
+  YAML file per subreddit you post in (see `packages/rules/README.md`), run
+  `pnpm rules:build` from the repo root, and redeploy.
+
+## Local development
+
+See the README: `pnpm dev` runs the app against local D1/KV with secrets from
+`apps/web/.dev.vars`.

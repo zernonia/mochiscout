@@ -48,3 +48,4 @@ pnpm rules:validate   # subreddit rules (packages/rules)
 ## Docs
 
 - [Architecture](docs/arch.md)
+- [Self-hosting on Cloudflare](docs/self-host.md)

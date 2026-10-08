@@ -396,11 +396,11 @@ Track actuals from day one in `usage` + AI Gateway; alert if any org exceeds 2×
 - [ ] Use it daily on own projects
 
 ### Phase 2 — Week 3: "full loop"
-- [ ] Research (pain-point clusters)
-- [ ] Drafter + rule check + pacing guardrails
-- [ ] Tracker + shadowban check
-- [ ] Today page + daily digest email
-- [ ] Self-host deploy docs; repo public; README with real results
+- [x] Research (pain-point clusters)
+- [x] Drafter + rule check + pacing guardrails
+- [x] Tracker + shadowban check
+- [x] Today page + daily digest email
+- [ ] Self-host deploy docs; repo public; README with real results — deploy docs done (docs/self-host.md)
 
 ### Phase 3 — Weeks 4–6: "cloud"
 - [ ] Multi-tenant org model, quotas, Polar billing
