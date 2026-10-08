@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   }
   const check = buildReport(
     { subreddit: draft.subreddit, title: draft.title, body: draft.body, promo: draft.promo },
-    await draftCheckContext(event, user.id, org.id),
+    await draftCheckContext(getDb(event), user.id, org.id),
     tone,
   )
   const [row] = await getDb(event).update(schema.drafts).set({ check }).where(eq(schema.drafts.id, draft.id)).returning()

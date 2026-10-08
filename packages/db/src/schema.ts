@@ -208,7 +208,12 @@ export const usage = sqliteTable(
 export const apiKeys = sqliteTable('api_keys', {
   id: text('id').primaryKey(),
   orgId: text('org_id').notNull().references(() => orgs.id, { onDelete: 'cascade' }),
+  /** Who created it; the key acts as this user. */
+  userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  /** SHA-256 of the key; the key itself is shown once and never stored. */
   hash: text('hash').notNull().unique(),
+  /** First characters, to tell keys apart in the UI. */
+  prefix: text('prefix'),
   label: text('label'),
   createdAt: createdAt(),
   lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),

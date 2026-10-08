@@ -45,6 +45,16 @@ pnpm typecheck
 pnpm rules:validate   # subreddit rules (packages/rules)
 ```
 
+## AI agents (MCP)
+
+Pro plans and self-hosted instances expose an MCP server at `/mcp`. Create an API key in
+**Settings → API keys**, then add it to Claude Code and install the skill in
+[`skills/social-radar`](skills/social-radar/SKILL.md):
+
+```sh
+claude mcp add --transport http social-radar https://<your-instance>/mcp --header "Authorization: Bearer sr_..."
+```
+
 ## Docs
 
 - [Architecture](docs/arch.md)

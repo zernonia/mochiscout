@@ -15,7 +15,9 @@
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
   },
   "dependencies": {
+    "@cfworker/json-schema": "^4.1.1",
     "@lucide/vue": "^1.53.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@social-radar/core": "workspace:*",
     "@social-radar/db": "workspace:*",
     "@social-radar/llm": "workspace:*",
