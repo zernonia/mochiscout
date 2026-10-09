@@ -11,5 +11,7 @@ export default defineEventHandler(async (event) => {
     db: db?.ok === 1,
     cache: (await env.CACHE.get('health:last')) !== null,
     edition: useRuntimeConfig(event).public.edition,
+    // Sign-in needs a 32+ character NUXT_SESSION_PASSWORD at runtime (value never returned).
+    session: (useRuntimeConfig(event).session.password?.length ?? 0) >= 32,
   }
 })
