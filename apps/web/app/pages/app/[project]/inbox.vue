@@ -18,8 +18,8 @@ const platforms = [
   { value: 'x', label: 'X' },
 ] as const
 
-const { data: project } = await useFetch(() => `/api/projects/${projectId.value}`)
-const { data: inbox, refresh } = await useFetch(() => `/api/projects/${projectId.value}/inbox`, {
+const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
+const { data: inbox, refresh, status: loadState } = useLazyFetch(() => `/api/projects/${projectId.value}/inbox`, {
   query: { status, platform },
 })
 useHead({ title: () => `Inbox · ${project.value?.name ?? 'Project'}` })
@@ -95,7 +95,8 @@ async function setStatus(threadId: string, next: Status) {
       </AlertDescription>
     </Alert>
 
-    <Empty v-if="!inbox?.threads.length" class="rounded-xl border border-dashed">
+    <SkeletonThreads v-if="!inbox" />
+    <Empty v-else-if="!inbox.threads.length" class="rounded-xl border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon"><component :is="tabs.find(t => t.value === status)!.icon" /></EmptyMedia>
         <EmptyTitle>{{ status === 'new' ? 'No new threads yet' : `Nothing ${status}` }}</EmptyTitle>
@@ -109,7 +110,8 @@ async function setStatus(threadId: string, next: Status) {
       </EmptyContent>
     </Empty>
 
-    <div class="flex flex-col gap-3">
+    <!-- Switching tabs keeps the current list on screen, dimmed, until the new one arrives. -->
+    <div class="flex flex-col gap-3 transition-opacity" :class="loadState === 'pending' && 'pointer-events-none opacity-50'">
       <ThreadCard v-for="t in inbox?.threads" :key="t.id" :thread="t" :status="status" @status="next => setStatus(t.id, next)" />
     </div>
   </div>

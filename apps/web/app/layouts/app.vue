@@ -8,7 +8,7 @@ const mobileOpen = ref(false)
 <template>
   <div class="min-h-dvh bg-sidebar">
     <!-- Desktop sidebar -->
-    <aside class="fixed inset-y-0 start-0 hidden w-64 border-e bg-sidebar lg:block">
+    <aside class="fixed inset-y-0 start-0 hidden w-64 bg-sidebar lg:block">
       <AppSidebar />
     </aside>
 

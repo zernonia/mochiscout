@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = await useFetch(() => `/api/projects/${projectId.value}`)
-const { data: research, refresh } = await useFetch(() => `/api/projects/${projectId.value}/research`)
+const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
+const { data: research, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/research`)
 useHead({ title: () => `Research · ${project.value?.name ?? 'Project'}` })
 
 const starting = ref(false)
@@ -20,7 +20,8 @@ function watchRun() {
     if (!research.value?.running) clearInterval(poll)
   }, 5000)
 }
-onMounted(() => { if (research.value?.running) watchRun() })
+// Data loads lazily, so start polling whenever a run is in progress.
+watch(() => research.value?.running, (running) => { if (running && import.meta.client) watchRun() }, { immediate: true })
 onBeforeUnmount(() => clearInterval(poll))
 
 async function run() {
@@ -60,7 +61,8 @@ const severityColor = ['', 'bg-neutral-400', 'bg-sky-500', 'bg-amber-500', 'bg-o
     </AppPageHeader>
     <p v-if="research && !research.llmConfigured" class="-mt-3 text-xs text-muted-foreground">Set ANTHROPIC_API_KEY to run research.</p>
 
-    <Empty v-if="!research?.points.length" class="rounded-xl border border-dashed">
+    <SkeletonCards v-if="!research" :count="3" :lines="2" />
+    <Empty v-else-if="!research.points.length" class="rounded-xl border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon"><LightbulbIcon /></EmptyMedia>
         <EmptyTitle>No pain points yet</EmptyTitle>

@@ -22,12 +22,11 @@ const { user, clear } = useUserSession()
 const edition = useRuntimeConfig().public.edition
 
 const projectId = computed(() => (route.params.project ? String(route.params.project) : null))
-const [{ data: projects }, { data: me }, { data: orgs }] = await Promise.all([
-  useFetch('/api/projects', { key: 'sidebar-projects' }),
-  useFetch('/api/me', { key: 'sidebar-me' }),
-  useFetch('/api/orgs', { key: 'sidebar-orgs' }),
-])
-const { data: counts } = useFetch(() => `/api/projects/${projectId.value}/nav`, {
+// Lazy: the page renders straight away and these fill in (skeletons meanwhile).
+const { data: projects } = useLazyFetch('/api/projects', { key: 'sidebar-projects' })
+const { data: me } = useLazyFetch('/api/me', { key: 'sidebar-me' })
+const { data: orgs } = useLazyFetch('/api/orgs', { key: 'sidebar-orgs' })
+const { data: counts } = useLazyFetch(() => `/api/projects/${projectId.value}/nav`, {
   key: 'project-nav',
   immediate: !!projectId.value,
   watch: [projectId],
@@ -107,11 +106,15 @@ async function signOut() {
     </NuxtLink>
 
     <!-- Project switcher -->
-    <Menu>
+    <div v-if="!projects" class="flex items-center gap-2.5 rounded-lg border bg-background p-2">
+      <Skeleton class="size-8 rounded-md" />
+      <div class="flex flex-1 flex-col gap-1.5"><Skeleton class="h-3.5 w-24" /><Skeleton class="h-3 w-32" /></div>
+    </div>
+    <Menu v-else>
       <MenuTrigger as-child>
         <button
           type="button"
-          class="flex w-full items-center gap-2.5 rounded-lg border bg-background p-2 text-left shadow-xs/5 transition-colors hover:bg-accent"
+          class="flex w-full items-center gap-2.5 rounded-lg border bg-background p-2 text-left shadow-xs/5 outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/40 data-[state=open]:bg-accent"
         >
           <span class="flex size-8 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-sm font-semibold text-white">
             {{ current ? initial(current.name) : '·' }}
@@ -171,6 +174,9 @@ async function signOut() {
 
     <div class="mt-auto flex flex-col gap-3">
       <!-- Plan and usage -->
+      <div v-if="!me && edition === 'cloud'" class="flex flex-col gap-2.5 rounded-lg border bg-background p-3">
+        <Skeleton class="h-4 w-20" /><Skeleton class="h-1.5 w-full" /><Skeleton class="h-1.5 w-full" />
+      </div>
       <div v-if="me && edition === 'cloud'" class="flex flex-col gap-2.5 rounded-lg border bg-background p-3">
         <div class="flex items-center justify-between">
           <span class="text-sm font-medium">{{ me.limits.label }} plan</span>
@@ -197,7 +203,7 @@ async function signOut() {
       <!-- Account -->
       <Menu>
         <MenuTrigger as-child>
-          <button type="button" class="flex w-full items-center gap-2.5 rounded-lg p-2 text-left transition-colors hover:bg-accent">
+          <button type="button" class="flex w-full items-center gap-2.5 rounded-lg p-2 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/40 data-[state=open]:bg-accent">
             <img v-if="user?.image" :src="user.image" alt="" class="size-7 rounded-full">
             <span v-else class="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-semibold">{{ initial(user?.name || user?.email) }}</span>
             <span class="min-w-0 flex-1 leading-tight">

@@ -4,7 +4,7 @@ import { ArrowRightIcon, FolderPlusIcon, PlusIcon } from '@lucide/vue'
 definePageMeta({ layout: 'app' })
 useHead({ title: 'Projects · Mochiscout' })
 
-const { data: projects } = await useFetch('/api/projects')
+const { data: projects } = useLazyFetch('/api/projects')
 
 function host(url: string) {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '')
@@ -19,7 +19,8 @@ function host(url: string) {
       </template>
     </AppPageHeader>
 
-    <Empty v-if="!projects?.length" class="rounded-xl border border-dashed">
+    <SkeletonCards v-if="!projects" :count="2" :lines="1" :cols="2" />
+    <Empty v-else-if="!projects.length" class="rounded-xl border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon"><FolderPlusIcon /></EmptyMedia>
         <EmptyTitle>No projects yet</EmptyTitle>

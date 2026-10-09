@@ -5,10 +5,8 @@ definePageMeta({ layout: 'app' })
 useHead({ title: 'Billing · Mochiscout' })
 
 const route = useRoute()
-const [{ data: me, refresh }, { data: catalogue }] = await Promise.all([
-  useFetch('/api/me'),
-  useFetch('/api/billing/plans'),
-])
+const { data: me, refresh } = useLazyFetch('/api/me')
+const { data: catalogue } = useLazyFetch('/api/billing/plans')
 const busy = ref<string | null>(null)
 
 onMounted(() => {
@@ -43,7 +41,11 @@ const meters = computed(() => me.value
   <div class="flex flex-col gap-6">
     <AppPageHeader title="Billing" description="Your plan, what you have used this month, and upgrades." />
 
-    <p v-if="me?.edition !== 'cloud'" class="text-muted-foreground">Self-hosted instances have no plans or limits.</p>
+    <template v-if="!me">
+      <Skeleton class="h-36 w-full rounded-xl" />
+      <div class="grid gap-4 md:grid-cols-3"><Skeleton v-for="i in 3" :key="i" class="h-72 rounded-xl" /></div>
+    </template>
+    <p v-else-if="me.edition !== 'cloud'" class="text-muted-foreground">Self-hosted instances have no plans or limits.</p>
 
     <template v-else-if="me">
       <Card>

@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = await useFetch(() => `/api/projects/${projectId.value}`)
-const { data: map, refresh } = await useFetch(() => `/api/projects/${projectId.value}/subreddits`)
+const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
+const { data: map, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/subreddits`)
 useHead({ title: () => `Subreddits · ${project.value?.name ?? 'Project'}` })
 
 const newSub = ref('')
@@ -86,7 +86,8 @@ async function discover() {
       Set TINYFISH_API_KEY (free) to discover threads and subreddits through search.
     </p>
 
-    <Empty v-if="!map?.subreddits.length" class="rounded-xl border border-dashed">
+    <SkeletonCards v-if="!map" :count="4" :lines="3" :cols="2" />
+    <Empty v-else-if="!map.subreddits.length" class="rounded-xl border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon"><HashIcon /></EmptyMedia>
         <EmptyTitle>No subreddits yet</EmptyTitle>

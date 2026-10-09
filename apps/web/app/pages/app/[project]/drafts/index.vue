@@ -6,12 +6,10 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const [{ data: project }, { data: drafts }, { data: map }, { data: research }] = await Promise.all([
-  useFetch(() => `/api/projects/${projectId.value}`),
-  useFetch(() => `/api/projects/${projectId.value}/drafts`),
-  useFetch(() => `/api/projects/${projectId.value}/subreddits`),
-  useFetch(() => `/api/projects/${projectId.value}/research`),
-])
+const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
+const { data: drafts } = useLazyFetch(() => `/api/projects/${projectId.value}/drafts`)
+const { data: map } = useLazyFetch(() => `/api/projects/${projectId.value}/subreddits`)
+const { data: research } = useLazyFetch(() => `/api/projects/${projectId.value}/research`)
 useHead({ title: () => `Drafts · ${project.value?.name ?? 'Project'}` })
 
 const angles = [
@@ -31,6 +29,11 @@ const form = reactive({
   topic: typeof q.topic === 'string' ? q.topic : '',
 })
 const busy = ref<'generate' | 'empty' | null>(null)
+
+// Default to the first watched subreddit once the map arrives.
+watch(map, (m) => {
+  if (!form.subreddit) form.subreddit = m?.subreddits.find(s => s.watching)?.name ?? ''
+}, { immediate: true })
 
 const watched = computed(() => map.value?.subreddits.filter(s => s.watching).map(s => s.name) ?? [])
 const topics = computed(() => research.value?.points.map(p => p.title) ?? [])
@@ -110,7 +113,8 @@ const level = {
         <h2 class="flex items-center justify-between text-sm font-medium text-muted-foreground">
           Your drafts <span v-if="drafts?.length" class="tabular-nums">{{ drafts.length }}</span>
         </h2>
-        <Empty v-if="!drafts?.length" class="rounded-xl border border-dashed py-8">
+        <SkeletonCards v-if="!drafts" :count="2" :lines="1" />
+        <Empty v-else-if="!drafts.length" class="rounded-xl border border-dashed py-8">
           <EmptyHeader>
             <EmptyMedia variant="icon"><FileTextIcon /></EmptyMedia>
             <EmptyTitle>No drafts yet</EmptyTitle>

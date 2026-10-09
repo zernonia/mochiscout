@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = await useFetch(() => `/api/projects/${projectId.value}`)
-const { data: today, refresh } = await useFetch(() => `/api/projects/${projectId.value}/today`)
+const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
+const { data: today, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/today`)
 useHead({ title: () => `Today · ${project.value?.name ?? 'Project'}` })
 
 async function setStatus(threadId: string, status: string) {
@@ -44,7 +44,8 @@ function time(d: string | Date) {
   <div class="flex flex-col gap-8">
     <AppPageHeader :title="greeting" :description="`Your plan for ${project?.name ?? 'today'}: answer the best threads, then post if you have a slot.`" />
 
-    <section v-if="today" class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <SkeletonStats v-if="!today" />
+    <section v-else class="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <StatTile
         label="New threads"
         :value="today.newCount"
@@ -87,7 +88,8 @@ function time(d: string | Date) {
           All {{ today.newCount }} in Inbox →
         </NuxtLink>
       </div>
-      <Empty v-if="!today?.threads.length" class="rounded-xl border border-dashed">
+      <SkeletonThreads v-if="!today" :count="2" />
+      <Empty v-else-if="!today.threads.length" class="rounded-xl border border-dashed">
         <EmptyHeader>
           <EmptyMedia variant="icon"><InboxIcon /></EmptyMedia>
           <EmptyTitle>Nothing to answer right now</EmptyTitle>
@@ -105,7 +107,8 @@ function time(d: string | Date) {
 
     <section class="flex flex-col gap-3">
       <h2 class="text-lg font-semibold tracking-tight">Post idea</h2>
-      <div v-if="today?.suggestion" class="flex flex-col gap-4 rounded-xl border bg-gradient-to-br from-amber-50 to-background p-5 shadow-xs/5 sm:flex-row sm:items-center dark:from-amber-500/5">
+      <Skeleton v-if="!today" class="h-24 w-full rounded-xl" />
+      <div v-else-if="today.suggestion" class="flex flex-col gap-4 rounded-xl border bg-gradient-to-br from-amber-50 to-background p-5 shadow-xs/5 sm:flex-row sm:items-center dark:from-amber-500/5">
         <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/14 text-amber-700 dark:text-amber-400"><SparklesIcon class="size-5" /></span>
         <div class="flex min-w-0 flex-1 flex-col gap-1">
           <p>

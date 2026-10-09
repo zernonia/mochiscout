@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = await useFetch(() => `/api/projects/${projectId.value}`)
-const { data: tracker, refresh } = await useFetch(() => `/api/projects/${projectId.value}/tracker`)
+const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
+const { data: tracker, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/tracker`)
 useHead({ title: () => `Tracker · ${project.value?.name ?? 'Project'}` })
 
 const form = reactive({ url: '', promo: true })
@@ -59,7 +59,9 @@ function when(d: string | null) {
     <AppPageHeader title="Tracker" description="Paste the posts you publish. We check every 12 hours that they're still visible, so you hear about removals early." />
 
     <!-- Account health -->
+    <Skeleton v-if="!tracker" class="h-[74px] w-full rounded-xl" />
     <div
+      v-else
       class="flex items-start gap-3 rounded-xl border p-4"
       :class="tracker?.account?.status === 'not_found' ? 'border-red-500/30 bg-red-500/5' : tracker?.account?.status === 'ok' ? 'border-emerald-500/30 bg-emerald-500/5' : 'bg-card'"
     >
@@ -103,7 +105,8 @@ function when(d: string | null) {
       <span class="inline-flex items-center gap-1.5" :class="summary.problems > 0 ? 'font-medium text-red-700 dark:text-red-400' : ''"><span class="size-2 rounded-full bg-red-500" /> {{ summary.problems }} removed or hidden</span>
     </div>
 
-    <Empty v-if="!tracker?.posts.length" class="rounded-xl border border-dashed">
+    <SkeletonCards v-if="!tracker" :count="2" :lines="2" />
+    <Empty v-else-if="!tracker.posts.length" class="rounded-xl border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon"><ActivityIcon /></EmptyMedia>
         <EmptyTitle>No tracked posts</EmptyTitle>
