@@ -19,7 +19,7 @@ const rows = [
 <template>
   <div class="min-h-dvh">
     <LandingHeader />
-    <main class="mx-auto flex max-w-3xl flex-col gap-10 px-4 py-14">
+    <main class="mx-auto flex max-w-3xl flex-col gap-10 px-4 pt-20 pb-24">
       <div class="flex flex-col gap-4">
         <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Moving off GummySearch?</h1>
         <p class="text-lg text-muted-foreground">
@@ -28,7 +28,7 @@ const rows = [
         <p class="text-muted-foreground">
           It does not use the Reddit API. It reads public feeds gently and uses web search for discovery, so it does not depend on API access that can be withdrawn. You can use the hosted version or run it on your own Cloudflare account for free.
         </p>
-        <LandingCta source="gummysearch" />
+        <LandingCta source="gummysearch" secondary="selfhost" class="justify-start" />
       </div>
 
       <section class="flex flex-col gap-3">
@@ -50,5 +50,6 @@ const rows = [
         </ul>
       </section>
     </main>
+    <LandingFooter />
   </div>
 </template>
