@@ -17,6 +17,7 @@ export default defineEventHandler((event) => {
       researchEveryDays: PLANS[id].researchEveryDays,
       manualResearchPerMonth: finite(PLANS[id].manualResearchPerMonth),
       mcp: PLANS[id].mcp,
+      autoReplies: PLANS[id].autoReplies,
       sources: PLANS[id].sources,
     })),
   }

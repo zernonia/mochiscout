@@ -2,6 +2,11 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-10-01',
+
+  experimental: {
+    // Keep fetched data between pages so revisits render from cache (see composables/useCachedFetch).
+    purgeCachedData: false,
+  },
   devtools: { enabled: true },
 
   modules: ['shadcn-nuxt', 'nuxt-auth-utils'],

@@ -17,6 +17,8 @@ export interface PlanLimits {
   /** Research runs a month started by hand. */
   manualResearchPerMonth: number
   mcp: boolean
+  /** Draft replies automatically for new inbox threads. */
+  autoReplies: boolean
   sources: Platform[]
 }
 
@@ -24,13 +26,13 @@ const ALL_SOURCES: Platform[] = ['reddit', 'hn', 'bluesky', 'x', 'web']
 
 /** Plans from docs/arch.md §10. Self-host has no limits. */
 export const PLANS: Record<Plan, PlanLimits> = {
-  selfhost: { label: 'Self-host', price: null, projects: Infinity, watchedSubreddits: Infinity, seats: Infinity, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: Infinity, mcp: true, sources: ALL_SOURCES },
-  free: { label: 'Free', price: 0, projects: 1, watchedSubreddits: 3, seats: 1, digest: 'weekly', researchEveryDays: null, manualResearchPerMonth: 1, mcp: false, sources: ['reddit'] },
-  solo: { label: 'Solo', price: 19, projects: 1, watchedSubreddits: 15, seats: 1, digest: 'daily', researchEveryDays: 30, manualResearchPerMonth: 2, mcp: false, sources: ['reddit', 'hn', 'bluesky'] },
-  pro: { label: 'Pro', price: 49, projects: 5, watchedSubreddits: 50, seats: 3, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: 8, mcp: true, sources: ALL_SOURCES },
+  selfhost: { label: 'Self-host', price: null, projects: Infinity, watchedSubreddits: Infinity, seats: Infinity, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: Infinity, mcp: true, autoReplies: true, sources: ALL_SOURCES },
+  free: { label: 'Free', price: 0, projects: 1, watchedSubreddits: 3, seats: 1, digest: 'weekly', researchEveryDays: null, manualResearchPerMonth: 1, mcp: false, autoReplies: false, sources: ['reddit'] },
+  solo: { label: 'Solo', price: 19, projects: 1, watchedSubreddits: 15, seats: 1, digest: 'daily', researchEveryDays: 30, manualResearchPerMonth: 2, mcp: false, autoReplies: true, sources: ['reddit', 'hn', 'bluesky'] },
+  pro: { label: 'Pro', price: 49, projects: 5, watchedSubreddits: 50, seats: 3, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: 8, mcp: true, autoReplies: true, sources: ALL_SOURCES },
 }
 
-export type QuotaFeature = 'projects' | 'watchedSubreddits' | 'seats' | 'research' | 'mcp' | 'source'
+export type QuotaFeature = 'projects' | 'watchedSubreddits' | 'seats' | 'research' | 'mcp' | 'source' | 'autoReplies'
 
 /** A plan limit was hit. The API turns this into HTTP 402 with an upgrade payload. */
 export class QuotaError extends Error {
@@ -60,6 +62,7 @@ function lifts(plan: Plan, feature: QuotaFeature, current: number | boolean) {
     case 'seats': return l.seats > Number(current)
     case 'research': return l.manualResearchPerMonth > Number(current)
     case 'mcp': return l.mcp
+    case 'autoReplies': return l.autoReplies
     case 'source': return true
   }
 }
@@ -141,4 +144,10 @@ export function assertMcp(org: Org) {
 /** Weekly digests go out on Mondays (user's local date). */
 export function digestDueToday(plan: Plan, localWeekday: number) {
   return PLANS[plan].digest === 'daily' || localWeekday === 1
+}
+
+export function assertAutoReplies(org: Org) {
+  if (!PLANS[org.plan].autoReplies) {
+    throw new QuotaError('autoReplies', org.plan, false, 'Automatic reply drafts are part of the Solo and Pro plans.')
+  }
 }

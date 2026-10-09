@@ -5,8 +5,8 @@ definePageMeta({ layout: 'app' })
 useHead({ title: 'Billing · Mochiscout' })
 
 const route = useRoute()
-const { data: me, refresh } = useLazyFetch('/api/me')
-const { data: catalogue } = useLazyFetch('/api/billing/plans')
+const { data: me, refresh } = useCachedFetch('/api/me')
+const { data: catalogue } = useCachedFetch('/api/billing/plans')
 const busy = ref<string | null>(null)
 
 onMounted(() => {

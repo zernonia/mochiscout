@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
-const { data: map, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/subreddits`)
+const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}`)
+const { data: map, refresh } = useCachedFetch(() => `/api/projects/${projectId.value}/subreddits`)
 useHead({ title: () => `Subreddits · ${project.value?.name ?? 'Project'}` })
 
 const newSub = ref('')

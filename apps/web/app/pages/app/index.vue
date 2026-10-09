@@ -4,7 +4,7 @@ import { ArrowRightIcon, FolderPlusIcon, PlusIcon } from '@lucide/vue'
 definePageMeta({ layout: 'app' })
 useHead({ title: 'Projects · Mochiscout' })
 
-const { data: projects } = useLazyFetch('/api/projects')
+const { data: projects } = useCachedFetch('/api/projects')
 
 function host(url: string) {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '')

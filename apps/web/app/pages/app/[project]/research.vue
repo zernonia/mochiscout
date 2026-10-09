@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
-const { data: research, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/research`)
+const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}`)
+const { data: research, refresh } = useCachedFetch(() => `/api/projects/${projectId.value}/research`)
 useHead({ title: () => `Research · ${project.value?.name ?? 'Project'}` })
 
 const starting = ref(false)

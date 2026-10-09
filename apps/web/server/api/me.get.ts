@@ -26,6 +26,7 @@ export default defineEventHandler(async (event) => {
       manualResearchPerMonth: finite(limits.manualResearchPerMonth),
       digest: limits.digest,
       mcp: limits.mcp,
+      autoReplies: limits.autoReplies,
     },
     usage: {
       projects: projects?.n ?? 0,

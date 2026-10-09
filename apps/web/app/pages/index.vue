@@ -34,11 +34,11 @@ const asks = [
 const steps = [
   { title: 'Paste your URL', body: 'We read your page to learn what it does and who it\'s for, then suggest keywords, competitors and the communities your buyers use.' },
   { title: 'Open your feed', body: 'New posts from Reddit, Hacker News, Bluesky and X are scored for buying intent. You only see the ones worth answering, each with a reason and an angle.' },
-  { title: 'Reply yourself', body: 'Write in your own words. Drafts are checked against the community\'s rules, and the tracker tells you if a post gets removed.' },
+  { title: 'Reply in a click', body: 'Get an AI-drafted reply for any thread, edit it in your voice, then copy it into the thread and post it yourself. The tracker tells you if a post gets removed.' },
 ]
 
 const principles = [
-  { title: 'You post. Always.', body: 'No auto-posting, auto-commenting, votes or DMs. Mochiscout finds the thread; you write the reply from your own account.' },
+  { title: 'You post. Always.', body: 'No auto-posting, auto-commenting, votes or DMs. Mochiscout finds the thread and drafts a reply; you edit it and post it from your own account.' },
   { title: 'Rules first', body: 'Each subreddit\'s promotion rules, karma and account-age limits are checked before you post, with per-sub cooldowns and a daily promo cap.' },
   { title: 'Open source', body: 'AGPL-licensed. Run it free on your own Cloudflare account, or let us host it for you.' },
 ]

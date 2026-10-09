@@ -31,7 +31,7 @@ export interface DraftProject {
   problems: string[]
 }
 
-function rulesBrief(subreddit: string, rules: SubredditRules | null) {
+export function rulesBrief(subreddit: string, rules: SubredditRules | null) {
   if (!rules) return `r/${subreddit}: rules unknown. Assume promotion is frowned upon and links in the body are risky.`
   return [
     `r/${subreddit} rules:`,

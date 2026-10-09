@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
-const { data: tracker, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/tracker`)
+const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}`)
+const { data: tracker, refresh } = useCachedFetch(() => `/api/projects/${projectId.value}/tracker`)
 useHead({ title: () => `Tracker · ${project.value?.name ?? 'Project'}` })
 
 const form = reactive({ url: '', promo: true })

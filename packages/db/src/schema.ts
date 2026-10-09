@@ -68,6 +68,8 @@ export const projects = sqliteTable('projects', {
   /** Feed sources besides Reddit: hn, bluesky, x. */
   sources: text('sources_json', { mode: 'json' }).$type<('hn' | 'bluesky' | 'x')[]>().notNull().default(sql`'[]'`),
   intentThreshold: integer('intent_threshold').notNull().default(60),
+  /** Draft a reply for every new inbox thread automatically (paid plans). */
+  autoReply: integer('auto_reply', { mode: 'boolean' }).notNull().default(false),
   createdAt: createdAt(),
 })
 
@@ -127,6 +129,9 @@ export const threadScores = sqliteTable(
     kind: text('kind', { enum: ['seeking_tool', 'comparison', 'complaint', 'pain', 'other'] }).notNull(),
     reason: text('reason'),
     replyAngle: text('reply_angle'),
+    /** AI-drafted reply the user can edit, copy and post themselves. */
+    replyDraft: text('reply_draft'),
+    replyDraftedAt: integer('reply_drafted_at', { mode: 'timestamp' }),
     status: text('status', { enum: ['new', 'replied', 'dismissed', 'saved'] }).notNull().default('new'),
     scoredAt: integer('scored_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   },

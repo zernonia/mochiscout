@@ -28,6 +28,8 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
       kind: s.kind,
       reason: s.reason,
       replyAngle: s.replyAngle,
+      replyDraft: s.replyDraft,
+      replyDraftedAt: s.replyDraftedAt,
       status: s.status,
     })
     .from(s)

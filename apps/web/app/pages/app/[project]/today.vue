@@ -6,8 +6,8 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
-const { data: today, refresh } = useLazyFetch(() => `/api/projects/${projectId.value}/today`)
+const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}`)
+const { data: today, refresh } = useCachedFetch(() => `/api/projects/${projectId.value}/today`)
 useHead({ title: () => `Today · ${project.value?.name ?? 'Project'}` })
 
 async function setStatus(threadId: string, status: string) {
@@ -102,7 +102,7 @@ function time(d: string | Date) {
           <Button as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
         </EmptyContent>
       </Empty>
-      <ThreadCard v-for="t in today?.threads" :key="t.id" :thread="t" @status="next => setStatus(t.id, next)" />
+      <ThreadCard v-for="t in today?.threads" :key="t.id" :project-id="projectId" :thread="t" @status="next => setStatus(t.id, next)" />
     </section>
 
     <section class="flex flex-col gap-3">

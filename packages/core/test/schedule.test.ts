@@ -6,16 +6,16 @@ const at = (iso: string) => new Date(`2026-10-08T${iso}:00Z`)
 
 describe('dueJobs', () => {
   it('runs plan-fetch every tick', () => {
-    expect(dueJobs(at('10:15'))).toEqual(['plan-fetch', 'score'])
+    expect(dueJobs(at('10:15'))).toEqual(['plan-fetch', 'score', 'auto-replies'])
   })
   it('runs digest hourly and discovery every 6h on the hour', () => {
-    expect(dueJobs(at('10:00'))).toEqual(['plan-fetch', 'feeds', 'score', 'digest'])
-    expect(dueJobs(at('12:00'))).toEqual(['plan-fetch', 'search-discovery', 'feeds', 'score', 'digest', 'research'])
+    expect(dueJobs(at('10:00'))).toEqual(['plan-fetch', 'feeds', 'score', 'auto-replies', 'digest'])
+    expect(dueJobs(at('12:00'))).toEqual(['plan-fetch', 'search-discovery', 'feeds', 'score', 'auto-replies', 'digest', 'research'])
   })
   it('runs tracker at :30 every 12h and retention at 03:00', () => {
-    expect(dueJobs(at('12:30'))).toEqual(['plan-fetch', 'score', 'tracker'])
-    expect(dueJobs(at('03:00'))).toEqual(['plan-fetch', 'feeds', 'score', 'digest', 'retention'])
-    expect(dueJobs(at('04:00'))).toEqual(['plan-fetch', 'feeds', 'score', 'digest', 'research'])
+    expect(dueJobs(at('12:30'))).toEqual(['plan-fetch', 'score', 'auto-replies', 'tracker'])
+    expect(dueJobs(at('03:00'))).toEqual(['plan-fetch', 'feeds', 'score', 'auto-replies', 'digest', 'retention'])
+    expect(dueJobs(at('04:00'))).toEqual(['plan-fetch', 'feeds', 'score', 'auto-replies', 'digest', 'research'])
   })
   it('tolerates late ticks', () => {
     expect(dueJobs(at('12:02'))).toContain('search-discovery')

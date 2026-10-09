@@ -6,10 +6,10 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const { data: project } = useLazyFetch(() => `/api/projects/${projectId.value}`)
-const { data: drafts } = useLazyFetch(() => `/api/projects/${projectId.value}/drafts`)
-const { data: map } = useLazyFetch(() => `/api/projects/${projectId.value}/subreddits`)
-const { data: research } = useLazyFetch(() => `/api/projects/${projectId.value}/research`)
+const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}`)
+const { data: drafts } = useCachedFetch(() => `/api/projects/${projectId.value}/drafts`)
+const { data: map } = useCachedFetch(() => `/api/projects/${projectId.value}/subreddits`)
+const { data: research } = useCachedFetch(() => `/api/projects/${projectId.value}/research`)
 useHead({ title: () => `Drafts · ${project.value?.name ?? 'Project'}` })
 
 const angles = [
@@ -70,7 +70,7 @@ const level = {
       <section class="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-xs/5">
         <div>
           <h2 class="font-semibold">New post</h2>
-          <p class="text-sm text-muted-foreground">Pick a subreddit and an angle. Replies to threads are never drafted for you.</p>
+          <p class="text-sm text-muted-foreground">Pick a subreddit and an angle. To answer a thread, use Draft reply in your inbox.</p>
         </div>
         <form class="flex flex-col gap-4" @submit.prevent="create(true)">
           <div class="grid gap-4 sm:grid-cols-2">

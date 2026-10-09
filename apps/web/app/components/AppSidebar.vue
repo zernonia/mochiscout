@@ -23,16 +23,15 @@ const edition = useRuntimeConfig().public.edition
 
 const projectId = computed(() => (route.params.project ? String(route.params.project) : null))
 // Lazy: the page renders straight away and these fill in (skeletons meanwhile).
-const { data: projects } = useLazyFetch('/api/projects', { key: 'sidebar-projects' })
-const { data: me } = useLazyFetch('/api/me', { key: 'sidebar-me' })
-const { data: orgs } = useLazyFetch('/api/orgs', { key: 'sidebar-orgs' })
-const { data: counts } = useLazyFetch(() => `/api/projects/${projectId.value}/nav`, {
+const { data: projects } = useCachedFetch('/api/projects', { key: 'sidebar-projects' })
+const { data: me } = useCachedFetch('/api/me', { key: 'sidebar-me' })
+const { data: orgs } = useCachedFetch('/api/orgs', { key: 'sidebar-orgs' })
+const { data: counts } = useCachedFetch(() => `/api/projects/${projectId.value}/nav`, {
   key: 'project-nav',
   immediate: !!projectId.value,
   watch: [projectId],
 })
-// Counts change as threads are handled; refresh on each navigation.
-watch(() => route.fullPath, () => { if (projectId.value) refreshNuxtData('project-nav') })
+// Counts are refreshed after each navigation by plugins/revalidate.client.ts.
 
 const current = computed(() => projects.value?.find(p => p.id === projectId.value) ?? null)
 
