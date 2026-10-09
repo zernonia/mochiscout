@@ -81,11 +81,15 @@ async function copy(text: string, what: string) {
 
 <template>
   <div v-if="draft" class="flex flex-col gap-5">
-    <NuxtLink :to="`/app/${projectId}/drafts`" class="text-sm text-muted-foreground">← Drafts</NuxtLink>
-    <div class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <a :href="`https://www.reddit.com/r/${draft.subreddit}/`" target="_blank" rel="noopener" class="font-medium text-foreground hover:underline">r/{{ draft.subreddit }}</a>
-      <span>· {{ draft.angle }}</span>
-    </div>
+    <NuxtLink :to="`/app/${projectId}/drafts`" class="text-sm text-muted-foreground hover:text-foreground">← All drafts</NuxtLink>
+    <AppPageHeader :title="draft.title || 'Untitled draft'">
+      <template #meta>
+        <div class="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <a :href="`https://www.reddit.com/r/${draft.subreddit}/`" target="_blank" rel="noopener" class="font-medium text-foreground hover:underline">r/{{ draft.subreddit }}</a>
+          <span>· {{ draft.angle }}</span>
+        </div>
+      </template>
+    </AppPageHeader>
 
     <div class="grid gap-5 lg:grid-cols-[1fr_320px]">
       <form class="flex flex-col gap-4" @submit.prevent="save">

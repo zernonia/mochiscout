@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BookmarkIcon, CheckCheckIcon, InboxIcon, TimerIcon, XIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -10,7 +11,7 @@ const projectId = computed(() => String(route.params.project))
 const status = ref<Status>('new')
 const platform = ref<'reddit' | 'hn' | 'bluesky' | 'x' | undefined>(undefined)
 const platforms = [
-  { value: undefined, label: 'All' },
+  { value: undefined, label: 'All sources' },
   { value: 'reddit', label: 'Reddit' },
   { value: 'hn', label: 'Hacker News' },
   { value: 'bluesky', label: 'Bluesky' },
@@ -23,11 +24,11 @@ const { data: inbox, refresh } = await useFetch(() => `/api/projects/${projectId
 })
 useHead({ title: () => `Inbox · ${project.value?.name ?? 'Project'}` })
 
-const tabs: { value: Status, label: string }[] = [
-  { value: 'new', label: 'New' },
-  { value: 'saved', label: 'Saved' },
-  { value: 'replied', label: 'Replied' },
-  { value: 'dismissed', label: 'Dismissed' },
+const tabs = [
+  { value: 'new' as const, label: 'New', icon: InboxIcon },
+  { value: 'saved' as const, label: 'Saved', icon: BookmarkIcon },
+  { value: 'replied' as const, label: 'Replied', icon: CheckCheckIcon },
+  { value: 'dismissed' as const, label: 'Dismissed', icon: XIcon },
 ]
 
 async function setStatus(threadId: string, next: Status) {
@@ -36,63 +37,80 @@ async function setStatus(threadId: string, next: Status) {
       method: 'PATCH',
       body: { status: next },
     })
-    await refresh()
+    await Promise.all([refresh(), refreshNuxtData('project-nav')])
   }
   catch {
     toast.error('Could not update the thread')
   }
 }
-
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <ProjectNav :project-id="projectId" :name="project?.name" />
+  <div class="flex flex-col gap-6">
+    <AppPageHeader
+      title="Inbox"
+      :description="`Threads scored ${inbox?.threshold ?? 60}+ for buying intent. Open one, reply in your own words, then mark it replied.`"
+    />
 
-    <div class="flex gap-1 overflow-x-auto">
-      <Button
-        v-for="tab in tabs"
-        :key="tab.value"
-        size="sm"
-        :variant="status === tab.value ? 'secondary' : 'ghost'"
-        @click="status = tab.value"
-      >
-        {{ tab.label }}
-        <span v-if="inbox?.counts[tab.value]" class="text-muted-foreground">{{ inbox.counts[tab.value] }}</span>
-      </Button>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="inline-flex w-full gap-1 overflow-x-auto rounded-lg bg-muted p-1 sm:w-auto">
+        <button
+          v-for="tab in tabs"
+          :key="tab.value"
+          type="button"
+          class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors"
+          :class="status === tab.value ? 'bg-background font-medium shadow-xs/5' : 'text-muted-foreground hover:text-foreground'"
+          @click="status = tab.value"
+        >
+          <component :is="tab.icon" class="size-4" />
+          {{ tab.label }}
+          <span
+            v-if="inbox?.counts[tab.value]"
+            class="rounded-full px-1.5 text-[11px] leading-5 tabular-nums"
+            :class="tab.value === 'new' ? 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-400' : 'bg-background text-muted-foreground'"
+          >{{ inbox.counts[tab.value] }}</span>
+        </button>
+      </div>
+      <div class="flex gap-1.5 overflow-x-auto">
+        <button
+          v-for="p in platforms"
+          :key="p.label"
+          type="button"
+          class="shrink-0 rounded-full border px-3 py-1 text-xs transition-colors"
+          :class="platform === p.value ? 'border-foreground bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'"
+          @click="platform = p.value"
+        >
+          {{ p.label }}
+        </button>
+      </div>
     </div>
 
-    <div class="flex gap-1 overflow-x-auto">
-      <button
-        v-for="p in platforms"
-        :key="p.label"
-        type="button"
-        class="shrink-0 rounded-full border px-3 py-1 text-xs"
-        :class="platform === p.value ? 'border-foreground bg-foreground text-background' : 'text-muted-foreground'"
-        @click="platform = p.value"
-      >
-        {{ p.label }}
-      </button>
-    </div>
-
-    <Alert v-if="inbox && inbox.pendingScoring > 0">
-      <AlertTitle>{{ inbox.pendingScoring }} matching threads waiting for scoring</AlertTitle>
+    <Alert v-if="inbox && inbox.pendingScoring > 0" variant="info">
+      <TimerIcon />
+      <AlertTitle>{{ inbox.pendingScoring }} matching threads waiting to be scored</AlertTitle>
       <AlertDescription>
         {{ inbox.llmConfigured
-          ? 'They are scored on the next scheduled run (every 15 minutes).'
+          ? 'They are scored on the next scheduled run, every 15 minutes.'
           : 'Set ANTHROPIC_API_KEY to score them for buying intent.' }}
       </AlertDescription>
     </Alert>
 
-    <div v-if="!inbox?.threads.length" class="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-      <template v-if="status === 'new'">
-        No threads at intent {{ inbox?.threshold ?? 60 }}+ yet. Watch a few subreddits and new threads show up here as they are scored.
-      </template>
-      <template v-else>
-        Nothing here.
-      </template>
-    </div>
+    <Empty v-if="!inbox?.threads.length" class="rounded-xl border border-dashed">
+      <EmptyHeader>
+        <EmptyMedia variant="icon"><component :is="tabs.find(t => t.value === status)!.icon" /></EmptyMedia>
+        <EmptyTitle>{{ status === 'new' ? 'No new threads yet' : `Nothing ${status}` }}</EmptyTitle>
+        <EmptyDescription>
+          <template v-if="status === 'new'">Threads scoring {{ inbox?.threshold ?? 60 }}+ show up here as they are found. Watching more subreddits widens the net.</template>
+          <template v-else>Threads you mark as {{ status }} appear here.</template>
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent v-if="status === 'new'">
+        <Button as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
+      </EmptyContent>
+    </Empty>
 
-    <ThreadCard v-for="t in inbox?.threads" :key="t.id" :thread="t" :status="status" @status="next => setStatus(t.id, next)" />
+    <div class="flex flex-col gap-3">
+      <ThreadCard v-for="t in inbox?.threads" :key="t.id" :thread="t" :status="status" @status="next => setStatus(t.id, next)" />
+    </div>
   </div>
 </template>

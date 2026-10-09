@@ -1,35 +1,51 @@
 <script setup lang="ts">
+import { ArrowRightIcon, FolderPlusIcon, PlusIcon } from '@lucide/vue'
+
 definePageMeta({ layout: 'app' })
 useHead({ title: 'Projects · Mochiscout' })
 
 const { data: projects } = await useFetch('/api/projects')
+
+function host(url: string) {
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+}
 </script>
 
 <template>
   <div class="flex flex-col gap-6">
-    <div class="flex items-center justify-between gap-4">
-      <h1 class="text-2xl font-semibold tracking-tight">Projects</h1>
-      <Button v-if="projects?.length" as-child size="sm">
-        <NuxtLink to="/app/new">New project</NuxtLink>
-      </Button>
-    </div>
+    <AppPageHeader title="Projects" description="One project per product. Each has its own inbox, subreddits and drafts.">
+      <template v-if="projects?.length" #actions>
+        <Button as-child><NuxtLink to="/app/new"><PlusIcon /> New project</NuxtLink></Button>
+      </template>
+    </AppPageHeader>
 
-    <Card v-if="!projects?.length">
-      <CardHeader>
-        <CardTitle>No projects yet</CardTitle>
-        <CardDescription>Paste your product URL to get started.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button as-child>
-          <NuxtLink to="/app/new">New project</NuxtLink>
-        </Button>
-      </CardContent>
-    </Card>
+    <Empty v-if="!projects?.length" class="rounded-xl border border-dashed">
+      <EmptyHeader>
+        <EmptyMedia variant="icon"><FolderPlusIcon /></EmptyMedia>
+        <EmptyTitle>No projects yet</EmptyTitle>
+        <EmptyDescription>Paste your product URL and we'll find where your buyers talk.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button as-child><NuxtLink to="/app/new"><PlusIcon /> New project</NuxtLink></Button>
+      </EmptyContent>
+    </Empty>
 
     <div v-else class="grid gap-3 sm:grid-cols-2">
-      <NuxtLink v-for="p in projects" :key="p.id" :to="`/app/${p.id}/today`" class="rounded-xl border p-4 transition-colors hover:bg-muted">
-        <div class="font-medium">{{ p.name }}</div>
-        <div class="truncate text-sm text-muted-foreground">{{ p.category || p.url }}</div>
+      <NuxtLink
+        v-for="p in projects"
+        :key="p.id"
+        :to="`/app/${p.id}/today`"
+        class="group flex items-center gap-3 rounded-xl border bg-card p-4 shadow-xs/5 transition-colors hover:bg-accent/50"
+      >
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-neutral-900 font-semibold text-white">{{ p.name.trim()[0]?.toUpperCase() }}</span>
+        <div class="min-w-0 flex-1">
+          <div class="truncate font-medium">{{ p.name }}</div>
+          <div class="truncate text-sm text-muted-foreground">{{ p.category ? `${p.category} · ` : '' }}{{ host(p.url) }}</div>
+        </div>
+        <ArrowRightIcon class="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      </NuxtLink>
+      <NuxtLink to="/app/new" class="flex items-center justify-center gap-2 rounded-xl border border-dashed p-4 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground">
+        <PlusIcon class="size-4" /> New project
       </NuxtLink>
     </div>
   </div>

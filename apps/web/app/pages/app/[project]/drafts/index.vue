@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FileTextIcon, PenLineIcon, SparklesIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -51,19 +52,23 @@ async function create(generate: boolean) {
   }
 }
 
-const levelBadge = { pass: 'secondary', warn: 'outline', fail: 'destructive' } as const
+const level = {
+  pass: { label: 'Passes rules', class: 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-400', dot: 'bg-emerald-500' },
+  warn: { label: 'Check warnings', class: 'bg-amber-500/14 text-amber-800 dark:text-amber-400', dot: 'bg-amber-500' },
+  fail: { label: 'Breaks rules', class: 'bg-red-500/12 text-red-700 dark:text-red-400', dot: 'bg-red-500' },
+} as const
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <ProjectNav :project-id="projectId" :name="project?.name" />
+  <div class="flex flex-col gap-6">
+    <AppPageHeader title="Drafts" description="Write posts with each subreddit's rules checked as you go. You review, edit and post them yourself." />
 
-    <Card>
-      <CardHeader>
-        <CardTitle>New post</CardTitle>
-        <CardDescription>You review, edit and post it yourself. Replies to threads are never drafted for you.</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div class="grid gap-6 lg:grid-cols-[1fr_20rem]">
+      <section class="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-xs/5">
+        <div>
+          <h2 class="font-semibold">New post</h2>
+          <p class="text-sm text-muted-foreground">Pick a subreddit and an angle. Replies to threads are never drafted for you.</p>
+        </div>
         <form class="flex flex-col gap-4" @submit.prevent="create(true)">
           <div class="grid gap-4 sm:grid-cols-2">
             <div class="flex flex-col gap-2">
@@ -95,27 +100,40 @@ const levelBadge = { pass: 'secondary', warn: 'outline', fail: 'destructive' } a
             Mention {{ project?.name }} (counts as a promo post)
           </label>
           <div class="flex flex-wrap gap-2">
-            <Button type="submit" :disabled="!!busy">{{ busy === 'generate' ? 'Writing…' : 'Write a draft' }}</Button>
-            <Button type="button" variant="outline" :disabled="!!busy" @click="create(false)">Start empty</Button>
+            <Button type="submit" :disabled="!!busy"><SparklesIcon /> {{ busy === 'generate' ? 'Writing…' : 'Write a draft' }}</Button>
+            <Button type="button" variant="outline" :disabled="!!busy" @click="create(false)"><PenLineIcon /> Start empty</Button>
           </div>
         </form>
-      </CardContent>
-    </Card>
+      </section>
 
-    <div v-if="drafts?.length" class="flex flex-col gap-2">
-      <h2 class="text-sm font-medium text-muted-foreground">Drafts</h2>
-      <NuxtLink
-        v-for="d in drafts"
-        :key="d.id"
-        :to="`/app/${projectId}/drafts/${d.id}`"
-        class="flex items-center justify-between gap-3 rounded-xl border p-3 hover:bg-muted"
-      >
-        <div class="min-w-0">
-          <div class="truncate font-medium">{{ d.title || 'Untitled draft' }}</div>
-          <div class="text-xs text-muted-foreground">r/{{ d.subreddit }} · {{ d.angle }}{{ d.promo ? ' · promo' : '' }}</div>
-        </div>
-        <Badge v-if="d.check" :variant="levelBadge[d.check.level]">{{ d.check.level }}</Badge>
-      </NuxtLink>
+      <section class="flex flex-col gap-2">
+        <h2 class="flex items-center justify-between text-sm font-medium text-muted-foreground">
+          Your drafts <span v-if="drafts?.length" class="tabular-nums">{{ drafts.length }}</span>
+        </h2>
+        <Empty v-if="!drafts?.length" class="rounded-xl border border-dashed py-8">
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><FileTextIcon /></EmptyMedia>
+            <EmptyTitle>No drafts yet</EmptyTitle>
+            <EmptyDescription>Drafts you write appear here with their rule check.</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+        <NuxtLink
+          v-for="d in drafts"
+          :key="d.id"
+          :to="`/app/${projectId}/drafts/${d.id}`"
+          class="flex flex-col gap-1.5 rounded-xl border bg-card p-3 shadow-xs/5 transition-colors hover:bg-accent/50"
+        >
+          <div class="truncate text-sm font-medium">{{ d.title || 'Untitled draft' }}</div>
+          <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+            <span>r/{{ d.subreddit }}</span>
+            <span>· {{ d.angle }}</span>
+            <span v-if="d.promo">· promo</span>
+            <span v-if="d.check" class="ms-auto inline-flex items-center gap-1 rounded-full px-1.5 leading-5 font-medium" :class="level[d.check.level].class">
+              <span class="size-1.5 rounded-full" :class="level[d.check.level].dot" />{{ level[d.check.level].label }}
+            </span>
+          </div>
+        </NuxtLink>
+      </section>
     </div>
   </div>
 </template>

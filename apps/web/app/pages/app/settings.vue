@@ -123,7 +123,7 @@ const keyRows = computed(() => settings.value
 
 <template>
   <div class="mx-auto flex max-w-2xl flex-col gap-6">
-    <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
+    <AppPageHeader title="Settings" description="Your digest, Reddit account, team and API keys." />
 
     <Alert v-if="myInvites?.length">
       <AlertTitle>You're invited to a team</AlertTitle>

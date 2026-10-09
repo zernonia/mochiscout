@@ -40,7 +40,7 @@ async function save() {
 
 <template>
   <div v-if="project" class="flex flex-col gap-5">
-    <ProjectNav :project-id="projectId" :name="project.name" />
+    <AppPageHeader title="Project profile" description="What we know about your product. Keywords and search terms decide which threads match, so keep them in your buyers' words." />
     <form class="flex flex-col gap-5" @submit.prevent="save">
       <Card>
         <CardContent>

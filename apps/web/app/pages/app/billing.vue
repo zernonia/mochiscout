@@ -41,7 +41,7 @@ const meters = computed(() => me.value
 
 <template>
   <div class="flex flex-col gap-6">
-    <h1 class="text-2xl font-semibold tracking-tight">Billing</h1>
+    <AppPageHeader title="Billing" description="Your plan, what you have used this month, and upgrades." />
 
     <p v-if="me?.edition !== 'cloud'" class="text-muted-foreground">Self-hosted instances have no plans or limits.</p>
 
@@ -62,7 +62,7 @@ const meters = computed(() => me.value
               <span class="tabular-nums text-muted-foreground">{{ m.used }}{{ m.limit !== null ? ` / ${m.limit}` : '' }}</span>
             </div>
             <div v-if="m.limit" class="h-1.5 overflow-hidden rounded-full bg-muted">
-              <div class="h-full rounded-full bg-foreground" :style="{ width: `${Math.min(100, (m.used / m.limit) * 100)}%` }" />
+              <div class="h-full rounded-full" :class="m.used >= m.limit ? 'bg-amber-500' : 'bg-foreground'" :style="{ width: `${Math.min(100, (m.used / m.limit) * 100)}%` }" />
             </div>
           </div>
           <Button

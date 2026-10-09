@@ -62,16 +62,13 @@ async function save() {
 
 <template>
   <div class="mx-auto flex max-w-2xl flex-col gap-6">
-    <div>
-      <h1 class="text-2xl font-semibold tracking-tight">New project</h1>
-      <p class="text-muted-foreground">Paste your product URL. We read the page and draft who your buyers are.</p>
-    </div>
+    <AppPageHeader title="New project" description="Paste your product URL. We read the page and draft who your buyers are, what they search for and who you compete with." />
 
     <Card v-if="!profile">
       <CardContent>
         <form class="flex flex-col gap-3 sm:flex-row" @submit.prevent="analyse">
           <Input v-model="url" type="text" inputmode="url" placeholder="yourproduct.com" required class="flex-1" />
-          <Button type="submit" :disabled="analysing">{{ analysing ? 'Reading page…' : 'Analyse' }}</Button>
+          <Button type="submit" :loading="analysing">Analyse</Button>
         </form>
         <button class="mt-3 text-sm text-muted-foreground underline" @click="profile = blank()">
           Fill in manually instead

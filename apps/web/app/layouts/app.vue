@@ -1,53 +1,41 @@
 <script setup lang="ts">
-const { user, clear } = useUserSession()
-const edition = useRuntimeConfig().public.edition
-const { data: orgs } = await useFetch('/api/orgs')
+import { MenuIcon } from '@lucide/vue'
 
-async function switchOrg(orgId: unknown) {
-  await $fetch('/api/orgs/active', { method: 'POST', body: { orgId: String(orgId) } })
-  // Projects belong to teams: start from the project list of the new team.
-  window.location.href = '/app'
-}
 useSeoMeta({ robots: 'noindex' })
-
-async function signOut() {
-  await clear()
-  await navigateTo('/login')
-}
+const mobileOpen = ref(false)
 </script>
 
 <template>
-  <div class="min-h-dvh">
-    <header class="border-b">
-      <div class="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4">
-        <div class="flex min-w-0 items-center gap-3">
-          <NuxtLink to="/app" class="font-semibold tracking-tight">Mochiscout</NuxtLink>
-          <Select
-            v-if="orgs && orgs.length > 1"
-            :model-value="orgs.find(o => o.active)?.id"
-            @update:model-value="switchOrg"
-          >
-            <SelectTrigger aria-label="Team" size="sm" class="max-w-44 min-w-0"><SelectValue class="truncate" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="o in orgs" :key="o.id" :value="o.id">{{ o.label }}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="flex items-center gap-3 text-sm">
-          <span class="hidden text-muted-foreground sm:inline">{{ user?.email }}</span>
-          <Button v-if="edition === 'cloud'" as-child variant="ghost" size="sm">
-            <NuxtLink to="/app/billing">Billing</NuxtLink>
-          </Button>
-          <Button as-child variant="ghost" size="sm">
-            <NuxtLink to="/app/settings">Settings</NuxtLink>
-          </Button>
-          <Button variant="ghost" size="sm" @click="signOut">Sign out</Button>
-        </div>
-      </div>
+  <div class="min-h-dvh bg-sidebar">
+    <!-- Desktop sidebar -->
+    <aside class="fixed inset-y-0 start-0 hidden w-64 border-e bg-sidebar lg:block">
+      <AppSidebar />
+    </aside>
+
+    <!-- Mobile top bar + drawer -->
+    <header class="sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-background/90 px-3 backdrop-blur lg:hidden">
+      <Button variant="ghost" size="icon" aria-label="Open menu" @click="mobileOpen = true">
+        <MenuIcon />
+      </Button>
+      <NuxtLink to="/app" class="flex items-center gap-1.5 font-semibold tracking-tight">
+        <LandingMochiMascot :blink="false" outline class="h-5 w-7" />
+        Mochiscout
+      </NuxtLink>
     </header>
-    <main class="mx-auto max-w-5xl px-4 py-6">
-      <slot />
-    </main>
+    <Sheet v-model:open="mobileOpen">
+      <SheetContent side="left" class="w-72 bg-sidebar p-0" :show-close-button="false">
+        <SheetTitle class="sr-only">Navigation</SheetTitle>
+        <AppSidebar @navigate="mobileOpen = false" />
+      </SheetContent>
+    </Sheet>
+
+    <div class="lg:ps-64">
+      <main class="min-h-dvh bg-background lg:my-2 lg:me-2 lg:min-h-[calc(100dvh-1rem)] lg:rounded-xl lg:border lg:shadow-xs/5">
+        <div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          <slot />
+        </div>
+      </main>
+    </div>
     <UpgradeSheet />
   </div>
 </template>
