@@ -56,7 +56,7 @@
       <li>The Free plan costs nothing. Paid plans (Solo and Pro) are billed monthly in advance at the price shown on our pricing page.</li>
       <li>Payments are processed by Polar, which acts as merchant of record and may add applicable taxes.</li>
       <li>You can upgrade, downgrade or cancel at any time from the billing page. When you cancel, your plan stays active until the end of the period you paid for, then your account moves to the Free plan.</li>
-      <li>If the Service did not work for you, email us within 14 days of a charge and we will refund it.</li>
+      <li>If the Service did not work for you, email us within 7 days of a charge and we will refund it.</li>
       <li>We may change prices with at least 30 days' notice by email. Changes apply from your next billing period.</li>
     </ul>
 
