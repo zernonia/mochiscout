@@ -1,15 +1,15 @@
-# social-radar reader (browser extension)
+# Mochiscout reader (browser extension)
 
 A read-only fallback for when server-side reads from reddit.com are blocked
 (docs/arch.md §5). While you browse Reddit, it reads the posts already on the
-page and sends them to your social-radar instance, where they go through the
+page and sends them to your Mochiscout instance, where they go through the
 same matching and scoring as RSS.
 
 It never posts, comments, votes, messages, clicks or loads pages for you.
 
 ## Use
 
-1. In social-radar, **Settings → API keys → Create key**.
+1. In Mochiscout, **Settings → API keys → Create key**.
 2. Build and load the extension:
    ```sh
    pnpm --filter @social-radar/extension build      # Chrome: .output/chrome-mv3

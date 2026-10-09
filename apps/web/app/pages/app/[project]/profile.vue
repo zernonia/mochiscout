@@ -8,7 +8,7 @@ const route = useRoute()
 const projectId = String(route.params.project)
 const { data: project, error } = await useFetch(() => `/api/projects/${projectId}`)
 if (error.value) throw createError({ statusCode: 404, statusMessage: 'Project not found', fatal: true })
-useHead({ title: () => `${project.value?.name ?? 'Project'} · social-radar` })
+useHead({ title: () => `${project.value?.name ?? 'Project'} · Mochiscout` })
 
 const form = ref<ProjectProfile>({
   url: project.value!.url,

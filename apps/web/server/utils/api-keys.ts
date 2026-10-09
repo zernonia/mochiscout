@@ -21,7 +21,7 @@ export async function authenticateApiKey(event: RequestEvent) {
   const header = getRequestHeader(event, 'authorization') ?? ''
   const key = header.match(/^Bearer\s+(\S+)$/i)?.[1]
   const fail = () => {
-    setResponseHeader(event, 'WWW-Authenticate', 'Bearer realm="social-radar"')
+    setResponseHeader(event, 'WWW-Authenticate', 'Bearer realm="mochiscout"')
     return createError({ statusCode: 401, statusMessage: 'Missing or invalid API key. Create one in Settings → API keys.' })
   }
   if (!key?.startsWith(PREFIX)) throw fail()

@@ -3,8 +3,8 @@ const { edition } = useRuntimeConfig().public
 if (edition !== 'cloud') throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
 
 useSeoMeta({
-  title: 'A GummySearch alternative for Reddit audience research · social-radar',
-  description: 'GummySearch is closing on December 1. social-radar covers the same Reddit research and lead-finding workflow without the Reddit API, and you can self-host it.',
+  title: 'A GummySearch alternative for Reddit audience research · Mochiscout',
+  description: 'GummySearch is closing on December 1. Mochiscout covers the same Reddit research and lead-finding workflow without the Reddit API, and you can self-host it.',
 })
 
 const rows = [
@@ -23,7 +23,7 @@ const rows = [
       <div class="flex flex-col gap-4">
         <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Moving off GummySearch?</h1>
         <p class="text-lg text-muted-foreground">
-          GummySearch is closing on December 1. social-radar is an open-source tool for the same job: understanding what your audience says on Reddit and finding the threads where your product helps.
+          GummySearch is closing on December 1. Mochiscout is an open-source tool for the same job: understanding what your audience says on Reddit and finding the threads where your product helps.
         </p>
         <p class="text-muted-foreground">
           It does not use the Reddit API. It reads public feeds gently and uses web search for discovery, so it does not depend on API access that can be withdrawn. You can use the hosted version or run it on your own Cloudflare account for free.

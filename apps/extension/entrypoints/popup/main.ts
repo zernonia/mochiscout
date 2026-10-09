@@ -16,7 +16,7 @@ async function render() {
     ? `Last send failed: ${stats.lastError}`
     : stats.sent
       ? `${stats.sent} posts sent${stats.lastSentAt ? `, last ${new Date(stats.lastSentAt).toLocaleString()}` : ''}.`
-      : settings ? 'Browse Reddit; posts are sent as you go.' : 'Create an API key in social-radar → Settings.'
+      : settings ? 'Browse Reddit; posts are sent as you go.' : 'Create an API key in Mochiscout → Settings.'
 }
 
 form.addEventListener('submit', async (e) => {

@@ -67,7 +67,7 @@ export function renderDigest(appUrl: string, sections: { project: { id: string, 
     text.push(`Today's plan: ${todayUrl}`, '')
   }
   return {
-    subject: sections.some(s => s.week) ? 'Your social-radar week, and today\'s plan' : 'Your social-radar plan for today',
+    subject: sections.some(s => s.week) ? 'Your Mochiscout week, and today\'s plan' : 'Your Mochiscout plan for today',
     html: `<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:560px;margin:0 auto;padding:16px;color:#111;line-height:1.45">${html.join('')}<p style="margin:32px 0 0;color:#888;font-size:12px">You post and reply yourself. Change the digest time or turn it off in <a href="${esc(appUrl)}/app/settings" style="color:#888">Settings</a>.</p></div>`,
     text: `${text.join('\n')}\nSettings: ${appUrl}/app/settings`,
   }

@@ -8,7 +8,7 @@ const projectId = computed(() => String(route.params.project))
 const draftId = String(route.params.draftId)
 const { data: draft, error } = await useFetch(() => `/api/projects/${projectId.value}/drafts/${draftId}`)
 if (error.value) throw createError({ statusCode: 404, statusMessage: 'Draft not found', fatal: true })
-useHead({ title: () => `${draft.value?.title || 'Draft'} · social-radar` })
+useHead({ title: () => `${draft.value?.title || 'Draft'} · Mochiscout` })
 type Draft = NonNullable<typeof draft.value>
 const url: string = `/api/projects/${projectId.value}/drafts/${draftId}`
 

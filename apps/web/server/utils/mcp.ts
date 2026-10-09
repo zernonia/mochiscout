@@ -25,13 +25,13 @@ function toolError(error: unknown) {
   return { isError: true, content: [{ type: 'text' as const, text: e.statusMessage ?? e.message ?? 'Something went wrong' }] }
 }
 
-/** social-radar as MCP tools (arch §7.8). Read-mostly; nothing here posts to Reddit. */
+/** Mochiscout as MCP tools (arch §7.8). Read-mostly; nothing here posts to Reddit. */
 export function createMcpServer(ctx: McpContext) {
   const server = new McpServer(
-    { name: 'social-radar', version: '0.1.0' },
+    { name: 'mochiscout', version: '0.1.0' },
     {
       jsonSchemaValidator: new CfWorkerJsonSchemaValidator(),
-      instructions: 'social-radar finds Reddit threads where the user\'s product can help and checks posts against subreddit rules. The user always posts and replies themselves: never suggest automating posting, commenting or voting. Start with get_today.',
+      instructions: 'Mochiscout finds Reddit threads where the user\'s product can help and checks posts against subreddit rules. The user always posts and replies themselves: never suggest automating posting, commenting or voting. Start with get_today.',
     },
   )
 

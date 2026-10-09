@@ -20,7 +20,7 @@ export async function sendEmail(env: Env, email: Email) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.EMAIL_FROM ?? 'social-radar <onboarding@resend.dev>',
+      from: env.EMAIL_FROM ?? 'Mochiscout <onboarding@resend.dev>',
       to: [email.to],
       subject: email.subject,
       html: email.html,

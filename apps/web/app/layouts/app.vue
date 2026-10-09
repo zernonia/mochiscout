@@ -21,7 +21,7 @@ async function signOut() {
     <header class="border-b">
       <div class="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4">
         <div class="flex min-w-0 items-center gap-3">
-          <NuxtLink to="/app" class="font-semibold tracking-tight">social-radar</NuxtLink>
+          <NuxtLink to="/app" class="font-semibold tracking-tight">Mochiscout</NuxtLink>
           <Select
             v-if="orgs && orgs.length > 1"
             :model-value="orgs.find(o => o.active)?.id"

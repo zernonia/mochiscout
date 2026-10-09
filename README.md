@@ -1,4 +1,4 @@
-# social-radar
+# Mochiscout
 
 > Working name. Open-source research + marketing radar: find the people who need your product on Reddit (then HN, Bluesky and more), understand their pain points, and show up helpfully without getting banned.
 
@@ -50,10 +50,10 @@ pnpm rules:validate   # subreddit rules (packages/rules)
 
 Pro plans and self-hosted instances expose an MCP server at `/mcp`. Create an API key in
 **Settings → API keys**, then add it to Claude Code and install the skill in
-[`skills/social-radar`](skills/social-radar/SKILL.md):
+[`skills/mochiscout`](skills/mochiscout/SKILL.md):
 
 ```sh
-claude mcp add --transport http social-radar https://<your-instance>/mcp --header "Authorization: Bearer sr_..."
+claude mcp add --transport http mochiscout https://<your-instance>/mcp --header "Authorization: Bearer sr_..."
 ```
 
 ## Docs

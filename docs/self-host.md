@@ -1,6 +1,6 @@
 # Self-hosting on Cloudflare
 
-social-radar runs as one Cloudflare Worker with a D1 database, a KV namespace and
+Mochiscout runs as one Cloudflare Worker with a D1 database, a KV namespace and
 one cron trigger. You need a Cloudflare account, Node 22+ and pnpm.
 
 ## 1. Install
@@ -64,7 +64,7 @@ Optional: `SEARCH_PROVIDER=brave` (use Brave first), `LLM_FAST_MODEL` / `LLM_QUA
 (defaults `claude-haiku-5-5` / `claude-opus-5-5`), `ANTHROPIC_BASE_URL` (route through
 Cloudflare AI Gateway: `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic`),
 `CONTACT_URL` (contact link in the User-Agent sent to Reddit; use your fork or site),
-`EMAIL_FROM` (sender for Resend, like `social-radar <radar@yourdomain.com>`; verify the domain in Resend).
+`EMAIL_FROM` (sender for Resend, like `Mochiscout <radar@yourdomain.com>`; verify the domain in Resend).
 
 Set each with `pnpm exec wrangler secret put NAME`.
 

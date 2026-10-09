@@ -157,5 +157,5 @@ function parseRetryAfter(value: string | null, from: number): number | undefined
 }
 
 export function userAgent(contactUrl: string) {
-  return `social-radar/0.1 (+${contactUrl})`
+  return `mochiscout/0.1 (+${contactUrl})`
 }

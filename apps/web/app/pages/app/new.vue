@@ -3,7 +3,7 @@ import type { ProjectProfile } from '~/components/ProjectProfileForm.vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
-useHead({ title: 'New project · social-radar' })
+useHead({ title: 'New project · Mochiscout' })
 
 const url = ref('')
 const analysing = ref(false)

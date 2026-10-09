@@ -10,9 +10,9 @@ if (edition !== 'cloud') {
 const { data: catalogue } = await useFetch('/api/billing/plans', { immediate: edition === 'cloud' })
 
 useSeoMeta({
-  title: 'social-radar · Find the people who need your product on Reddit',
+  title: 'Mochiscout · Find the people who need your product on Reddit',
   description: 'Mine Reddit for the pain points your buyers talk about, watch the subreddits they use for buying-intent threads, and post without getting banned. Open source.',
-  ogTitle: 'social-radar',
+  ogTitle: 'Mochiscout',
   ogDescription: 'Research → Map → Watch → Draft → Track. A daily 10-minute plan for showing up helpfully on Reddit.',
 })
 
@@ -95,7 +95,7 @@ const faqs = [
 
     <footer class="border-t">
       <div class="mx-auto flex max-w-5xl flex-wrap gap-4 px-4 py-6 text-sm text-muted-foreground">
-        <span>social-radar</span>
+        <span>Mochiscout</span>
         <NuxtLink to="/alternatives/gummysearch" class="hover:underline">GummySearch alternative</NuxtLink>
         <a href="https://github.com/zernonia/social-radar" target="_blank" rel="noopener" class="hover:underline">GitHub</a>
       </div>

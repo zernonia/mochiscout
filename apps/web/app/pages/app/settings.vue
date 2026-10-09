@@ -2,7 +2,7 @@
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
-useHead({ title: 'Settings · social-radar' })
+useHead({ title: 'Settings · Mochiscout' })
 
 const { data: settings, refresh } = await useFetch('/api/settings')
 const { data: team, refresh: refreshTeam } = await useFetch('/api/org')
@@ -12,7 +12,7 @@ const { data: apiKeys, refresh: refreshKeys } = await useFetch('/api/api-keys')
 const keyLabel = ref('Browser extension')
 const newKey = ref<string | null>(null)
 const mcpUrl = computed(() => (import.meta.client ? `${location.origin}/mcp` : '/mcp'))
-const mcpCommand = computed(() => `claude mcp add --transport http social-radar ${mcpUrl.value} --header "Authorization: Bearer ${newKey.value}"`)
+const mcpCommand = computed(() => `claude mcp add --transport http mochiscout ${mcpUrl.value} --header "Authorization: Bearer ${newKey.value}"`)
 async function createKey() {
   try {
     const res = await $fetch('/api/api-keys', { method: 'POST', body: { label: keyLabel.value } })

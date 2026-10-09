@@ -27,9 +27,9 @@ export default defineEventHandler(async (event) => {
   const appUrl = env.APP_URL ?? getRequestURL(event).origin
   event.waitUntil(sendEmail(env, {
     to: email,
-    subject: `${user.email} invited you to social-radar`,
-    text: `${user.email} invited you to their social-radar team.\n\nSign in with this email address to join: ${appUrl}/login`,
-    html: `<p>${user.email} invited you to their social-radar team.</p><p><a href="${appUrl}/login">Sign in with this email address to join</a>.</p>`,
+    subject: `${user.email} invited you to Mochiscout`,
+    text: `${user.email} invited you to their Mochiscout team.\n\nSign in with this email address to join: ${appUrl}/login`,
+    html: `<p>${user.email} invited you to their Mochiscout team.</p><p><a href="${appUrl}/login">Sign in with this email address to join</a>.</p>`,
   }).catch(error => console.error('[invite] email failed', error)))
 
   setResponseStatus(event, 201)

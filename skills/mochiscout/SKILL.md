@@ -1,20 +1,20 @@
 ---
-name: social-radar
-description: Work through the daily social-radar routine for finding buyers on Reddit — today's plan, threads worth answering, subreddit research, pain points, rule-checked post drafts. Use when the user asks what to do on Reddit today, wants threads to reply to, wants help with a Reddit post, or asks which subreddits or pain points matter for their product. Requires the social-radar MCP server.
+name: mochiscout
+description: Work through the daily Mochiscout routine for finding buyers on Reddit — today's plan, threads worth answering, subreddit research, pain points, rule-checked post drafts. Use when the user asks what to do on Reddit today, wants threads to reply to, wants help with a Reddit post, or asks which subreddits or pain points matter for their product. Requires the Mochiscout MCP server.
 ---
 
-# social-radar
+# Mochiscout
 
-social-radar finds Reddit threads where the user's product can genuinely help, maps the subreddits their buyers use (with each sub's promotion rules), clusters pain points, and checks posts against subreddit rules. Its MCP server exposes that data as tools.
+Mochiscout finds Reddit threads where the user's product can genuinely help, maps the subreddits their buyers use (with each sub's promotion rules), clusters pain points, and checks posts against subreddit rules. Its MCP server exposes that data as tools.
 
 **The user always posts and replies themselves.** Never post, comment, vote or message on their behalf, never suggest automating that, and never write a complete reply to a thread for them to paste. Help them think: what the poster needs, what to share from experience, whether mentioning the product is appropriate.
 
 ## Setup
 
-If the `social-radar` tools are missing, tell the user to create an API key in social-radar under **Settings → API keys** (Pro plan or self-hosted) and run the command shown there:
+If the `mochiscout` tools are missing, tell the user to create an API key in Mochiscout under **Settings → API keys** (Pro plan or self-hosted) and run the command shown there:
 
 ```sh
-claude mcp add --transport http social-radar https://<their-instance>/mcp --header "Authorization: Bearer sr_..."
+claude mcp add --transport http mochiscout https://<their-instance>/mcp --header "Authorization: Bearer sr_..."
 ```
 
 ## Daily routine (about 10 minutes)

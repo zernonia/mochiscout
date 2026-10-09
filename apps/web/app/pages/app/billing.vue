@@ -2,7 +2,7 @@
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
-useHead({ title: 'Billing · social-radar' })
+useHead({ title: 'Billing · Mochiscout' })
 
 const route = useRoute()
 const [{ data: me, refresh }, { data: catalogue }] = await Promise.all([

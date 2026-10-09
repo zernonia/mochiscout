@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'app' })
-useHead({ title: 'Projects · social-radar' })
+useHead({ title: 'Projects · Mochiscout' })
 
 const { data: projects } = await useFetch('/api/projects')
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toast } from '@/lib/toast'
 
-useHead({ title: 'Sign in · social-radar' })
+useHead({ title: 'Sign in · Mochiscout' })
 
 const route = useRoute()
 const { fetch: refreshSession } = useUserSession()
