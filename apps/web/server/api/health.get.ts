@@ -12,6 +12,11 @@ export default defineEventHandler(async (event) => {
     cache: (await env.CACHE.get('health:last')) !== null,
     edition: useRuntimeConfig(event).public.edition,
     // Sign-in needs a 32+ character NUXT_SESSION_PASSWORD at runtime (value never returned).
-    session: (useRuntimeConfig(event).session.password?.length ?? 0) >= 32,
+    session: sessionSecretStatus(useRuntimeConfig(event).session.password),
   }
 })
+
+function sessionSecretStatus(password: string | undefined) {
+  if (!password) return 'missing'
+  return password.length >= 32 ? 'ok' : 'too short'
+}
