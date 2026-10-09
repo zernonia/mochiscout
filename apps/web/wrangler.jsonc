@@ -8,6 +8,8 @@
     "directory": "./.output/public",
     "binding": "ASSETS"
   },
+  // Keep variables set in the dashboard (NUXT_PUBLIC_EDITION etc.) across deploys.
+  "keep_vars": true,
   "observability": {
     "enabled": true
   },
