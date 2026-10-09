@@ -1,5 +1,5 @@
-import { assertCanAddSeat } from '@social-radar/core'
-import { and, eq, schema } from '@social-radar/db'
+import { assertCanAddSeat } from '@mochiscout/core'
+import { and, eq, schema } from '@mochiscout/db'
 import { z } from 'zod'
 
 const Body = z.object({ email: z.email().max(320) })

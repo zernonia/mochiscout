@@ -1,6 +1,6 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
-import type { CheckReport } from '@social-radar/core'
-import { and, eq, schema } from '@social-radar/db'
+import type { CheckReport } from '@mochiscout/core'
+import { and, eq, schema } from '@mochiscout/db'
 
 /** The draft in the route, scoped to the user's project. */
 export async function requireDraft(event: RequestEvent) {

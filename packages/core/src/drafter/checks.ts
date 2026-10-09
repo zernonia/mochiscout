@@ -1,4 +1,4 @@
-import type { SubredditRules } from '@social-radar/rules'
+import type { SubredditRules } from '@mochiscout/rules'
 
 export type CheckLevel = 'pass' | 'warn' | 'fail'
 

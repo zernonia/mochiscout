@@ -18,7 +18,7 @@ All commands below run from `apps/web`.
 ## 2. Create the database and cache
 
 ```sh
-pnpm exec wrangler d1 create social-radar
+pnpm exec wrangler d1 create mochiscout
 pnpm exec wrangler kv namespace create CACHE
 ```
 
@@ -36,7 +36,7 @@ pnpm db:migrate:remote
 ## 3. Set secrets
 
 Generate a session secret and set it, plus the URL the app will live at
-(`https://social-radar.<your-subdomain>.workers.dev` unless you add a custom domain):
+(`https://mochiscout.<your-subdomain>.workers.dev` unless you add a custom domain):
 
 ```sh
 openssl rand -hex 32 | pnpm exec wrangler secret put NUXT_SESSION_PASSWORD

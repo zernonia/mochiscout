@@ -1,6 +1,6 @@
-import type { Db } from '@social-radar/db'
-import type { Platform } from '@social-radar/sources'
-import { and, count, eq, inArray, schema, sql } from '@social-radar/db'
+import type { Db } from '@mochiscout/db'
+import type { Platform } from '@mochiscout/sources'
+import { and, count, eq, inArray, schema, sql } from '@mochiscout/db'
 
 export type Plan = 'selfhost' | 'free' | 'solo' | 'pro'
 

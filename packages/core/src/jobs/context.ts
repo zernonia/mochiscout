@@ -1,7 +1,7 @@
 import type { KVNamespace, Queue } from '@cloudflare/workers-types'
-import type { Db } from '@social-radar/db'
-import type { Llm } from '@social-radar/llm'
-import type { Http, Platform, SearchClient, SourceAdapter } from '@social-radar/sources'
+import type { Db } from '@mochiscout/db'
+import type { Llm } from '@mochiscout/llm'
+import type { Http, Platform, SearchClient, SourceAdapter } from '@mochiscout/sources'
 import type { Job } from './types'
 
 export interface JobContext {

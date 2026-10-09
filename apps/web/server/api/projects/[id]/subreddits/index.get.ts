@@ -1,4 +1,4 @@
-import { subredditMap } from '@social-radar/core'
+import { subredditMap } from '@mochiscout/core'
 
 export default defineEventHandler(async (event) => {
   const { project } = await requireProject(event)

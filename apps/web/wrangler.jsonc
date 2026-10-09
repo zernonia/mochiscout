@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "social-radar",
+  "name": "mochiscout",
   "main": "./.output/server/index.mjs",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -15,9 +15,9 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "social-radar",
-      // Self-hosting your own copy? Use the id from `wrangler d1 create social-radar`.
-      "database_id": "dd243d28-ed8d-4bd3-afa7-b1e6a6a0f02e",
+      "database_name": "mochiscout",
+      // Self-hosting your own copy? Use the id from `wrangler d1 create mochiscout`.
+      "database_id": "ea663c06-44e3-4650-97a3-051b68085757",
       "migrations_dir": "../../packages/db/migrations"
     }
   ],
@@ -37,7 +37,7 @@
 
   // Optional (cloud): JOBS queue, consumer max_concurrency 1.
   // "queues": {
-  //   "producers": [{ "binding": "JOBS", "queue": "social-radar-jobs" }],
-  //   "consumers": [{ "queue": "social-radar-jobs", "max_concurrency": 1 }]
+  //   "producers": [{ "binding": "JOBS", "queue": "mochiscout-jobs" }],
+  //   "consumers": [{ "queue": "mochiscout-jobs", "max_concurrency": 1 }]
   // }
 }

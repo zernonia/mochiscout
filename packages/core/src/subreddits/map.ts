@@ -1,7 +1,7 @@
-import type { Db } from '@social-radar/db'
-import type { SubredditRules } from '@social-radar/rules'
-import { and, count, eq, schema, sql } from '@social-radar/db'
-import { getRules, rulesForTags } from '@social-radar/rules'
+import type { Db } from '@mochiscout/db'
+import type { SubredditRules } from '@mochiscout/rules'
+import { and, count, eq, schema, sql } from '@mochiscout/db'
+import { getRules, rulesForTags } from '@mochiscout/rules'
 
 const PROMO_WEIGHT: Record<SubredditRules['promo_policy'], number> = {
   none: 0,

@@ -1,6 +1,6 @@
-import { checkRedditAccount } from '@social-radar/core'
-import { eq, schema } from '@social-radar/db'
-import { normalizeRedditUsername } from '@social-radar/sources'
+import { checkRedditAccount } from '@mochiscout/core'
+import { eq, schema } from '@mochiscout/db'
+import { normalizeRedditUsername } from '@mochiscout/sources'
 import { z } from 'zod'
 
 const Body = z.object({

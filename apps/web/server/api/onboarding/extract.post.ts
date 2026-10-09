@@ -1,6 +1,6 @@
-import { extractProductProfile, fetchProductPage, recordUsage, UnsafeUrlError } from '@social-radar/core'
-import { LlmRefusalError } from '@social-radar/llm'
-import { createHttp, HttpError } from '@social-radar/sources'
+import { extractProductProfile, fetchProductPage, recordUsage, UnsafeUrlError } from '@mochiscout/core'
+import { LlmRefusalError } from '@mochiscout/llm'
+import { createHttp, HttpError } from '@mochiscout/sources'
 import { z } from 'zod'
 
 const Body = z.object({ url: z.string().trim().min(1).max(2048) })

@@ -1,6 +1,6 @@
-import { checkTrackedPost } from '@social-radar/core'
-import { and, eq, schema } from '@social-radar/db'
-import { parseRedditThreadUrl } from '@social-radar/sources'
+import { checkTrackedPost } from '@mochiscout/core'
+import { and, eq, schema } from '@mochiscout/db'
+import { parseRedditThreadUrl } from '@mochiscout/sources'
 import { z } from 'zod'
 
 const Body = z.object({

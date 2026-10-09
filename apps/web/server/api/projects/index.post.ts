@@ -1,5 +1,5 @@
-import { assertCanCreateProject, assertSources, runDiscovery } from '@social-radar/core'
-import { schema } from '@social-radar/db'
+import { assertCanCreateProject, assertSources, runDiscovery } from '@mochiscout/core'
+import { schema } from '@mochiscout/db'
 
 export default defineEventHandler(async (event) => {
   const { org } = await requireUser(event)

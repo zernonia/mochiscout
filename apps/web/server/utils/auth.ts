@@ -1,5 +1,5 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
-import { and, count, eq, schema } from '@social-radar/db'
+import { and, count, eq, schema } from '@mochiscout/db'
 
 type Db = ReturnType<typeof getDb>
 type User = typeof schema.users.$inferSelect

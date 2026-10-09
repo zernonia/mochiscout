@@ -1,7 +1,7 @@
-import type { Llm } from '@social-radar/llm'
+import type { Llm } from '@mochiscout/llm'
 import type { JobContext } from '../jobs/context'
-import { and, asc, eq, inArray, schema } from '@social-radar/db'
-import { LlmParseError, LlmRefusalError, z } from '@social-radar/llm'
+import { and, asc, eq, inArray, schema } from '@mochiscout/db'
+import { LlmParseError, LlmRefusalError, z } from '@mochiscout/llm'
 import { recordUsage } from '../usage'
 
 export const SCORE_BATCH = 20

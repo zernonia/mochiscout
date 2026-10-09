@@ -1,5 +1,5 @@
-import type { Db } from '@social-radar/db'
-import { and, count, desc, eq, gte, schema, sql } from '@social-radar/db'
+import type { Db } from '@mochiscout/db'
+import { and, count, desc, eq, gte, schema, sql } from '@mochiscout/db'
 
 export type ThreadStatus = 'new' | 'saved' | 'replied' | 'dismissed'
 

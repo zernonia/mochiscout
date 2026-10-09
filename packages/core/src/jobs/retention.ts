@@ -1,5 +1,5 @@
 import type { JobContext } from './context'
-import { sql } from '@social-radar/db'
+import { sql } from '@mochiscout/db'
 
 const RETAIN_DAYS = 90
 

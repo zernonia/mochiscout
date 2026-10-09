@@ -1,7 +1,7 @@
 import type { DiscoveryMode } from '../search/queries'
 import type { JobContext } from './context'
-import { eq, inArray, schema } from '@social-radar/db'
-import { cleanRedditTitle, HttpDeferredError, parseRedditThreadUrl, SNIPPET_MAX, truncate } from '@social-radar/sources'
+import { eq, inArray, schema } from '@mochiscout/db'
+import { cleanRedditTitle, HttpDeferredError, parseRedditThreadUrl, SNIPPET_MAX, truncate } from '@mochiscout/sources'
 import { queueSearchThreads } from '../scoring/queue'
 import { buildDiscoveryQueries } from '../search/queries'
 

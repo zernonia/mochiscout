@@ -1,5 +1,5 @@
 import type { JobContext } from '../jobs/context'
-import { and, eq, inArray, schema } from '@social-radar/db'
+import { and, eq, inArray, schema } from '@mochiscout/db'
 import { createMatcher } from './prefilter'
 
 /** D1 allows 100 bound parameters per statement. */

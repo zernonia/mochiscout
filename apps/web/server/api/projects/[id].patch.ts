@@ -1,5 +1,5 @@
-import { assertSources } from '@social-radar/core'
-import { eq, schema } from '@social-radar/db'
+import { assertSources } from '@mochiscout/core'
+import { eq, schema } from '@mochiscout/db'
 
 /** Edit a project's profile, search terms and feed sources. */
 export default defineEventHandler(async (event) => {

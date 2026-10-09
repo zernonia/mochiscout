@@ -1,4 +1,4 @@
-import { runDiscovery } from '@social-radar/core'
+import { runDiscovery } from '@mochiscout/core'
 
 /** Run search discovery for this project now, in the background. */
 export default defineEventHandler(async (event) => {

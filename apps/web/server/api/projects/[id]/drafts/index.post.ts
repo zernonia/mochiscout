@@ -1,4 +1,4 @@
-import { ANGLES } from '@social-radar/core'
+import { ANGLES } from '@mochiscout/core'
 import { z } from 'zod'
 
 const Body = z.object({

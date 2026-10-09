@@ -1,5 +1,5 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
-import { and, eq, schema } from '@social-radar/db'
+import { and, eq, schema } from '@mochiscout/db'
 import { z } from 'zod'
 
 const list = (max: number) => z.array(z.string().trim().min(1).max(100)).max(max).default([])

@@ -1,4 +1,4 @@
-import { PLANS } from '@social-radar/core'
+import { PLANS } from '@mochiscout/core'
 
 /** Plan catalogue for the billing and pricing pages. */
 export default defineEventHandler((event) => {

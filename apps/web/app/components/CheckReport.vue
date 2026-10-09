@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CheckReport } from '@social-radar/core'
+import type { CheckReport } from '@mochiscout/core'
 
 defineProps<{ report: CheckReport | null }>()
 

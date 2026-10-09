@@ -1,4 +1,4 @@
-import { inboxCounts, listThreads } from '@social-radar/core'
+import { inboxCounts, listThreads } from '@mochiscout/core'
 import { z } from 'zod'
 
 const Query = z.object({

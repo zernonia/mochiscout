@@ -1,6 +1,6 @@
 # Architecture — Open-Source Reddit Research + Marketing Loop
 
-> Product: Mochiscout (repo and package codename `social-radar`)
+> Product: Mochiscout (https://mochiscout.com)
 > Stack: Nuxt 4 · coss ui (Vue) · Tailwind v4 · Cloudflare (one Worker + D1, KV, Cron; Queues optional; AI Gateway)
 > Editions: **Self-host** (free, AGPL) and **Cloud** (paid, hosted by us). Same codebase.
 

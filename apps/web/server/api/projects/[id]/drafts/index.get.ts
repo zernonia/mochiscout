@@ -1,4 +1,4 @@
-import { desc, eq, schema } from '@social-radar/db'
+import { desc, eq, schema } from '@mochiscout/db'
 
 export default defineEventHandler(async (event) => {
   const { project } = await requireProject(event)
@@ -8,5 +8,5 @@ export default defineEventHandler(async (event) => {
     .where(eq(schema.drafts.projectId, project.id))
     .orderBy(desc(schema.drafts.createdAt))
     .limit(100)
-  return rows.map(d => ({ ...d, check: d.check as import('@social-radar/core').CheckReport | null }))
+  return rows.map(d => ({ ...d, check: d.check as import('@mochiscout/core').CheckReport | null }))
 })

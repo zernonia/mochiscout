@@ -1,4 +1,4 @@
-import { buildToday } from '@social-radar/core'
+import { buildToday } from '@mochiscout/core'
 
 export default defineEventHandler(async (event) => {
   const { project } = await requireProject(event)

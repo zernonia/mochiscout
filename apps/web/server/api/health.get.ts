@@ -1,4 +1,4 @@
-import { sql } from '@social-radar/db'
+import { sql } from '@mochiscout/db'
 
 export default defineEventHandler(async (event) => {
   const env = getEnv(event)

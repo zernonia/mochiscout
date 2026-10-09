@@ -1,4 +1,4 @@
-import { eq, schema } from '@social-radar/db'
+import { eq, schema } from '@mochiscout/db'
 
 /** Members and pending invites of the active org. */
 export default defineEventHandler(async (event) => {

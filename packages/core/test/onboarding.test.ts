@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createHttp } from '@social-radar/sources'
+import { createHttp } from '@mochiscout/sources'
 import { assertPublicUrl, fetchProductPage, UnsafeUrlError } from '../src/onboarding'
 
 describe('assertPublicUrl', () => {

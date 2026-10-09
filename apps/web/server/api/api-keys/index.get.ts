@@ -1,4 +1,4 @@
-import { limitsFor } from '@social-radar/core'
+import { limitsFor } from '@mochiscout/core'
 
 export default defineEventHandler(async (event) => {
   const { user, org } = await requireUser(event)

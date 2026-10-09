@@ -1,7 +1,7 @@
 import type { JobContext } from './context'
 import type { FetchGroupJob } from './types'
-import { and, eq, schema, sql } from '@social-radar/db'
-import { FEED_LIMIT, newPostsFeedUrl, parseRedditFeed } from '@social-radar/sources'
+import { and, eq, schema, sql } from '@mochiscout/db'
+import { FEED_LIMIT, newPostsFeedUrl, parseRedditFeed } from '@mochiscout/sources'
 import { queueRssThreads } from '../scoring/queue'
 
 /** Busy subs share a feed with fewer others so 100 entries still cover the gap since last fetch. */

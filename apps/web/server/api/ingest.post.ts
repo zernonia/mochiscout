@@ -1,5 +1,5 @@
-import { queueRssThreads, upsertPosts } from '@social-radar/core'
-import { normalizeExtensionPost } from '@social-radar/sources'
+import { queueRssThreads, upsertPosts } from '@mochiscout/core'
+import { normalizeExtensionPost } from '@mochiscout/sources'
 import { z } from 'zod'
 
 const Body = z.object({

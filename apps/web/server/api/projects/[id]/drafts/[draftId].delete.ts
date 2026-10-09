@@ -1,4 +1,4 @@
-import { eq, schema } from '@social-radar/db'
+import { eq, schema } from '@mochiscout/db'
 
 export default defineEventHandler(async (event) => {
   const { draft } = await requireDraft(event)

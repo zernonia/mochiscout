@@ -1,5 +1,5 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
-import { desc, eq, schema } from '@social-radar/db'
+import { desc, eq, schema } from '@mochiscout/db'
 
 export const ACTIVE_ORG_COOKIE = 'sr_org'
 

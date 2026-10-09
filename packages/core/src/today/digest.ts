@@ -1,6 +1,6 @@
 import type { JobContext } from '../jobs/context'
 import type { TodayPlan } from './today'
-import { desc, eq, schema } from '@social-radar/db'
+import { desc, eq, schema } from '@mochiscout/db'
 import { digestDueToday } from '../plans'
 import { buildToday } from './today'
 import type { WeeklySummary } from './weekly'

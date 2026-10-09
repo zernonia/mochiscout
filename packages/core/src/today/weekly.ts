@@ -1,5 +1,5 @@
-import type { Db } from '@social-radar/db'
-import { and, count, desc, eq, gte, schema } from '@social-radar/db'
+import type { Db } from '@mochiscout/db'
+import { and, count, desc, eq, gte, schema } from '@mochiscout/db'
 
 const WEEK_MS = 7 * 86_400_000
 

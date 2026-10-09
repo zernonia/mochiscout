@@ -1,7 +1,7 @@
 import type { JobName } from '../schedule'
 import type { JobContext } from './context'
 import type { Job } from './types'
-import { HttpDeferredError } from '@social-radar/sources'
+import { HttpDeferredError } from '@mochiscout/sources'
 import { dueJobs } from '../schedule'
 import { runWeeklyResearch } from '../research/research'
 import { runScoring } from '../scoring/score'

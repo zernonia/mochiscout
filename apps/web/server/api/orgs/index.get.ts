@@ -1,4 +1,4 @@
-import { eq, schema } from '@social-radar/db'
+import { eq, schema } from '@mochiscout/db'
 
 /** Teams the user belongs to, for the switcher. Orgs are labelled by their owner. */
 export default defineEventHandler(async (event) => {

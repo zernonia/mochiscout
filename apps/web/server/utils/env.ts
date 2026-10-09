@@ -1,6 +1,6 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
 import type { D1Database, KVNamespace, Queue } from '@cloudflare/workers-types'
-import type { Job } from '@social-radar/core'
+import type { Job } from '@mochiscout/core'
 
 export interface Env {
   DB: D1Database

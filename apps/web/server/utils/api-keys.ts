@@ -1,5 +1,5 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
-import { and, desc, eq, schema } from '@social-radar/db'
+import { and, desc, eq, schema } from '@mochiscout/db'
 
 const PREFIX = 'sr_'
 

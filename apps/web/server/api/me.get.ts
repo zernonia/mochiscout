@@ -1,5 +1,5 @@
-import { limitsFor, watchedSubredditCount } from '@social-radar/core'
-import { and, count, eq, schema } from '@social-radar/db'
+import { limitsFor, watchedSubredditCount } from '@mochiscout/core'
+import { and, count, eq, schema } from '@mochiscout/db'
 
 /** The signed-in user, their org, plan limits and this month's usage. */
 export default defineEventHandler(async (event) => {

@@ -1,7 +1,7 @@
-import type { Platform, Post, SourceAdapter } from '@social-radar/sources'
+import type { Platform, Post, SourceAdapter } from '@mochiscout/sources'
 import type { JobContext } from './context'
-import { eq, inArray, schema } from '@social-radar/db'
-import { HttpDeferredError } from '@social-radar/sources'
+import { eq, inArray, schema } from '@mochiscout/db'
+import { HttpDeferredError } from '@mochiscout/sources'
 import { PLANS } from '../plans'
 import { queueSearchThreads } from '../scoring/queue'
 

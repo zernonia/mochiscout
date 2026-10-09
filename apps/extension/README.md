@@ -12,8 +12,8 @@ It never posts, comments, votes, messages, clicks or loads pages for you.
 1. In Mochiscout, **Settings → API keys → Create key**.
 2. Build and load the extension:
    ```sh
-   pnpm --filter @social-radar/extension build      # Chrome: .output/chrome-mv3
-   pnpm --filter @social-radar/extension build:firefox
+   pnpm --filter @mochiscout/extension build      # Chrome: .output/chrome-mv3
+   pnpm --filter @mochiscout/extension build:firefox
    ```
    Chrome: `chrome://extensions` → Developer mode → Load unpacked → `apps/extension/.output/chrome-mv3`.
 3. Open the extension popup, enter your instance URL and the key, and allow access when asked.

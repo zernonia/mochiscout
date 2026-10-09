@@ -1,4 +1,4 @@
-import { PLANS, QuotaError } from '@social-radar/core'
+import { PLANS, QuotaError } from '@mochiscout/core'
 
 /** Run a quota check; a hit becomes HTTP 402 with what the UI needs to offer an upgrade. */
 export async function quota<T>(check: Promise<T> | (() => T)): Promise<T> {

@@ -1,4 +1,4 @@
-import { eq, schema } from '@social-radar/db'
+import { eq, schema } from '@mochiscout/db'
 
 /** Pending invites for the signed-in user's email. */
 export default defineEventHandler(async (event) => {

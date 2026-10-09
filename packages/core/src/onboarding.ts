@@ -1,7 +1,7 @@
-import type { Llm } from '@social-radar/llm'
-import type { Http } from '@social-radar/sources'
-import { z } from '@social-radar/llm'
-import { decodeEntities, htmlToText, truncate } from '@social-radar/sources'
+import type { Llm } from '@mochiscout/llm'
+import type { Http } from '@mochiscout/sources'
+import { z } from '@mochiscout/llm'
+import { decodeEntities, htmlToText, truncate } from '@mochiscout/sources'
 
 export const ProductProfile = z.object({
   product: z.string().describe('Product name'),

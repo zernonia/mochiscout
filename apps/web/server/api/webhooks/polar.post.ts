@@ -1,6 +1,6 @@
-import type { PolarSubscription } from '@social-radar/core'
-import { planForSubscription, verifyWebhook, WebhookVerificationError } from '@social-radar/core'
-import { eq, schema } from '@social-radar/db'
+import type { PolarSubscription } from '@mochiscout/core'
+import { planForSubscription, verifyWebhook, WebhookVerificationError } from '@mochiscout/core'
+import { eq, schema } from '@mochiscout/db'
 
 const SUBSCRIPTION_EVENTS = new Set([
   'subscription.created',

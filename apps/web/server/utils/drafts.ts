@@ -1,10 +1,10 @@
-import type { Angle, CheckReport, DraftInput } from '@social-radar/core'
-import type { Db } from '@social-radar/db'
+import type { Angle, CheckReport, DraftInput } from '@mochiscout/core'
+import type { Db } from '@mochiscout/db'
 import type { Env } from './env'
-import { checkDraft, checkTone, generateDraft, normalizeSubredditName, recordUsage, worst } from '@social-radar/core'
-import { eq, schema } from '@social-radar/db'
-import { LlmRefusalError } from '@social-radar/llm'
-import { getRules } from '@social-radar/rules'
+import { checkDraft, checkTone, generateDraft, normalizeSubredditName, recordUsage, worst } from '@mochiscout/core'
+import { eq, schema } from '@mochiscout/db'
+import { LlmRefusalError } from '@mochiscout/llm'
+import { getRules } from '@mochiscout/rules'
 
 type Project = typeof schema.projects.$inferSelect
 

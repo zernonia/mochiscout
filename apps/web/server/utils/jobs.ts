@@ -1,8 +1,8 @@
-import type { JobContext } from '@social-radar/core'
+import type { JobContext } from '@mochiscout/core'
 import type { Env } from './env'
-import { createDb } from '@social-radar/db'
-import type { SearchProvider } from '@social-radar/sources'
-import { blueskyAdapter, brave, createHttp, createSearchClient, hnAdapter, tinyfish, userAgent, xAdapter } from '@social-radar/sources'
+import { createDb } from '@mochiscout/db'
+import type { SearchProvider } from '@mochiscout/sources'
+import { blueskyAdapter, brave, createHttp, createSearchClient, hnAdapter, tinyfish, userAgent, xAdapter } from '@mochiscout/sources'
 
 /** Leave headroom under the Workers cron wall-clock limit (15 min). */
 const RUN_BUDGET_MS = 10 * 60_000
@@ -15,7 +15,7 @@ export function getTaskEnv(context?: { cloudflare?: { env?: unknown } }): Env {
 }
 
 export function sourcesUserAgent(env: Env) {
-  return userAgent(env.CONTACT_URL ?? 'https://github.com/zernonia/social-radar')
+  return userAgent(env.CONTACT_URL ?? 'https://mochiscout.com')
 }
 
 export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): JobContext {

@@ -1,4 +1,4 @@
-import { and, eq, schema } from '@social-radar/db'
+import { and, eq, schema } from '@mochiscout/db'
 
 /** Leave the active team (members only; the owner cannot leave their own team). */
 export default defineEventHandler(async (event) => {

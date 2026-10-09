@@ -1,4 +1,4 @@
-import { and, eq, schema } from '@social-radar/db'
+import { and, eq, schema } from '@mochiscout/db'
 
 export default defineEventHandler(async (event) => {
   const { project } = await requireProject(event)

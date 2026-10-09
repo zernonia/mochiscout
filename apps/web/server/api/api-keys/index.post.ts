@@ -1,4 +1,4 @@
-import { schema } from '@social-radar/db'
+import { schema } from '@mochiscout/db'
 import { z } from 'zod'
 
 const Body = z.object({ label: z.string().trim().min(1).max(60) })

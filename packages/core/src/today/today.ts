@@ -1,6 +1,6 @@
-import type { Db } from '@social-radar/db'
+import type { Db } from '@mochiscout/db'
 import type { Angle } from '../drafter/generate'
-import { and, count, desc, eq, gte, schema, sql } from '@social-radar/db'
+import { and, count, desc, eq, gte, schema, sql } from '@mochiscout/db'
 import { DEFAULT_COOLDOWN_DAYS, MAX_PROMO_POSTS_PER_DAY } from '../drafter/checks'
 import { subredditMap } from '../subreddits/map'
 

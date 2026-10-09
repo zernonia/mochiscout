@@ -1,4 +1,4 @@
-import { assertCanRunResearch, runResearch } from '@social-radar/core'
+import { assertCanRunResearch, runResearch } from '@mochiscout/core'
 
 /** Start a research run in the background. */
 export default defineEventHandler(async (event) => {

@@ -1,4 +1,4 @@
-import { runDiscovery } from '@social-radar/core'
+import { runDiscovery } from '@mochiscout/core'
 
 // Also runs from the dispatcher every 6 h; this task allows a manual run.
 export default defineTask({

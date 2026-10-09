@@ -1,7 +1,7 @@
-import type { Llm } from '@social-radar/llm'
-import type { SubredditRules } from '@social-radar/rules'
+import type { Llm } from '@mochiscout/llm'
+import type { SubredditRules } from '@mochiscout/rules'
 import type { CheckLevel } from './checks'
-import { z } from '@social-radar/llm'
+import { z } from '@mochiscout/llm'
 
 export const ANGLES = ['story', 'lesson', 'question', 'showcase'] as const
 export type Angle = typeof ANGLES[number]

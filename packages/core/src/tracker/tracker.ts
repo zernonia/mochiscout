@@ -1,6 +1,6 @@
 import type { JobContext } from '../jobs/context'
-import { and, asc, eq, gte, isNull, lt, ne, or, schema, sql } from '@social-radar/db'
-import { HttpDeferredError, HttpError, parsePostStatus, postFeedUrl, userFeedUrl } from '@social-radar/sources'
+import { and, asc, eq, gte, isNull, lt, ne, or, schema, sql } from '@mochiscout/db'
+import { HttpDeferredError, HttpError, parsePostStatus, postFeedUrl, userFeedUrl } from '@mochiscout/sources'
 
 const TRACK_DAYS = 30
 const ACCOUNT_RECHECK_MS = 12 * 3_600_000

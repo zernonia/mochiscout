@@ -1,4 +1,4 @@
-import type { SubredditRules } from '@social-radar/rules'
+import type { SubredditRules } from '@mochiscout/rules'
 import { describe, expect, it } from 'vitest'
 import { checkDraft, worst } from '../src/drafter/checks'
 

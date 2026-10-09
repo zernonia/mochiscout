@@ -1,5 +1,5 @@
-import type { Db } from '@social-radar/db'
-import { schema, sql } from '@social-radar/db'
+import type { Db } from '@mochiscout/db'
+import { schema, sql } from '@mochiscout/db'
 
 export interface UsageDelta {
   searches?: number

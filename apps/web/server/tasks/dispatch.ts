@@ -1,4 +1,4 @@
-import { runTick } from '@social-radar/core'
+import { runTick } from '@mochiscout/core'
 
 // Runs on the single Cloudflare cron trigger (every 15 min) and runs whichever
 // jobs are due this tick: inline, or fanned out to the JOBS queue when bound.

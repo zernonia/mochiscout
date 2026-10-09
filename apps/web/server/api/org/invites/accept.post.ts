@@ -1,4 +1,4 @@
-import { eq, schema } from '@social-radar/db'
+import { eq, schema } from '@mochiscout/db'
 
 /** An existing user accepts pending invites for their email; the newest org becomes active. */
 export default defineEventHandler(async (event) => {

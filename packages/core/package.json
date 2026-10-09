@@ -1,5 +1,5 @@
 {
-  "name": "@social-radar/core",
+  "name": "@mochiscout/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,10 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@social-radar/db": "workspace:*",
-    "@social-radar/sources": "workspace:*",
-    "@social-radar/llm": "workspace:*",
-    "@social-radar/rules": "workspace:*"
+    "@mochiscout/db": "workspace:*",
+    "@mochiscout/sources": "workspace:*",
+    "@mochiscout/llm": "workspace:*",
+    "@mochiscout/rules": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261006.1",

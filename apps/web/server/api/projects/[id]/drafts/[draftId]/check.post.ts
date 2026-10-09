@@ -1,7 +1,7 @@
-import { checkTone, recordUsage } from '@social-radar/core'
-import { eq, schema } from '@social-radar/db'
-import { LlmRefusalError } from '@social-radar/llm'
-import { getRules } from '@social-radar/rules'
+import { checkTone, recordUsage } from '@mochiscout/core'
+import { eq, schema } from '@mochiscout/db'
+import { LlmRefusalError } from '@mochiscout/llm'
+import { getRules } from '@mochiscout/rules'
 
 /** Full check: deterministic rules plus the LLM tone check when a key is set. */
 export default defineEventHandler(async (event) => {

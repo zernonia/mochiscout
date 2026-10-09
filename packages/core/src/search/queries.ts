@@ -1,4 +1,4 @@
-import type { SearchQuery } from '@social-radar/sources'
+import type { SearchQuery } from '@mochiscout/sources'
 
 export interface DiscoveryProject {
   category: string | null

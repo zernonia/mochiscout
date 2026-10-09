@@ -14,7 +14,7 @@ export default defineNuxtConfig({
 
   // Workspace packages ship TypeScript source; bundle them instead of loading from node_modules.
   build: {
-    transpile: [/^@social-radar\//],
+    transpile: [/^@mochiscout\//],
   },
 
   runtimeConfig: {

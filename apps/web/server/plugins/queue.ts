@@ -1,7 +1,7 @@
 import type { MessageBatch } from '@cloudflare/workers-types'
-import type { Job } from '@social-radar/core'
-import { runJob } from '@social-radar/core'
-import { HttpDeferredError } from '@social-radar/sources'
+import type { Job } from '@mochiscout/core'
+import { runJob } from '@mochiscout/core'
+import { HttpDeferredError } from '@mochiscout/sources'
 
 // Consumer for the optional JOBS queue (cloud). Configure the consumer with
 // max_concurrency: 1 so reddit.com requests stay serialized.

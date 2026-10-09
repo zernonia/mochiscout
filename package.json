@@ -1,5 +1,5 @@
 {
-  "name": "social-radar",
+  "name": "mochiscout",
   "private": true,
   "license": "AGPL-3.0-only",
   "packageManager": "pnpm@10.28.0",
@@ -7,15 +7,15 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "pnpm --filter @social-radar/web dev",
-    "build": "pnpm --filter @social-radar/web build",
-    "preview": "pnpm --filter @social-radar/web preview",
-    "deploy": "pnpm --filter @social-radar/web deploy",
+    "dev": "pnpm --filter @mochiscout/web dev",
+    "build": "pnpm --filter @mochiscout/web build",
+    "preview": "pnpm --filter @mochiscout/web preview",
+    "deploy": "pnpm --filter @mochiscout/web deploy",
     "typecheck": "pnpm -r typecheck",
-    "db:generate": "pnpm --filter @social-radar/db generate",
-    "db:migrate:local": "pnpm --filter @social-radar/web db:migrate:local",
+    "db:generate": "pnpm --filter @mochiscout/db generate",
+    "db:migrate:local": "pnpm --filter @mochiscout/web db:migrate:local",
     "test": "pnpm -r --if-present test",
-    "rules:build": "pnpm --filter @social-radar/rules build",
-    "rules:validate": "pnpm --filter @social-radar/rules validate"
+    "rules:build": "pnpm --filter @mochiscout/rules build",
+    "rules:validate": "pnpm --filter @mochiscout/rules validate"
   }
 }

@@ -1,4 +1,4 @@
-import { and, eq, schema } from '@social-radar/db'
+import { and, eq, schema } from '@mochiscout/db'
 import { z } from 'zod'
 
 const Body = z.object({ orgId: z.string().max(64) })

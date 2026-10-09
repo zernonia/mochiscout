@@ -1,6 +1,6 @@
-import { assertCanWatch, normalizeSubredditName } from '@social-radar/core'
-import { schema } from '@social-radar/db'
-import { getRules, RULES_VERSION } from '@social-radar/rules'
+import { assertCanWatch, normalizeSubredditName } from '@mochiscout/core'
+import { schema } from '@mochiscout/db'
+import { getRules, RULES_VERSION } from '@mochiscout/rules'
 import { z } from 'zod'
 
 const Body = z.object({ name: z.string().max(200), watching: z.boolean() })

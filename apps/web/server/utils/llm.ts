@@ -1,6 +1,6 @@
-import type { Llm } from '@social-radar/llm'
+import type { Llm } from '@mochiscout/llm'
 import type { Env } from './env'
-import { createLlm } from '@social-radar/llm'
+import { createLlm } from '@mochiscout/llm'
 
 /** The configured LLM, or null when no provider key is set. */
 export function getLlm(env: Env): Llm | null {

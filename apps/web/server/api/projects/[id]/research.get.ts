@@ -1,4 +1,4 @@
-import { latestPainPoints } from '@social-radar/core'
+import { latestPainPoints } from '@mochiscout/core'
 
 /** Latest research run's pain points, and whether a run is in progress. */
 export default defineEventHandler(async (event) => {

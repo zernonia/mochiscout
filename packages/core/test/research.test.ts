@@ -1,4 +1,4 @@
-import type { Llm } from '@social-radar/llm'
+import type { Llm } from '@mochiscout/llm'
 import { describe, expect, it } from 'vitest'
 import { clusterPainPoints } from '../src/research/research'
 

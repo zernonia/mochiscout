@@ -1,4 +1,4 @@
-import { assertMcp } from '@social-radar/core'
+import { assertMcp } from '@mochiscout/core'
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js'
 
 /**

@@ -1,4 +1,4 @@
-import { setThreadStatus } from '@social-radar/core'
+import { setThreadStatus } from '@mochiscout/core'
 import { z } from 'zod'
 
 const Body = z.object({ status: z.enum(['new', 'saved', 'replied', 'dismissed']) })
