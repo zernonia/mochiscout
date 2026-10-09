@@ -30,6 +30,12 @@
     }
   ],
 
+  // Cloudflare Email Service for digests and invites; set EMAIL_FROM to an address on an
+  // onboarded sending domain. Self-hosting with Resend instead? Remove this and set RESEND_API_KEY.
+  "send_email": [
+    { "name": "EMAIL" }
+  ],
+
   // Single cron trigger; Nitro's scheduledTasks + the `dispatch` task decide what runs.
   "triggers": {
     "crons": ["*/15 * * * *"]

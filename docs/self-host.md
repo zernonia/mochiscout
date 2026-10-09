@@ -58,15 +58,24 @@ pnpm exec wrangler secret put APP_URL
 | `ANTHROPIC_API_KEY` | Onboarding from URL, intent scoring, research, drafts, tone checks | Manual onboarding and empty drafts only; matching threads wait in the queue unscored |
 | `TINYFISH_API_KEY` | Thread and subreddit discovery, research searches (free key) | Only watched subreddits are read |
 | `BRAVE_API_KEY` | Search fallback when TinyFish fails or rate-limits | No fallback |
-| `RESEND_API_KEY` | Daily digest, team invites | Emails are skipped |
+| `EMAIL_FROM` + email provider | Daily digest, team invites | Emails are skipped |
 
 Optional: `SEARCH_PROVIDER=brave` (use Brave first), `LLM_FAST_MODEL` / `LLM_QUALITY_MODEL`
 (defaults `claude-haiku-5-5` / `claude-opus-5-5`), `ANTHROPIC_BASE_URL` (route through
 Cloudflare AI Gateway: `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic`),
-`CONTACT_URL` (contact link in the User-Agent sent to Reddit; use your fork or site),
-`EMAIL_FROM` (sender for Resend, like `Mochiscout <radar@yourdomain.com>`; verify the domain in Resend).
+`CONTACT_URL` (contact link in the User-Agent sent to Reddit; use your fork or site).
 
 Set each with `pnpm exec wrangler secret put NAME`.
+
+**Email.** Digests and team invites go out through one of two providers:
+
+- **Cloudflare Email Service** (default in `wrangler.jsonc`): onboard your sending domain in
+  Cloudflare Email Service (Workers Paid plan), then set `EMAIL_FROM`, for example
+  `Mochiscout <hello@yourdomain.com>`. The `send_email` binding named `EMAIL` is already configured.
+- **Resend**: set `RESEND_API_KEY` and `EMAIL_FROM` (verify the domain in Resend), and remove the
+  `send_email` block from `wrangler.jsonc` if your account doesn't use Email Service.
+
+With both set, Cloudflare is tried first and Resend is the fallback if a send fails.
 
 ## 4. Deploy
 

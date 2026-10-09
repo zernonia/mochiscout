@@ -113,7 +113,7 @@ const keyRows = computed(() => settings.value
       { label: 'Anthropic (onboarding, scoring, drafts)', env: 'ANTHROPIC_API_KEY', set: settings.value.keys.anthropic },
       { label: 'TinyFish search (discovery, research)', env: 'TINYFISH_API_KEY', set: settings.value.keys.tinyfish },
       { label: 'Brave search (fallback)', env: 'BRAVE_API_KEY', set: settings.value.keys.brave },
-      { label: 'Resend (digest, invites)', env: 'RESEND_API_KEY', set: settings.value.keys.resend },
+      { label: `Email (digest, invites)${settings.value.keys.email ? `: ${settings.value.keys.email === 'cloudflare' ? 'Cloudflare' : 'Resend'}` : ''}`, env: 'EMAIL binding + EMAIL_FROM, or RESEND_API_KEY', set: Boolean(settings.value.keys.email) },
       { label: 'GitHub sign-in', env: 'NUXT_OAUTH_GITHUB_CLIENT_ID / _SECRET', set: settings.value.keys.github },
       { label: 'Google sign-in', env: 'NUXT_OAUTH_GOOGLE_CLIENT_ID / _SECRET', set: settings.value.keys.google },
     ]

@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
       anthropic: Boolean(env.ANTHROPIC_API_KEY),
       tinyfish: Boolean(env.TINYFISH_API_KEY),
       brave: Boolean(env.BRAVE_API_KEY),
-      resend: Boolean(env.RESEND_API_KEY),
+      email: emailProvider(env),
       github: Boolean(oauth.github.clientId && oauth.github.clientSecret),
       google: Boolean(oauth.google.clientId && oauth.google.clientSecret),
     },

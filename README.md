@@ -35,7 +35,7 @@ pnpm dev                                            # http://localhost:3000
 ```
 
 Sign in with email and password (GitHub and Google when their OAuth keys are set). Without
-`RESEND_API_KEY`, digest and invite emails are printed in the dev server log. Without
+`EMAIL_FROM` (Cloudflare Email Service) or `RESEND_API_KEY`, digest and invite emails are printed in the dev server log. Without
 `ANTHROPIC_API_KEY` or `TINYFISH_API_KEY`, onboarding falls back to a manual form and
 scoring / discovery wait until a key is set. Scheduled jobs can be run by hand at
 `/_nitro/tasks/dispatch` and `/_nitro/tasks/discovery`.

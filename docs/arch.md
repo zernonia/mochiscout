@@ -37,7 +37,7 @@ flowchart LR
   Q -.-> W
   T --> RSS[(reddit.com RSS)]
   T --> SRC[(Search provider / HN / Bluesky)]
-  T --> MAIL[Resend: daily digest]
+  T --> MAIL[Email: daily digest]
   EXT[Browser extension<br/>phase 4 fallback] -.-> W
 ```
 
@@ -178,7 +178,7 @@ interface SourceAdapter {
      "reason": "one sentence", "reply_angle": "one sentence" }
    ```
    Store in `thread_scores`. Threshold per project (default 60) decides inbox visibility.
-4. **Digest** → top N threads + today's suggested post → email (Resend). Same content renders `/today`.
+4. **Digest** → top N threads + today's suggested post → email (Cloudflare Email Service, Resend fallback). Same content renders `/today`.
 
 ### Search discovery queries (templates in `packages/core`)
 - `site:reddit.com "{competitor}" alternative`
@@ -332,7 +332,7 @@ Quota middleware returns `402` with an upgrade payload; UI shows an upsell sheet
 
 - **Auth:** nuxt-auth-utils: sealed-cookie sessions, email + password (scrypt), GitHub and Google OAuth.
 - **Billing:** Polar checkout + customer portal; webhook `server/api/webhooks/polar.post.ts` → update `orgs.plan`. Verify signatures.
-- **Email:** Resend for digests and invites (email verification / password reset to follow). Plain, mobile-friendly HTML.
+- **Email:** Cloudflare Email Service (`send_email` binding) for digests and invites, Resend as the fallback for self-hosters (email verification / password reset to follow). Plain, mobile-friendly HTML.
 - **Product analytics:** PostHog (or your own analytics tool) on the cloud edition only; off by default in self-host.
 
 ---
@@ -351,7 +351,7 @@ One `apps/web/wrangler.jsonc`:
 
 Cron note: Cloudflare limits cron triggers per Worker, so use **one** trigger and let a dispatcher task decide which jobs are due (digest by user timezone, discovery every 6 h, etc.). Keep each cron run within the Worker's time limit by processing in batches and resuming next tick.
 
-Secrets: `SEARCH_PROVIDER` (`tinyfish` | `brave`), `TINYFISH_API_KEY`, `BRAVE_API_KEY` (optional fallback), `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`, `NUXT_SESSION_PASSWORD`, `NUXT_OAUTH_*`, `RESEND_API_KEY`, `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`.
+Secrets: `SEARCH_PROVIDER` (`tinyfish` | `brave`), `TINYFISH_API_KEY`, `BRAVE_API_KEY` (optional fallback), `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`, `NUXT_SESSION_PASSWORD`, `NUXT_OAUTH_*`, `EMAIL_FROM` (+ `send_email` binding `EMAIL`, or `RESEND_API_KEY` as fallback), `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`.
 
 Environments: `dev` (local wrangler), `staging`, `production`. Migrations: `drizzle-kit generate` → `wrangler d1 migrations apply`.
 

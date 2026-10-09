@@ -12,6 +12,7 @@ NUXT_SESSION_PASSWORD=change-me-to-a-long-random-string-of-32-plus-chars
 # NUXT_OAUTH_GOOGLE_CLIENT_SECRET=
 
 # Digests and team invites. Without a key, emails are printed to the dev server log.
+# Email: Cloudflare Email Service (EMAIL binding) when EMAIL_FROM is set, else Resend.
 # RESEND_API_KEY=
 # EMAIL_FROM="Mochiscout <hello@example.com>"
 
