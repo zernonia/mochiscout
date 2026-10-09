@@ -8,7 +8,7 @@ const project = { name: 'Shipnote', url: 'https://shipnote.test', category: 'cha
 function capturingLlm() {
   const calls: { tier: string, system: string, prompt: string }[] = []
   const llm: Llm = {
-    models: { fast: 'f', quality: 'q' },
+    models: { fast: 'f', balanced: 'b', quality: 'q' },
     generate: async (opts: any) => {
       calls.push({ tier: opts.tier, system: opts.system, prompt: opts.prompt })
       return { data: { reply: 'Here is what worked for us…', mentions_product: false } as any, model: 'q', usage: { inputTokens: 1, outputTokens: 1 } }

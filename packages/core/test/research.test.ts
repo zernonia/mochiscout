@@ -12,7 +12,7 @@ const snippets = [1, 2, 3].map(i => ({
 
 function llmReturning(pain_points: unknown[]): Llm {
   return {
-    models: { fast: 'f', quality: 'q' },
+    models: { fast: 'f', balanced: 'b', quality: 'q' },
     generate: async () => ({ data: { pain_points } as any, model: 'f', usage: { inputTokens: 1, outputTokens: 1 } }),
   }
 }

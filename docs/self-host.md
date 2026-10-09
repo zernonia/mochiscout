@@ -60,8 +60,8 @@ pnpm exec wrangler secret put APP_URL
 | `BRAVE_API_KEY` | Search fallback when TinyFish fails or rate-limits | No fallback |
 | `EMAIL_FROM` + email provider | Daily digest, team invites | Emails are skipped |
 
-Optional: `SEARCH_PROVIDER=brave` (use Brave first), `LLM_FAST_MODEL` / `LLM_QUALITY_MODEL`
-(defaults `claude-haiku-5-5` / `claude-opus-5-5`), `ANTHROPIC_BASE_URL` (route through
+Optional: `SEARCH_PROVIDER=brave` (use Brave first), `LLM_FAST_MODEL` / `LLM_BALANCED_MODEL` / `LLM_QUALITY_MODEL`
+(defaults `claude-haiku-5-5` for scoring, `claude-sonnet-5-5` for auto-drafts, `claude-opus-5-5` for drafts you ask for), `ANTHROPIC_BASE_URL` (route through
 Cloudflare AI Gateway: `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic`),
 `CONTACT_URL` (contact link in the User-Agent sent to Reddit; use your fork or site).
 
@@ -89,7 +89,8 @@ sign-ups are refused unless their email is in `ALLOWED_EMAILS` (comma-separated)
 ## 5. Check the scheduled jobs
 
 `wrangler.jsonc` defines one cron trigger (`*/15 * * * *`). Each tick the dispatcher
-decides what is due: RSS fetch and scoring every tick, the digest hourly, discovery
+decides what is due: RSS fetch, scoring, lead checks (archived or removed posts, full thread text),
+auto-drafts and hot-lead alerts every tick, the digest hourly, discovery
 every 6 hours, research every 4 hours for projects whose last run is over a week old,
 the tracker every 12 hours and cleanup daily.
 

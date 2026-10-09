@@ -21,6 +21,7 @@ export interface Env {
   ANTHROPIC_BASE_URL?: string
   LLM_FAST_MODEL?: string
   LLM_QUALITY_MODEL?: string
+  LLM_BALANCED_MODEL?: string
   SEARCH_PROVIDER?: 'tinyfish' | 'brave'
   TINYFISH_API_KEY?: string
   BRAVE_API_KEY?: string

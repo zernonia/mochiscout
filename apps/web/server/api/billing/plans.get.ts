@@ -18,6 +18,7 @@ export default defineEventHandler((event) => {
       manualResearchPerMonth: finite(PLANS[id].manualResearchPerMonth),
       mcp: PLANS[id].mcp,
       autoReplies: PLANS[id].autoReplies,
+      hotAlerts: PLANS[id].hotAlerts,
       sources: PLANS[id].sources,
     })),
   }

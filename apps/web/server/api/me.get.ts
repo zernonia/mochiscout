@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
       digest: limits.digest,
       mcp: limits.mcp,
       autoReplies: limits.autoReplies,
+      hotAlerts: limits.hotAlerts,
     },
     usage: {
       projects: projects?.n ?? 0,

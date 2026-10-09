@@ -1,4 +1,4 @@
-export type JobName = 'plan-fetch' | 'search-discovery' | 'feeds' | 'score' | 'digest' | 'tracker' | 'research' | 'retention' | 'auto-replies'
+export type JobName = 'plan-fetch' | 'search-discovery' | 'feeds' | 'score' | 'digest' | 'tracker' | 'research' | 'retention' | 'lead-checks' | 'auto-replies' | 'hot-alerts'
 
 /**
  * One Cloudflare cron trigger fires every 15 minutes; this decides which jobs
@@ -8,7 +8,9 @@ export type JobName = 'plan-fetch' | 'search-discovery' | 'feeds' | 'score' | 'd
  *   every tick   plan-fetch
  *   :00 hourly   feeds (HN, Bluesky, X searches)
  *   every tick   score (after fetch and discovery)
- *   every tick   auto-replies (after score; projects with auto-replies on)
+ *   every tick   lead-checks (after score; reply state and full text of new leads)
+ *   every tick   auto-replies (hot leads in projects with auto-replies on)
+ *   every tick   hot-alerts (email new hot leads; at most hourly per project)
  *   :00 /6h      search-discovery
  *   :00 hourly   digest (per-user local hour is checked inside the job)
  *   :30 /12h     tracker
@@ -22,7 +24,7 @@ export function dueJobs(at: Date): JobName[] {
   if (slot === 0 && hour % 6 === 0) jobs.push('search-discovery')
   if (slot === 0) jobs.push('feeds')
   jobs.push('score')
-  jobs.push('auto-replies')
+  jobs.push('lead-checks', 'auto-replies', 'hot-alerts')
   if (slot === 0) jobs.push('digest')
   if (slot === 30 && hour % 12 === 0) jobs.push('tracker')
   if (slot === 0 && hour % 4 === 0) jobs.push('research')

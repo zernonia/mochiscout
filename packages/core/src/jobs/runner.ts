@@ -4,6 +4,8 @@ import type { Job } from './types'
 import { HttpDeferredError } from '@mochiscout/sources'
 import { dueJobs } from '../schedule'
 import { runAutoReplies } from '../drafter/reply'
+import { runHotAlerts } from '../leads/alerts'
+import { runLeadChecks } from '../leads/context'
 import { runWeeklyResearch } from '../research/research'
 import { runScoring } from '../scoring/score'
 import { runDigest } from '../today/digest'
@@ -63,7 +65,9 @@ const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> 
   'search-discovery': ctx => runDiscovery(ctx),
   'feeds': runFeedDiscovery,
   'score': runScoring,
+  'lead-checks': runLeadChecks,
   'auto-replies': runAutoReplies,
+  'hot-alerts': runHotAlerts,
   'research': ctx => runWeeklyResearch(ctx),
   'tracker': runTracker,
   'digest': runDigest,

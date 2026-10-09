@@ -1,7 +1,10 @@
 import type { Llm } from '@mochiscout/llm'
 import type { JobContext } from '../jobs/context'
 import { and, asc, eq, inArray, schema } from '@mochiscout/db'
+import type { ScoringExamples } from '../leads/learning'
 import { LlmParseError, LlmRefusalError, z } from '@mochiscout/llm'
+import { stateFromAge } from '@mochiscout/sources'
+import { scoringExamples, scoringExamplesBrief } from '../leads/learning'
 import { recordUsage } from '../usage'
 
 export const SCORE_BATCH = 20
@@ -36,7 +39,7 @@ export interface ScoringThread {
   snippet: string | null
 }
 
-export function scoringSystemPrompt(p: ScoringProject) {
+export function scoringSystemPrompt(p: ScoringProject, examples?: ScoringExamples) {
   return `You find threads and posts (Reddit, Hacker News, Bluesky, X) where a founder could genuinely help someone, and where their product may be relevant. You never write the reply yourself.
 
 Product: ${p.name} (${p.url})
@@ -54,7 +57,7 @@ For each thread, return:
 - kind: seeking_tool (asks for a tool or service), comparison (weighs named products), complaint (about a specific product), pain (describes the problem without asking for tools), other.
 - reason: one sentence.
 - reply_angle: one sentence on how to help in a reply.
-
+${scoringExamplesBrief(examples)}
 Score every thread exactly once, using its number as id.`
 }
 
@@ -71,10 +74,10 @@ export function scoringUserPrompt(threads: ScoringThread[]) {
     .join('\n\n')
 }
 
-export async function scoreThreads(llm: Llm, project: ScoringProject, threads: ScoringThread[]) {
+export async function scoreThreads(llm: Llm, project: ScoringProject, threads: ScoringThread[], examples?: ScoringExamples) {
   const res = await llm.generate({
     tier: 'fast',
-    system: scoringSystemPrompt(project),
+    system: scoringSystemPrompt(project, examples),
     prompt: scoringUserPrompt(threads),
     schema: ScoreBatch,
     maxTokens: 8000,
@@ -117,6 +120,8 @@ export async function runScoring(ctx: JobContext, opts: { maxBatches?: number } 
         channel: schema.threads.channel,
         title: schema.threads.title,
         snippet: schema.threads.snippet,
+        createdUtc: schema.threads.createdUtc,
+        state: schema.threads.state,
       })
       .from(schema.scoreQueue)
       .innerJoin(schema.threads, eq(schema.threads.id, schema.scoreQueue.threadId))
@@ -136,9 +141,18 @@ export async function runScoring(ctx: JobContext, opts: { maxBatches?: number } 
       continue
     }
 
+    // Threads nobody can reply to any more (archived, removed) are not leads: skip the LLM call.
+    const now = ctx.now()
+    const open = items.filter(i => i.state === 'open' && !stateFromAge(i.platform, i.createdUtc, now, i.threadId))
+    if (open.length === 0) {
+      await dequeue()
+      dropped += items.length
+      continue
+    }
+
     let result: Awaited<ReturnType<typeof scoreThreads>>
     try {
-      result = await scoreThreads(ctx.llm, project, items)
+      result = await scoreThreads(ctx.llm, project, open, await scoringExamples(ctx.db, project.id))
     }
     catch (error) {
       // A batch the model refuses or cannot answer would block the queue forever: drop it.
@@ -152,7 +166,7 @@ export async function runScoring(ctx: JobContext, opts: { maxBatches?: number } 
       break
     }
 
-    const inserts = items.flatMap((item, i) => {
+    const inserts = open.flatMap((item, i) => {
       const s = result.scores[i]
       if (!s) return []
       return [ctx.db.insert(schema.threadScores).values({

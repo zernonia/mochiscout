@@ -11,7 +11,7 @@ const threads = [
 
 function fakeLlm(scores: unknown[]): Llm {
   return {
-    models: { fast: 'f', quality: 'q' },
+    models: { fast: 'f', balanced: 'b', quality: 'q' },
     generate: async () => ({ data: { scores } as any, model: 'f', usage: { inputTokens: 1, outputTokens: 1 } }),
   }
 }

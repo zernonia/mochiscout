@@ -10,6 +10,7 @@ export function getLlm(env: Env): Llm | null {
     baseURL: env.ANTHROPIC_BASE_URL,
     models: {
       ...(env.LLM_FAST_MODEL ? { fast: env.LLM_FAST_MODEL } : {}),
+      ...(env.LLM_BALANCED_MODEL ? { balanced: env.LLM_BALANCED_MODEL } : {}),
       ...(env.LLM_QUALITY_MODEL ? { quality: env.LLM_QUALITY_MODEL } : {}),
     },
   })

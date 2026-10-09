@@ -2,6 +2,7 @@ import type { Db } from '@mochiscout/db'
 import type { Angle } from '../drafter/generate'
 import { and, count, desc, eq, gte, schema, sql } from '@mochiscout/db'
 import { DEFAULT_COOLDOWN_DAYS, MAX_PROMO_POSTS_PER_DAY } from '../drafter/checks'
+import { HN_REPLY_DAYS, REDDIT_ARCHIVE_DAYS } from '@mochiscout/sources'
 import { subredditMap } from '../subreddits/map'
 
 const DAY_MS = 86_400_000
@@ -47,7 +48,12 @@ export interface TodayPlan {
 export async function buildToday(db: Db, project: Project, now = new Date()): Promise<TodayPlan> {
   const s = schema.threadScores
   const t = schema.threads
-  const visible = and(eq(s.projectId, project.id), eq(s.status, 'new'), gte(s.intent, project.intentThreshold))
+  const nowS = Math.floor(now.getTime() / 1000)
+  // Only threads that can still be answered (see stateFromAge): not archived, removed or past the reply window.
+  const replyable = sql`${t.state} = 'open'
+    and not (${t.platform} = 'reddit' and (${t.createdUtc} < ${nowS - REDDIT_ARCHIVE_DAYS * 86_400} or length(${t.id}) <= 16))
+    and not (${t.platform} = 'hn' and ${t.createdUtc} < ${nowS - HN_REPLY_DAYS * 86_400})`
+  const visible = and(eq(s.projectId, project.id), eq(s.status, 'new'), gte(s.intent, project.intentThreshold), replyable)
 
   const [threads, [newCount], [pending], history, painPoints, drafted, map] = await Promise.all([
     db.select({

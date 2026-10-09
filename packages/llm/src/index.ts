@@ -4,21 +4,23 @@ import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod'
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod'
 
 /**
- * LLM layer (docs/arch.md §9). Two tiers:
+ * LLM layer (docs/arch.md §9). Three tiers:
  * - fast: scoring, extraction, clustering (high volume, cheap)
- * - quality: drafts, rule checks
+ * - balanced: background reply drafts for hot leads
+ * - quality: drafts the user asks for, rule checks
  * Every call returns JSON validated against a zod schema, with one retry on
  * a parse failure. Anthropic is the first provider; others can implement
  * `Llm` later.
  */
-export type Tier = 'fast' | 'quality'
+export type Tier = 'fast' | 'balanced' | 'quality'
 
 export const DEFAULT_MODELS: Record<Tier, string> = {
   fast: 'claude-haiku-5-5',
+  balanced: 'claude-sonnet-5-5',
   quality: 'claude-opus-5-5',
 }
 
-const EFFORT: Record<Tier, 'low' | 'high'> = { fast: 'low', quality: 'high' }
+const EFFORT: Record<Tier, 'low' | 'medium' | 'high'> = { fast: 'low', balanced: 'medium', quality: 'high' }
 
 /** Models that accept server-side refusal fallback (`fallbacks: "default"`). */
 const SERVER_FALLBACK_MODELS = new Set(['claude-opus-5-5', 'claude-opus-5', 'claude-fable-5-1', 'claude-sonnet-5-5'])

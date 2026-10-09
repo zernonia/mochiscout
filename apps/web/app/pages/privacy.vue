@@ -19,7 +19,7 @@
     <h2>Public posts we process</h2>
     <p>
       To build your feed, the Service reads publicly available posts from Reddit, Hacker News, Bluesky and X through public feeds or official APIs.
-      We store the post's link, title, a short excerpt, author handle and public engagement counts so you can review them. We do not collect private
+      We store the post's link, title, text, author handle and public engagement counts, plus a few of its top public replies (with their authors' handles) for the posts you may answer, so you can review them and draft a reply that fits the conversation. We do not collect private
       messages, do not log in to any social network as anyone, and do not build profiles of the people who wrote those posts. Posts that no project
       found relevant are deleted after 90 days.
     </p>

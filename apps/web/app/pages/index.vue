@@ -33,8 +33,8 @@ const asks = [
 
 const steps = [
   { title: 'Paste your URL', body: 'We read your page to learn what it does and who it\'s for, then suggest keywords, competitors and the communities your buyers use.' },
-  { title: 'Open your feed', body: 'New posts from Reddit, Hacker News, Bluesky and X are scored for buying intent. You only see the ones worth answering, each with a reason and an angle.' },
-  { title: 'Reply in a click', body: 'Get an AI-drafted reply for any thread, edit it in your voice, then copy it into the thread and post it yourself. The tracker tells you if a post gets removed.' },
+  { title: 'Open your feed', body: 'New posts from Reddit, Hacker News, Bluesky and X are scored for buying intent. Fresh, uncrowded ones rise to the top, archived ones are flagged, and hot leads can email you.' },
+  { title: 'Reply in a click', body: 'Get an AI-drafted reply that has read the whole thread, edit it, then copy it in and post it yourself. It learns your voice and what you care about from what you reply to and dismiss.' },
 ]
 
 const principles = [

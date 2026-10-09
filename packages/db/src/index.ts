@@ -11,4 +11,4 @@ export { schema }
 export * from './schema'
 
 // Re-export query helpers so apps share this package's drizzle-orm instance.
-export { and, asc, count, desc, eq, gt, gte, inArray, isNull, lt, lte, ne, not, or, sql } from 'drizzle-orm'
+export { and, asc, count, desc, eq, gt, gte, inArray, isNotNull, isNull, lt, lte, ne, not, or, sql } from 'drizzle-orm'

@@ -70,6 +70,9 @@ export const projects = sqliteTable('projects', {
   intentThreshold: integer('intent_threshold').notNull().default(60),
   /** Draft a reply for every new inbox thread automatically (paid plans). */
   autoReply: integer('auto_reply', { mode: 'boolean' }).notNull().default(false),
+  /** Email members when a hot lead appears (paid plans). */
+  hotAlerts: integer('hot_alerts', { mode: 'boolean' }).notNull().default(true),
+  lastHotAlertAt: integer('last_hot_alert_at', { mode: 'timestamp' }),
   createdAt: createdAt(),
 })
 
@@ -115,6 +118,13 @@ export const threads = sqliteTable(
     engagement: text('engagement_json', { mode: 'json' }),
     source: text('source', { enum: ['rss', 'search', 'api', 'extension'] }).notNull(),
     searchRankFlag: integer('search_rank_flag', { mode: 'boolean' }).notNull().default(false),
+    /** Whether a reply is still possible. Archived: too old (Reddit ~6 months, HN 2 weeks). */
+    state: text('state', { enum: ['open', 'archived', 'locked', 'removed', 'deleted'] }).notNull().default('open'),
+    /** Full post text (≤ 4000 chars), fetched before drafting. */
+    body: text('body'),
+    /** Top comments (≤ 8), fetched with the body. */
+    comments: text('comments_json', { mode: 'json' }).$type<{ author: string | null, text: string, score?: number }[]>(),
+    contextFetchedAt: integer('context_fetched_at', { mode: 'timestamp' }),
     ingestedAt: integer('ingested_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   },
   t => [index('threads_channel_created_idx').on(t.channel, t.createdUtc)],
@@ -132,7 +142,14 @@ export const threadScores = sqliteTable(
     /** AI-drafted reply the user can edit, copy and post themselves. */
     replyDraft: text('reply_draft'),
     replyDraftedAt: integer('reply_drafted_at', { mode: 'timestamp' }),
+    /** The model's draft before the user's edits: the difference teaches the founder's voice. */
+    replyAiDraft: text('reply_ai_draft'),
     status: text('status', { enum: ['new', 'replied', 'dismissed', 'saved'] }).notNull().default('new'),
+    statusChangedAt: integer('status_changed_at', { mode: 'timestamp' }),
+    /** Why a thread was dismissed; fit reasons calibrate future scoring. */
+    dismissReason: text('dismiss_reason', { enum: ['off_topic', 'not_buyer', 'already_answered', 'closed', 'other'] }),
+    /** When a hot-lead alert went out for this thread. */
+    alertedAt: integer('alerted_at', { mode: 'timestamp' }),
     scoredAt: integer('scored_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   },
   t => [

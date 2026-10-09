@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { BookmarkIcon, CheckIcon, CopyIcon, ExternalLinkIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TrendingUpIcon, XIcon } from '@lucide/vue'
+import { BookmarkIcon, CheckIcon, ChevronDownIcon, CopyIcon, ExternalLinkIcon, FlameIcon, LockIcon, MessageSquareIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TrendingUpIcon, XIcon } from '@lucide/vue'
 import { useDebounceFn } from '@vueuse/core'
 import { toast } from '@/lib/toast'
 
 type Status = 'new' | 'saved' | 'replied' | 'dismissed'
+type ThreadState = 'open' | 'archived' | 'locked' | 'removed' | 'deleted'
+type DismissReason = 'off_topic' | 'not_buyer' | 'already_answered' | 'closed' | 'other'
 
 const props = defineProps<{
   projectId: string
@@ -21,10 +23,42 @@ const props = defineProps<{
     replyAngle: string | null
     searchRankFlag?: boolean
     replyDraft?: string | null
+    state?: ThreadState
+    hot?: boolean
+    ageHours?: number | null
+    commentCount?: number | null
+    competitorMentions?: string[]
+    dismissReason?: DismissReason | null
   }
   status?: Status
 }>()
-const emit = defineEmits<{ status: [Status] }>()
+const emit = defineEmits<{ status: [Status, DismissReason?] }>()
+
+// Drafting re-checks the thread; it may turn out archived or removed since the list loaded.
+const state = ref<ThreadState>(props.thread.state ?? 'open')
+watch(() => props.thread.state, (next) => { if (next) state.value = next })
+const closed = computed(() => state.value !== 'open')
+const closedLabel: Record<ThreadState, string> = {
+  open: '',
+  archived: 'Archived · can\'t reply',
+  locked: 'Locked · can\'t reply',
+  removed: 'Removed',
+  deleted: 'Deleted by author',
+}
+
+const dismissReasons: { value: DismissReason, label: string }[] = [
+  { value: 'off_topic', label: 'Not relevant' },
+  { value: 'not_buyer', label: 'Not my audience' },
+  { value: 'already_answered', label: 'Already answered' },
+  { value: 'other', label: 'Other reason' },
+]
+const reasonLabel: Record<DismissReason, string> = {
+  off_topic: 'Not relevant',
+  not_buyer: 'Not my audience',
+  already_answered: 'Already answered',
+  closed: 'Closed to replies',
+  other: 'Other',
+}
 
 const kinds: Record<string, { label: string, dot: string }> = {
   seeking_tool: { label: 'Looking for a tool', dot: 'bg-emerald-500' },
@@ -39,7 +73,6 @@ const platformLabel: Record<string, string> = { reddit: 'Reddit', hn: 'Hacker Ne
 const actions = [
   { status: 'replied' as const, label: 'Replied', icon: CheckIcon },
   { status: 'saved' as const, label: 'Save', icon: BookmarkIcon },
-  { status: 'dismissed' as const, label: 'Dismiss', icon: XIcon },
   { status: 'new' as const, label: 'Back to new', icon: RotateCcwIcon },
 ]
 
@@ -66,7 +99,14 @@ async function draftReply() {
     reply.value = res.replyDraft
   }
   catch (error) {
-    if (!isPlanLimit(error)) toast.error(apiErrorMessage(error, 'Could not draft a reply'))
+    const closedState = (error as { data?: { data?: { state?: ThreadState } } })?.data?.data?.state
+    if (closedState) {
+      state.value = closedState
+      toast.error(apiErrorMessage(error, 'This thread no longer accepts replies.'))
+    }
+    else if (!isPlanLimit(error)) {
+      toast.error(apiErrorMessage(error, 'Could not draft a reply'))
+    }
   }
   finally {
     drafting.value = false
@@ -99,7 +139,7 @@ async function copyAndOpen() {
 </script>
 
 <template>
-  <article class="flex gap-4 rounded-xl border bg-card p-4 shadow-xs/5 sm:p-5">
+  <article class="flex gap-4 rounded-xl border bg-card p-4 shadow-xs/5 transition-opacity sm:p-5" :class="closed && status === 'new' && 'opacity-70'">
     <IntentScore :value="thread.intent" class="hidden sm:flex" />
     <div class="flex min-w-0 flex-1 flex-col gap-3">
       <div class="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground">
@@ -110,13 +150,20 @@ async function copyAndOpen() {
         </span>
         <span class="font-medium text-foreground">{{ thread.channel ? `r/${thread.channel}` : platformLabel[thread.platform ?? ''] ?? '' }}</span>
         <span v-if="age(thread.createdUtc)">{{ age(thread.createdUtc) }}</span>
+        <span v-if="thread.commentCount != null" class="inline-flex items-center gap-1"><MessageSquareIcon class="size-3" /> {{ thread.commentCount }}</span>
+        <span v-if="thread.hot && !closed" class="inline-flex items-center gap-1 rounded-full bg-orange-500/12 px-2 py-0.5 font-medium text-orange-700 dark:text-orange-400"><FlameIcon class="size-3" /> Hot · reply now</span>
+        <span v-if="closed" class="inline-flex items-center gap-1 rounded-full bg-neutral-500/12 px-2 py-0.5 font-medium text-neutral-700 dark:text-neutral-300"><LockIcon class="size-3" /> {{ closedLabel[state] }}</span>
+        <span v-if="status === 'dismissed' && thread.dismissReason" class="rounded-full border px-2 py-0.5">{{ reasonLabel[thread.dismissReason] }}</span>
         <span v-if="thread.searchRankFlag" class="inline-flex items-center gap-1 text-sky-700 dark:text-sky-400"><TrendingUpIcon class="size-3" /> Ranks in Google</span>
       </div>
 
       <a :href="thread.url" target="_blank" rel="noopener" class="text-[15px] leading-snug font-medium text-pretty hover:underline">{{ thread.title }}</a>
       <p v-if="thread.snippet" class="line-clamp-3 text-sm text-muted-foreground">{{ thread.snippet }}</p>
+      <p v-if="thread.competitorMentions?.length && !closed" class="text-xs text-muted-foreground">
+        Already suggested in the replies: <span class="font-medium text-foreground">{{ thread.competitorMentions.join(', ') }}</span>. Your draft will say how you differ.
+      </p>
 
-      <div v-if="thread.reason || thread.replyAngle" class="grid gap-2 rounded-lg border border-dashed bg-muted/40 p-3 text-sm sm:grid-cols-2">
+      <div v-if="(thread.reason || thread.replyAngle) && !closed" class="grid gap-2 rounded-lg border border-dashed bg-muted/40 p-3 text-sm sm:grid-cols-2">
         <div v-if="thread.reason">
           <div class="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">Why it matters</div>
           <p class="mt-0.5">{{ thread.reason }}</p>
@@ -141,7 +188,13 @@ async function copyAndOpen() {
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        <template v-if="reply && !drafting">
+        <template v-if="closed">
+          <Button v-if="status !== 'dismissed'" size="sm" variant="outline" @click="emit('status', 'dismissed', 'closed')"><XIcon /> Dismiss, can't reply</Button>
+          <Button as-child size="sm" variant="ghost">
+            <a :href="thread.url" target="_blank" rel="noopener"><ExternalLinkIcon /> Open thread</a>
+          </Button>
+        </template>
+        <template v-else-if="reply && !drafting">
           <Button size="sm" @click="copyAndOpen">
             <CheckIcon v-if="copied" /><CopyIcon v-else /> {{ copied ? 'Copied, opening thread' : 'Copy & open thread' }}
           </Button>
@@ -153,7 +206,7 @@ async function copyAndOpen() {
           </Button>
         </template>
         <Button
-          v-for="a in actions.filter(a => a.status !== (status ?? 'new'))"
+          v-for="a in actions.filter(a => a.status !== (status ?? 'new') && !(closed && a.status === 'replied'))"
           :key="a.status"
           size="sm"
           variant="ghost"
@@ -161,6 +214,16 @@ async function copyAndOpen() {
         >
           <component :is="a.icon" /> {{ a.label }}
         </Button>
+        <!-- The reason teaches the scorer what isn't a fit. -->
+        <Menu v-if="status !== 'dismissed' && !closed">
+          <MenuTrigger as-child>
+            <Button size="sm" variant="ghost"><XIcon /> Dismiss <ChevronDownIcon class="-ms-0.5 opacity-60" /></Button>
+          </MenuTrigger>
+          <MenuPopup align="start" class="min-w-48">
+            <MenuGroupLabel>Why? It improves your scores</MenuGroupLabel>
+            <MenuItem v-for="r in dismissReasons" :key="r.value" @select="emit('status', 'dismissed', r.value)">{{ r.label }}</MenuItem>
+          </MenuPopup>
+        </Menu>
       </div>
     </div>
   </article>
