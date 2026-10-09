@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const normalized = /^https?:\/\//i.test(url) ? url : `https://${url}`
   let page
   try {
-    page = await fetchProductPage(createHttp({ userAgent: sourcesUserAgent(env), minDelayMs: 0 }), normalized)
+    page = await fetchProductPage(createHttp({ userAgent: sourcesUserAgent(env), minDelayMs: 0, fetch: selfAwareFetch(event, env) }), normalized)
   }
   catch (error) {
     if (error instanceof UnsafeUrlError) throw createError({ statusCode: 400, statusMessage: error.message })

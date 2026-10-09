@@ -33,8 +33,11 @@ export default defineNuxtConfig({
       waitlist: false,
       /** GitHub repo that receives subreddit rule suggestions (owner/name). */
       rulesRepo: 'zernonia/social-radar',
+      /** PostHog project key (NUXT_PUBLIC_POSTHOG_KEY). Empty = no analytics; only used on the cloud edition. */
+      posthogKey: '',
     },
   },
+
 
   nitro: {
     preset: 'cloudflare_module',

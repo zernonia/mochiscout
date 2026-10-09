@@ -13,6 +13,7 @@
       <li><strong>Settings:</strong> time zone, digest preferences and, if you add it, your public Reddit username, which we use to check your account's public standing.</li>
       <li><strong>Billing data:</strong> your plan and subscription status. Payments are handled by Polar; we never see or store card details.</li>
       <li><strong>Technical data:</strong> standard request logs (IP address, user agent, time) kept by our hosting provider for security and debugging.</li>
+      <li><strong>Usage data:</strong> which pages you visit and features you use, your browser and device type, and approximate location from your IP address, collected with PostHog so we can see how the Service is used and improve it. When you are signed in, these events are linked to your account ID, email and name.</li>
     </ul>
 
     <h2>Public posts we process</h2>
@@ -30,12 +31,13 @@
       <li>To keep the Service secure and fix problems.</li>
       <li>To reply when you contact us.</li>
     </ul>
-    <p>We do not sell your data, use it for advertising, or share it with data brokers. The Service uses no third-party analytics or tracking scripts.</p>
+    <p>We do not sell your data, use it for advertising, or share it with data brokers. We use PostHog for product analytics only, never for advertising.</p>
 
     <h2>Cookies</h2>
     <p>
       We use two strictly necessary cookies: an encrypted session cookie that keeps you signed in, and a cookie that remembers which team you
-      have selected. There are no advertising or analytics cookies.
+      have selected. PostHog stores an analytics identifier in a cookie and in your browser's local storage so visits can be counted. There are
+      no advertising cookies. You can block analytics with your browser's privacy settings or an ad blocker; the Service keeps working.
     </p>
 
     <h2>Service providers</h2>
@@ -48,6 +50,7 @@
       <li><strong>Polar:</strong> payments, invoices, tax and subscription management, as merchant of record.</li>
       <li><strong>GitHub and Google:</strong> sign-in, if you choose them.</li>
       <li><strong>Resend:</strong> backup email delivery if our primary email provider is unavailable.</li>
+      <li><strong>PostHog:</strong> product analytics (United States).</li>
     </ul>
     <p>Some of these providers process data outside your country, including in the United States.</p>
 

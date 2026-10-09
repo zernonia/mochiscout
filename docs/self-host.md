@@ -135,7 +135,8 @@ variable in your Workers Build, or a Worker variable). That turns on the landing
 plans and quotas, and billing. Billing needs `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`,
 `POLAR_PRODUCT_SOLO` and `POLAR_PRODUCT_PRO` (`POLAR_SERVER=sandbox` for testing); point a
 Polar webhook at `<APP_URL>/api/webhooks/polar` with the `subscription.*` events. Before
-launch, `NUXT_PUBLIC_WAITLIST=true` replaces sign-up with a waitlist.
+launch, `NUXT_PUBLIC_WAITLIST=true` replaces sign-up with a waitlist. Set `NUXT_PUBLIC_POSTHOG_KEY` to send product analytics to
+PostHog (US cloud), proxied through `/ingest` on your own domain; self-hosted instances never load it.
 
 ## Local development
 
