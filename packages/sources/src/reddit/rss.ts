@@ -22,6 +22,14 @@ export function newPostsFeedUrl(subreddits: string[], limit = FEED_LIMIT) {
   return `${BASE}/r/${path}/new/.rss?limit=${limit}`
 }
 
+/**
+ * A sub's hot posts. Pinned posts (rules, weekly self-promotion threads)
+ * come first in the hot listing, which is how rules are found without the API.
+ */
+export function hotPostsFeedUrl(subreddit: string, limit = 10) {
+  return `${BASE}/r/${encodeURIComponent(normalizeSubreddit(subreddit))}/hot/.rss?limit=${limit}`
+}
+
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '',
@@ -82,4 +90,12 @@ export function parseRedditFeed(xml: string): Post[] {
     })
   }
   return posts
+}
+
+/** The sub's public description (the feed's subtitle), if any. */
+export function parseFeedSubtitle(xml: string): string | null {
+  const doc = parser.parse(xml) as { feed?: { subtitle?: string | { '#text': string } } }
+  const raw = text(doc.feed?.subtitle)
+  const value = raw ? decodeEntities(raw).trim() : ''
+  return value || null
 }

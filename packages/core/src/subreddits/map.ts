@@ -1,7 +1,12 @@
 import type { Db } from '@mochiscout/db'
+import type { SubredditStats } from '@mochiscout/db'
 import type { SubredditRules } from '@mochiscout/rules'
-import { and, count, eq, schema, sql } from '@mochiscout/db'
+import type { SubredditVerdict } from './insights'
+import type { RulesSource } from './rules'
+import { and, count, eq, inArray, schema, sql } from '@mochiscout/db'
 import { getRules, rulesForTags } from '@mochiscout/rules'
+import { subredditVerdict } from './insights'
+import { resolveRulesMany } from './rules'
 
 const PROMO_WEIGHT: Record<SubredditRules['promo_policy'], number> = {
   none: 0,
@@ -31,6 +36,11 @@ export interface SubredditCandidate {
   fit: number
   evidence: SubredditEvidence
   rules: SubredditRules | null
+  /** Curated file, or read from the sub's pinned posts. */
+  rulesSource: RulesSource | null
+  /** Pooled outcomes across all users, once the sub has enough activity. */
+  stats: SubredditStats | null
+  verdict: SubredditVerdict
   /** Why it is listed: watched, seen in results, or suggested by rules-DB tags. */
   sources: ('watched' | 'threads' | 'rules')[]
 }
@@ -90,6 +100,9 @@ export async function subredditMap(
         fit: 0,
         evidence: { scored: 0, hits: 0, avgIntent: 0, pending: 0 },
         rules: getRules(name) ?? null,
+        rulesSource: null,
+        stats: null,
+        verdict: { grade: 'unknown', removalRate: null, linkedReplyRemovalRate: null, reasons: [] },
         sources: [],
       }
       byName.set(name, c)
@@ -118,7 +131,22 @@ export async function subredditMap(
     if (row.watching) c.sources.unshift('watched')
   }
 
-  for (const c of byName.values()) c.fit = fitScore(c.evidence, c.rules)
+  const names = [...byName.keys()]
+  const [resolved, statRows] = await Promise.all([
+    resolveRulesMany(db, names),
+    names.length
+      ? db.select({ name: schema.subreddits.name, stats: schema.subreddits.stats }).from(schema.subreddits).where(inArray(schema.subreddits.name, names.slice(0, 90)))
+      : Promise.resolve([]),
+  ])
+  const statsByName = new Map(statRows.map(r => [r.name, r.stats]))
+  for (const c of byName.values()) {
+    const r = resolved.get(c.name)
+    c.rules = r?.rules ?? null
+    c.rulesSource = r?.source ?? null
+    c.stats = statsByName.get(c.name) ?? null
+    c.verdict = subredditVerdict(c.rules, c.stats)
+    c.fit = fitScore(c.evidence, c.rules)
+  }
   return [...byName.values()].sort((a, b) => Number(b.watching) - Number(a.watching) || b.fit - a.fit)
 }
 

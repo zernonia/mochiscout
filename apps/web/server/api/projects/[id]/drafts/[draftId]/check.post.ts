@@ -1,7 +1,6 @@
-import { checkTone, recordUsage } from '@mochiscout/core'
+import { checkTone, recordUsage, resolveRules } from '@mochiscout/core'
 import { eq, schema } from '@mochiscout/db'
 import { LlmRefusalError } from '@mochiscout/llm'
-import { getRules } from '@mochiscout/rules'
 
 /** Full check: deterministic rules plus the LLM tone check when a key is set. */
 export default defineEventHandler(async (event) => {
@@ -12,7 +11,7 @@ export default defineEventHandler(async (event) => {
     try {
       const res = await checkTone(llm, {
         subreddit: draft.subreddit,
-        rules: getRules(draft.subreddit) ?? null,
+        rules: (await resolveRules(getDb(event), draft.subreddit)).rules,
         title: draft.title,
         body: draft.body,
         promo: draft.promo,
@@ -27,7 +26,7 @@ export default defineEventHandler(async (event) => {
   }
   const check = buildReport(
     { subreddit: draft.subreddit, title: draft.title, body: draft.body, promo: draft.promo },
-    await draftCheckContext(getDb(event), user.id, org.id),
+    await draftCheckContext(getDb(event), user.id, org.id, draft.subreddit),
     tone,
   )
   const [row] = await getDb(event).update(schema.drafts).set({ check }).where(eq(schema.drafts.id, draft.id)).returning()

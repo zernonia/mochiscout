@@ -2,7 +2,6 @@ import type { Db } from '@mochiscout/db'
 import type { Env } from './env'
 import { ANGLES, buildToday, latestPainPoints, listThreads, normalizeSubredditName, setThreadStatus, subredditMap } from '@mochiscout/core'
 import { asc, eq, schema } from '@mochiscout/db'
-import { getRules } from '@mochiscout/rules'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/cfworker'
 import { z } from 'zod'
@@ -126,11 +125,9 @@ export function createMcpServer(ctx: McpContext) {
   }, run(async (a: { subreddit: string, title: string, body: string, mentions_product: boolean }) => {
     const subreddit = normalizeSubredditName(a.subreddit)
     if (!subreddit) throw new Error('Not a valid subreddit name')
-    const report = buildReport(
-      { subreddit, title: a.title, body: a.body, promo: a.mentions_product },
-      await draftCheckContext(ctx.db, ctx.userId, ctx.orgId),
-    )
-    return { ...report, rules: getRules(subreddit) ?? null }
+    const checkCtx = await draftCheckContext(ctx.db, ctx.userId, ctx.orgId, subreddit)
+    const report = buildReport({ subreddit, title: a.title, body: a.body, promo: a.mentions_product }, checkCtx)
+    return { ...report, rules: checkCtx.rules }
   }))
 
   server.registerTool('draft_post', {

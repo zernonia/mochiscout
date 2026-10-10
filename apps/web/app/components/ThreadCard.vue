@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookmarkIcon, CheckIcon, ChevronDownIcon, CopyIcon, ExternalLinkIcon, FlameIcon, LockIcon, MessageSquareIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TrendingUpIcon, XIcon } from '@lucide/vue'
+import { BookmarkIcon, CheckIcon, ChevronDownIcon, CircleAlertIcon, CircleHelpIcon, CopyIcon, ExternalLinkIcon, FlameIcon, LinkIcon, LockIcon, MessageSquareIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TrendingUpIcon, XIcon } from '@lucide/vue'
 import { useDebounceFn } from '@vueuse/core'
 import { toast } from '@/lib/toast'
 
@@ -29,6 +29,8 @@ const props = defineProps<{
     commentCount?: number | null
     competitorMentions?: string[]
     dismissReason?: DismissReason | null
+    replyUrl?: string | null
+    replyStatus?: 'live' | 'removed' | 'unknown' | null
   }
   status?: Status
 }>()
@@ -126,6 +128,47 @@ function onEdit(text: string) {
   saveEdits(text)
 }
 
+// Tracking link: the project's own URL with ?ref=ms_<code>, counted by the script on their site.
+const copyingLink = ref(false)
+async function copyTrackingLink() {
+  copyingLink.value = true
+  try {
+    const { link } = await $fetch<{ link: string }>(`${threadPath.value}/ref`, { method: 'POST' })
+    await navigator.clipboard.writeText(link)
+    toast.success('Tracking link copied. Only add it where the community allows links.')
+  }
+  catch (error) {
+    toast.error(apiErrorMessage(error, 'Could not copy the link'))
+  }
+  finally {
+    copyingLink.value = false
+  }
+}
+
+// After replying: the link to the posted reply, so we can check it stays up.
+const replyUrl = ref(props.thread.replyUrl ?? '')
+const savedReplyUrl = ref(props.thread.replyUrl ?? '')
+const savingReplyUrl = ref(false)
+async function saveReplyUrl() {
+  savingReplyUrl.value = true
+  try {
+    await $fetch(threadPath.value, { method: 'PATCH', body: { replyUrl: replyUrl.value.trim() || null } })
+    savedReplyUrl.value = replyUrl.value.trim()
+    toast.success(savedReplyUrl.value ? 'We\'ll check every 12 hours that your reply stays up.' : 'Reply link removed.')
+  }
+  catch (error) {
+    toast.error(apiErrorMessage(error, 'Could not save the link'))
+  }
+  finally {
+    savingReplyUrl.value = false
+  }
+}
+const replyStatusInfo = {
+  live: { label: 'Your reply is live', class: 'text-emerald-700 dark:text-emerald-400', icon: CheckIcon },
+  removed: { label: 'Your reply was removed', class: 'text-red-700 dark:text-red-400', icon: CircleAlertIcon },
+  unknown: { label: 'Checking your reply', class: 'text-muted-foreground', icon: CircleHelpIcon },
+} as const
+
 async function copyAndOpen() {
   try {
     await navigator.clipboard.writeText(reply.value)
@@ -187,6 +230,18 @@ async function copyAndOpen() {
         <Textarea :model-value="reply" rows="5" class="bg-background text-sm" aria-label="Reply draft" @update:model-value="(v: string | number) => onEdit(String(v))" />
       </div>
 
+      <!-- Replied: track the posted reply -->
+      <form v-if="status === 'replied'" class="flex flex-col gap-2 rounded-lg border border-dashed p-3" @submit.prevent="saveReplyUrl">
+        <div v-if="savedReplyUrl" class="flex items-center gap-1.5 text-xs font-medium" :class="replyStatusInfo[thread.replyStatus ?? 'unknown'].class">
+          <component :is="replyStatusInfo[thread.replyStatus ?? 'unknown'].icon" class="size-3.5" /> {{ replyStatusInfo[thread.replyStatus ?? 'unknown'].label }}
+        </div>
+        <Label v-else :for="`reply-url-${thread.id}`" class="text-xs font-normal text-muted-foreground">Paste the link to your reply and we'll check it stays up</Label>
+        <div class="flex gap-2">
+          <Input :id="`reply-url-${thread.id}`" v-model="replyUrl" placeholder="https://www.reddit.com/r/…/comments/…/…/abc123/" class="h-8 flex-1 text-sm" />
+          <Button type="submit" size="sm" variant="outline" :loading="savingReplyUrl" :disabled="replyUrl.trim() === savedReplyUrl">Save</Button>
+        </div>
+      </form>
+
       <div class="flex flex-wrap items-center gap-2">
         <template v-if="closed">
           <Button v-if="status !== 'dismissed'" size="sm" variant="outline" @click="emit('status', 'dismissed', 'closed')"><XIcon /> Dismiss, can't reply</Button>
@@ -198,9 +253,10 @@ async function copyAndOpen() {
           <Button size="sm" @click="copyAndOpen">
             <CheckIcon v-if="copied" /><CopyIcon v-else /> {{ copied ? 'Copied, opening thread' : 'Copy & open thread' }}
           </Button>
+          <Button size="sm" variant="outline" :loading="copyingLink" @click="copyTrackingLink"><LinkIcon /> Copy tracking link</Button>
         </template>
         <template v-else>
-          <Button size="sm" :loading="drafting" @click="draftReply"><SparklesIcon /> Draft reply</Button>
+          <Button v-if="status !== 'replied'" size="sm" :loading="drafting" @click="draftReply"><SparklesIcon /> Draft reply</Button>
           <Button as-child size="sm" variant="outline">
             <a :href="thread.url" target="_blank" rel="noopener"><ExternalLinkIcon /> Open thread</a>
           </Button>

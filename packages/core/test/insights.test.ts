@@ -1,0 +1,65 @@
+import type { SubredditStats } from '@mochiscout/db'
+import { describe, expect, it } from 'vitest'
+import { refLink, sameSite } from '../src/leads/attribution'
+import { dueJobs } from '../src/schedule'
+import { peakHours, subredditVerdict } from '../src/subreddits/insights'
+import { autoToRules } from '../src/subreddits/rules'
+
+const stats = (over: Partial<SubredditStats> = {}): SubredditStats => ({
+  posts30d: 100, hours: Array.from({ length: 24 }, (_, h) => (h === 14 ? 0.3 : h === 15 ? 0.2 : 0.5 / 22)), buyingPosts30d: 12,
+  checked: 0, removed: 0, ownPosts: 0, ownPostsRemoved: 0, ownReplies: 0, ownRepliesRemoved: 0, linkedReplies: 0, linkedRepliesRemoved: 0, ...over,
+})
+
+describe('autoToRules', () => {
+  it('turns auto rules into a rules record, and ignores unknown policies', () => {
+    const auto = { promo_policy: 'weekly_thread_only' as const, self_promo_thread: 'Share Your Startup', links_allowed: 'none' as const, min_karma: 50, min_account_age_days: null, notes: '', evidence: ['Rules'] }
+    expect(autoToRules('saas', auto, new Date('2026-10-01'))).toMatchObject({ name: 'saas', promo_policy: 'weekly_thread_only', self_promo_thread: 'Share Your Startup', last_verified: '2026-10-01', tags: ['auto'] })
+    expect(autoToRules('saas', { ...auto, promo_policy: 'unknown' }, null)).toBeNull()
+  })
+})
+
+describe('subredditVerdict', () => {
+  const rules = autoToRules('saas', { promo_policy: 'allowed_with_value', self_promo_thread: null, links_allowed: null, min_karma: null, min_account_age_days: null, notes: '', evidence: [] }, null)
+  it('starts from the rules', () => {
+    expect(subredditVerdict(rules, null).grade).toBe('friendly')
+    expect(subredditVerdict({ ...rules!, promo_policy: 'none' }, null).grade).toBe('strict')
+    expect(subredditVerdict(null, null)).toMatchObject({ grade: 'unknown', removalRate: null })
+  })
+  it('tightens the grade when moderators remove a lot, once there are enough samples', () => {
+    expect(subredditVerdict(rules, stats({ checked: 5, removed: 4 })).removalRate).toBeNull()
+    const v = subredditVerdict(rules, stats({ checked: 40, removed: 12 }))
+    expect(v.grade).toBe('strict')
+    expect(v.reasons.join(' ')).toContain('removed 30% of the posts')
+  })
+  it('warns about links when linked replies get removed', () => {
+    const v = subredditVerdict(null, stats({ checked: 20, removed: 1, linkedReplies: 10, linkedRepliesRemoved: 6 }))
+    expect(v.grade).toBe('careful')
+    expect(v.reasons.at(-1)).toContain('Leave the link out')
+  })
+})
+
+describe('peakHours', () => {
+  it('lists the busiest UTC hours first', () => {
+    expect(peakHours(stats()).map(h => h.hour)).toEqual([14, 15, 0])
+  })
+})
+
+describe('attribution', () => {
+  it('adds the ref parameter to the founder\'s own URL', () => {
+    expect(refLink('https://shipnote.app', 'abc1234')).toBe('https://shipnote.app/?ref=ms_abc1234')
+    expect(refLink('https://shipnote.app/pricing?x=1', 'abc1234')).toBe('https://shipnote.app/pricing?x=1&ref=ms_abc1234')
+  })
+  it('only accepts events from the project\'s own site', () => {
+    expect(sameSite('https://www.shipnote.app', 'https://shipnote.app')).toBe(true)
+    expect(sameSite('https://app.shipnote.app', 'https://shipnote.app')).toBe(true)
+    expect(sameSite('https://evil.test', 'https://shipnote.app')).toBe(false)
+    expect(sameSite(null, 'https://shipnote.app')).toBe(true)
+  })
+})
+
+describe('schedule', () => {
+  it('runs insights daily at 05:00', () => {
+    expect(dueJobs(new Date('2026-10-10T05:00:00Z'))).toContain('insights')
+    expect(dueJobs(new Date('2026-10-10T06:00:00Z'))).not.toContain('insights')
+  })
+})

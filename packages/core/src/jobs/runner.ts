@@ -8,6 +8,7 @@ import { runHotAlerts } from '../leads/alerts'
 import { runLeadChecks } from '../leads/context'
 import { runWeeklyResearch } from '../research/research'
 import { runScoring } from '../scoring/score'
+import { runSubredditInsights } from '../subreddits/insights'
 import { runDigest } from '../today/digest'
 import { runTracker } from '../tracker/tracker'
 import { runDiscovery } from './discovery'
@@ -72,6 +73,7 @@ const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> 
   'tracker': runTracker,
   'digest': runDigest,
   'retention': runRetention,
+  'insights': runSubredditInsights,
 }
 
 /** Cron dispatcher: run every job due at this tick. */

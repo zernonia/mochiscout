@@ -1,24 +1,25 @@
 import type { Angle, CheckReport, DraftInput } from '@mochiscout/core'
 import type { Db } from '@mochiscout/db'
 import type { Env } from './env'
-import { checkDraft, checkTone, generateDraft, normalizeSubredditName, recordUsage, worst } from '@mochiscout/core'
+import { checkDraft, checkTone, generateDraft, normalizeSubredditName, recordUsage, resolveRules, worst } from '@mochiscout/core'
 import { eq, schema } from '@mochiscout/db'
 import { LlmRefusalError } from '@mochiscout/llm'
-import { getRules } from '@mochiscout/rules'
 
 type Project = typeof schema.projects.$inferSelect
 
-/** The user's Reddit account info and the org's post history, for rule checks. */
-export async function draftCheckContext(db: Db, userId: string, orgId: string) {
-  const [user, history] = await Promise.all([
+/** The sub's rules (curated or read from pinned posts), the user's Reddit account info and the org's post history, for rule checks. */
+export async function draftCheckContext(db: Db, userId: string, orgId: string, subreddit: string) {
+  const [user, history, resolved] = await Promise.all([
     db.select().from(schema.users).where(eq(schema.users.id, userId)).get(),
     db
       .select({ subreddit: schema.trackedPosts.subreddit, postedAt: schema.trackedPosts.postedAt, promo: schema.trackedPosts.promo })
       .from(schema.trackedPosts)
       .innerJoin(schema.projects, eq(schema.projects.id, schema.trackedPosts.projectId))
       .where(eq(schema.projects.orgId, orgId)),
+    resolveRules(db, subreddit),
   ])
   return {
+    rules: resolved.rules,
     account: {
       karma: user?.redditKarma ?? null,
       createdAt: user?.redditAccountCreatedAt ?? null,
@@ -33,7 +34,7 @@ export function buildReport(
   ctx: Awaited<ReturnType<typeof draftCheckContext>>,
   tone: CheckReport['tone'] = null,
 ): CheckReport {
-  const results = checkDraft({ draft, rules: getRules(draft.subreddit) ?? null, ...ctx, now: new Date() })
+  const results = checkDraft({ draft, rules: ctx.rules, account: ctx.account, history: ctx.history, now: new Date() })
   return {
     level: worst([...results.map(r => r.level), ...(tone ? [tone.level] : [])]),
     results,
@@ -53,7 +54,7 @@ export async function createDraft(db: Db, env: Env, ctx: { userId: string, orgId
   const subreddit = normalizeSubredditName(input.subreddit)
   if (!subreddit) throw createError({ statusCode: 400, statusMessage: 'Not a valid subreddit name' })
   const promo = input.angle === 'showcase' ? true : input.promo
-  const rules = getRules(subreddit) ?? null
+  const { rules } = await resolveRules(db, subreddit)
 
   // Hard block (arch §7.6): no promo drafts for subs that forbid promotion.
   if (promo && rules?.promo_policy === 'none') {
@@ -83,7 +84,7 @@ export async function createDraft(db: Db, env: Env, ctx: { userId: string, orgId
     }
   }
 
-  const check = buildReport({ subreddit, title, body, promo }, await draftCheckContext(db, ctx.userId, ctx.orgId), tone)
+  const check = buildReport({ subreddit, title, body, promo }, await draftCheckContext(db, ctx.userId, ctx.orgId, subreddit), tone)
   const [draft] = await db.insert(schema.drafts).values({
     id: crypto.randomUUID(),
     projectId: ctx.project.id,

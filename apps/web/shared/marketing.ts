@@ -6,5 +6,5 @@ export const MARKETING_PAGES: { path: string, updated: string, priority: number 
   { path: '/alternatives', updated: '2026-10-10', priority: 0.8 },
   ...COMPETITORS.map(c => ({ path: `/alternatives/${c.slug}`, updated: c.verified, priority: c.slug === 'gummysearch' ? 0.9 : 0.7 })),
   { path: '/terms', updated: '2026-10-09', priority: 0.2 },
-  { path: '/privacy', updated: '2026-10-09', priority: 0.2 },
+  { path: '/privacy', updated: '2026-10-10', priority: 0.2 },
 ]

@@ -24,6 +24,20 @@
       found relevant are deleted after 90 days.
     </p>
 
+    <h2>Pooled community statistics</h2>
+    <p>
+      To make rule checks better for everyone, we combine outcomes across all users into anonymous counts per community: for example, how many
+      checked posts in a subreddit were removed, or how many replies containing a link stayed up. These counts never identify you, your project or
+      your posts, and we publish them on public subreddit pages. Rules we read from a community's pinned public posts are published the same way.
+    </p>
+
+    <h2>Tracking links on your site</h2>
+    <p>
+      If you add our tracking script to your own website, it reports only that a visit or sign-up arrived through one of your Mochiscout tracking links
+      (a link containing <code>ref=ms_…</code>). It sets no cookies, stores no IP addresses, and remembers the link for 30 days in the visitor's browser
+      storage. You are responsible for describing it in your own site's privacy policy.
+    </p>
+
     <h2>How we use it</h2>
     <ul>
       <li>To run the Service: find and score relevant posts, draft and check replies, send your digest and team invites.</li>

@@ -12,6 +12,7 @@ import {
   PlusIcon,
   SettingsIcon,
   SlidersHorizontalIcon,
+  TrendingUpIcon,
   UsersIcon,
 } from '@lucide/vue'
 
@@ -58,6 +59,7 @@ const groups = computed(() => {
     {
       label: 'Monitor',
       items: [
+        { to: `/app/${id}/results`, label: 'Results', icon: TrendingUpIcon },
         { to: `/app/${id}/tracker`, label: 'Tracker', icon: ActivityIcon, count: c?.trackerAlerts || undefined, tone: 'alert' as const },
         { to: `/app/${id}/profile`, label: 'Project profile', icon: SlidersHorizontalIcon },
       ],

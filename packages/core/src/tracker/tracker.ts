@@ -1,6 +1,6 @@
 import type { JobContext } from '../jobs/context'
 import { and, asc, eq, gte, isNull, lt, ne, or, schema, sql } from '@mochiscout/db'
-import { HttpDeferredError, HttpError, parsePostStatus, postFeedUrl, userFeedUrl } from '@mochiscout/sources'
+import { checkReplyStatus, HttpDeferredError, HttpError, parsePostStatus, parseReplyUrl, postFeedUrl, userFeedUrl } from '@mochiscout/sources'
 
 const TRACK_DAYS = 30
 const ACCOUNT_RECHECK_MS = 12 * 3_600_000
@@ -8,6 +8,7 @@ const ACCOUNT_RECHECK_MS = 12 * 3_600_000
 const LISTING_GRACE_MS = 30 * 60_000
 const MAX_POSTS_PER_RUN = 10
 const MAX_ACCOUNTS_PER_RUN = 3
+const MAX_REPLIES_PER_RUN = 10
 
 type TrackedPost = typeof schema.trackedPosts.$inferSelect
 
@@ -91,8 +92,33 @@ export async function runTracker(ctx: JobContext) {
     ))
     .limit(MAX_ACCOUNTS_PER_RUN)
 
-  const result = { posts: 0, accounts: 0, deferred: false }
+  // The founder's posted replies (links they pasted after marking a thread replied).
+  const s = schema.threadScores
+  const replies = await ctx.db.select({ projectId: s.projectId, threadId: s.threadId, replyUrl: s.replyUrl }).from(s)
+    .where(and(
+      sql`${s.replyUrl} is not null`,
+      or(isNull(s.replyStatus), ne(s.replyStatus, 'removed')),
+      or(isNull(s.statusChangedAt), gte(s.statusChangedAt, since)),
+    ))
+    .orderBy(sql`${s.replyCheckedAt} is not null`, asc(s.replyCheckedAt))
+    .limit(MAX_REPLIES_PER_RUN)
+
+  const result = { posts: 0, accounts: 0, replies: 0, deferred: false }
   try {
+    for (const r of replies) {
+      const ref = parseReplyUrl(r.replyUrl!)
+      let status: 'live' | 'removed' | 'unknown' = 'unknown'
+      try {
+        if (ref) status = await checkReplyStatus(ctx.http, ref)
+      }
+      catch (error) {
+        if (error instanceof HttpDeferredError) throw error
+        ctx.log('reply check failed', { thread: r.threadId, error: String(error) })
+      }
+      await ctx.db.update(s).set({ replyStatus: status, replyCheckedAt: now })
+        .where(and(eq(s.projectId, r.projectId), eq(s.threadId, r.threadId)))
+      result.replies++
+    }
     for (const a of accounts) {
       await checkRedditAccount(ctx, a.id, a.username!)
       result.accounts++

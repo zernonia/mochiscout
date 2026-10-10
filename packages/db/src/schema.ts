@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm'
-import { index, integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 import { users } from './auth-schema'
 
 export * from './auth-schema'
@@ -84,7 +84,46 @@ export const subreddits = sqliteTable('subreddits', {
   lastRssAt: integer('last_rss_at', { mode: 'timestamp' }),
   rssEtag: text('rss_etag'),
   refreshIntervalMin: integer('refresh_interval_min').notNull().default(60),
+  /** Public description from the sub's feed. */
+  description: text('description'),
+  /** Rules read by the LLM from the sub's pinned posts, when there is no curated file. */
+  autoRules: text('auto_rules_json', { mode: 'json' }).$type<AutoRules>(),
+  autoRulesAt: integer('auto_rules_at', { mode: 'timestamp' }),
+  /** Pooled, anonymous outcomes across all projects (see core/subreddits/insights). */
+  stats: text('stats_json', { mode: 'json' }).$type<SubredditStats>(),
+  statsAt: integer('stats_at', { mode: 'timestamp' }),
 })
+
+export interface AutoRules {
+  promo_policy: 'none' | 'weekly_thread_only' | 'flair_only' | 'allowed_with_value' | 'allowed' | 'unknown'
+  self_promo_thread: string | null
+  links_allowed: 'none' | 'in_comments_only' | 'yes' | null
+  min_karma: number | null
+  min_account_age_days: number | null
+  notes: string
+  /** Titles of the posts the rules were read from. */
+  evidence: string[]
+}
+
+export interface SubredditStats {
+  /** Posts seen in the last 30 days. */
+  posts30d: number
+  /** Share of posts per UTC hour (24 values summing to ~1). */
+  hours: number[]
+  /** Posts asking for a tool or comparing products (any project, intent 60+), last 30 days. */
+  buyingPosts30d: number
+  /** Posts checked for removal, and how many were removed (moderation strictness). */
+  checked: number
+  removed: number
+  /** Our users' own posts and replies here, and how many were removed. */
+  ownPosts: number
+  ownPostsRemoved: number
+  ownReplies: number
+  ownRepliesRemoved: number
+  /** Replies that included a link, and how many of those were removed. */
+  linkedReplies: number
+  linkedRepliesRemoved: number
+}
 
 export const projectSubreddits = sqliteTable(
   'project_subreddits',
@@ -150,11 +189,18 @@ export const threadScores = sqliteTable(
     dismissReason: text('dismiss_reason', { enum: ['off_topic', 'not_buyer', 'already_answered', 'closed', 'other'] }),
     /** When a hot-lead alert went out for this thread. */
     alertedAt: integer('alerted_at', { mode: 'timestamp' }),
+    /** The founder's posted reply, for survival tracking. */
+    replyUrl: text('reply_url'),
+    replyStatus: text('reply_status', { enum: ['live', 'removed', 'unknown'] }),
+    replyCheckedAt: integer('reply_checked_at', { mode: 'timestamp' }),
+    /** Short code in the tracking link (?ref=ms_<code>) for this thread. */
+    refCode: text('ref_code'),
     scoredAt: integer('scored_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   },
   t => [
     primaryKey({ columns: [t.projectId, t.threadId] }),
     index('thread_scores_inbox_idx').on(t.projectId, t.status, t.intent),
+    uniqueIndex('thread_scores_ref_code_idx').on(t.refCode),
   ],
 )
 
@@ -229,6 +275,22 @@ export const usage = sqliteTable(
     researchRuns: integer('research_runs').notNull().default(0),
   },
   t => [primaryKey({ columns: [t.orgId, t.period] })],
+)
+
+/** Visits and sign-ups that arrived through a thread's tracking link, per day. */
+export const refStats = sqliteTable(
+  'ref_stats',
+  {
+    code: text('code').notNull(),
+    day: text('day').notNull(),
+    projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+    visits: integer('visits').notNull().default(0),
+    signups: integer('signups').notNull().default(0),
+  },
+  t => [
+    primaryKey({ columns: [t.code, t.day] }),
+    index('ref_stats_project_idx').on(t.projectId, t.day),
+  ],
 )
 
 export const apiKeys = sqliteTable('api_keys', {

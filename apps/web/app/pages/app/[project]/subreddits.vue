@@ -135,10 +135,18 @@ async function discover() {
             <Badge v-if="s.rules.self_promo_thread" variant="outline">{{ s.rules.self_promo_thread }}</Badge>
           </div>
           <p v-if="s.rules.notes" class="text-xs text-muted-foreground">{{ s.rules.notes }}</p>
+          <p v-if="s.rulesSource === 'auto'" class="text-[11px] text-muted-foreground">Read from the sub's pinned posts. Check the sidebar too.</p>
         </div>
         <p v-else class="text-xs text-muted-foreground">
           Promo rules not in our database yet. Read the sub's rules before posting.
         </p>
+        <!-- Pooled outcomes across all Mochiscout users -->
+        <div v-if="s.verdict.removalRate !== null || s.verdict.linkedReplyRemovalRate !== null" class="flex flex-col gap-0.5 rounded-lg bg-muted/50 p-2.5 text-xs">
+          <span class="font-medium" :class="s.verdict.grade === 'strict' ? 'text-red-700 dark:text-red-400' : s.verdict.grade === 'careful' ? 'text-amber-800 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'">
+            {{ s.verdict.grade === 'strict' ? 'Strict moderators' : s.verdict.grade === 'careful' ? 'Promote carefully' : 'Promotion-friendly' }}
+          </span>
+          <span v-for="r in s.verdict.reasons.filter(r => /removed/.test(r))" :key="r" class="text-muted-foreground">{{ r }}</span>
+        </div>
         <SuggestRules :subreddit="s.name" :current="s.rules" />
       </div>
     </div>

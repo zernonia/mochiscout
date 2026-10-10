@@ -1,5 +1,6 @@
 import type { Db } from '@mochiscout/db'
 import type { Llm, Tier } from '@mochiscout/llm'
+import type { SubredditRules } from '@mochiscout/rules'
 import type { Http, ThreadComment, ThreadState } from '@mochiscout/sources'
 import type { JobContext } from '../jobs/context'
 import type { DraftProject } from './generate'
@@ -9,6 +10,7 @@ import { getRules } from '@mochiscout/rules'
 import { assessLead, HOT_MIN_INTENT, isClosed } from '../leads/assess'
 import { refreshThreadContext } from '../leads/context'
 import { voiceExamples } from '../leads/learning'
+import { resolveRules } from '../subreddits/rules'
 import { PLANS } from '../plans'
 import { recordUsage } from '../usage'
 import { rulesBrief } from './generate'
@@ -58,9 +60,11 @@ const PLATFORM_STYLE: Record<string, string> = {
 }
 
 /** Draft a helpful reply to a thread for the founder to review, edit and post themselves. */
-export async function generateReply(llm: Llm, opts: { project: DraftProject, thread: ReplyThread, tier: Tier, voice?: string[] }) {
+export async function generateReply(llm: Llm, opts: { project: DraftProject, thread: ReplyThread, tier: Tier, voice?: string[], rules?: SubredditRules | null }) {
   const { project, thread } = opts
-  const rules = thread.platform === 'reddit' && thread.channel ? getRules(thread.channel) ?? null : null
+  const rules = opts.rules !== undefined
+    ? opts.rules
+    : thread.platform === 'reddit' && thread.channel ? getRules(thread.channel) ?? null : null
   const asksForTool = thread.kind === 'seeking_tool' || thread.kind === 'comparison'
   const system = `You help a founder reply to an online thread. They will review, edit and post the reply themselves from their own account.
 
@@ -122,12 +126,16 @@ export async function draftReplyForThread(db: Db, llm: Llm, project: typeof sche
   const lead = assessLead({ ...thread, intent: score.intent }, project.competitors, now)
   if (isClosed(lead.state)) throw new ThreadClosedError(lead.state)
 
-  const voice = await voiceExamples(db, project.id)
+  const [voice, resolved] = await Promise.all([
+    voiceExamples(db, project.id),
+    thread.platform === 'reddit' && thread.channel ? resolveRules(db, thread.channel) : Promise.resolve({ rules: null }),
+  ])
   const { data, usage } = await generateReply(llm, {
     project,
     thread: { ...thread, ...score, competitorMentions: lead.competitorMentions },
     tier: opts.tier ?? 'quality',
     voice,
+    rules: resolved.rules,
   })
   const reply = data.reply.trim()
   await Promise.all([

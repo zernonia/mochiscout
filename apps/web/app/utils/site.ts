@@ -6,5 +6,5 @@ export const site = {
   operator: 'J146 LLC',
   supportEmail: 'support@mochiscout.com',
   repo: 'https://github.com/zernonia/social-radar',
-  legalUpdated: 'October 9, 2026',
+  legalUpdated: 'October 10, 2026',
 }
