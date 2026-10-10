@@ -7,7 +7,7 @@ if (edition !== 'cloud') throw createError({ statusCode: 404, statusMessage: 'No
 
 useMarketingSeo({
   title: 'Reddit lead generation tools compared: Mochiscout alternatives',
-  description: 'How Mochiscout compares with GummySearch, Ownfeed, F5Bot, Syften, ReplyGuy and Subreddit Signals for finding customers on Reddit, Hacker News, Bluesky and X.',
+  description: 'How Mochiscout compares with GummySearch, RedShip, Ownfeed, F5Bot, Syften, Redreach, Pulse, Octolens, KWatch.io, Brand24 and others for finding customers on Reddit, Hacker News, Bluesky and X.',
   path: '/alternatives',
 })
 useJsonLd({
