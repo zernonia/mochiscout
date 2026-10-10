@@ -72,7 +72,7 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
       // Fresh threads first among similar scores: replies to new threads get seen.
       .orderBy(desc(sql`${s.intent} - min(20, (unixepoch() - coalesce(${t.createdUtc}, ${t.ingestedAt})) / 21600)`))
       .limit(TOP_THREADS),
-    db.select({ n: count() }).from(s).where(visible),
+    db.select({ n: count() }).from(s).innerJoin(t, eq(t.id, s.threadId)).where(visible),
     db.select({ n: count() }).from(schema.scoreQueue).where(eq(schema.scoreQueue.projectId, project.id)),
     db.select({ subreddit: schema.trackedPosts.subreddit, postedAt: schema.trackedPosts.postedAt, promo: schema.trackedPosts.promo })
       .from(schema.trackedPosts)
