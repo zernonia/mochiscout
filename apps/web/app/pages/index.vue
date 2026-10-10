@@ -9,14 +9,21 @@ if (edition !== 'cloud') {
 
 const { data: catalogue } = await useFetch('/api/billing/plans', { immediate: edition === 'cloud' })
 
-useSeoMeta({
-  title: 'Mochiscout · Find the people already asking for your product',
-  description: 'Mochiscout watches Reddit, Hacker News, Bluesky and X for people asking for what you built, checks each community\'s rules, and helps you reply yourself. Open source.',
-  ogTitle: 'Mochiscout',
-  ogDescription: 'Find the people already asking for your product, and reply to them yourself.',
+const seoDescription = 'Find customers on Reddit, Hacker News, Bluesky and X. Mochiscout scores every post for buying intent, flags archived threads, drafts a reply that fits the thread and the subreddit rules, and leaves posting to you. Free plan, open source.'
+useMarketingSeo({
+  title: 'Mochiscout: find customers on Reddit, Hacker News, Bluesky and X',
+  description: seoDescription,
+  path: '/',
 })
 
 const sources = ['reddit', 'hn', 'bluesky', 'x'] as const
+
+const differentiators = [
+  { title: 'Leads, not mentions', body: 'Every post gets a buying-intent score and a reason. Fresh, uncrowded threads rise to the top; archived, locked and removed ones are flagged so you never draft for a dead thread.' },
+  { title: 'Replies that fit the thread', body: 'Drafts read the full post and the replies so far, say fairly how you differ from a competitor someone already suggested, and learn your voice from what you post.' },
+  { title: 'Gets better as you use it', body: 'Reply, save or dismiss with a reason, and scoring learns what fits your product. Hot leads can email you within the hour.' },
+  { title: 'Won\'t disappear on you', body: 'No Reddit Data API to lose, and the code is open source. If the hosted service ever changed, you could run your own copy.' },
+]
 
 const pains = [
   { title: 'Your launch post got removed.', body: 'Every subreddit has its own promo rules, and one wrong link costs you the post.' },
@@ -48,8 +55,30 @@ const faqs = [
   { q: 'Does Mochiscout post for me?', a: 'No. It never posts, comments, votes or sends messages. You copy the reply and post it yourself, so it stays in your voice.' },
   { q: 'Which sites are covered?', a: 'Reddit on every plan. Hacker News and Bluesky on Solo and Pro, and X on Pro.' },
   { q: 'Is there a free plan?', a: 'Yes: one project, three watched subreddits and a weekly digest. Self-hosting is free with no limits.' },
+  { q: 'I used GummySearch. Is this a replacement?', a: 'For finding customers, yes. GummySearch shuts down on December 1, 2026. Mochiscout finds the threads where people ask for what you sell, on Reddit and three other sites, without the Reddit Data API that GummySearch lost.' },
   { q: 'Can I cancel anytime?', a: 'Yes. Plans are monthly and you can cancel from the billing page; you keep access until the end of the paid period.' },
 ]
+
+useJsonLd([
+  {
+    '@type': 'SoftwareApplication',
+    'name': site.name,
+    'url': site.url,
+    'applicationCategory': 'BusinessApplication',
+    'operatingSystem': 'Web',
+    'description': seoDescription,
+    'offers': [
+      { '@type': 'Offer', 'name': 'Free', 'price': '0', 'priceCurrency': 'USD' },
+      { '@type': 'Offer', 'name': 'Solo', 'price': '19', 'priceCurrency': 'USD' },
+      { '@type': 'Offer', 'name': 'Pro', 'price': '49', 'priceCurrency': 'USD' },
+    ],
+  },
+  { '@type': 'Organization', 'name': site.name, 'url': site.url, 'logo': `${site.url}/apple-touch-icon.png`, 'email': site.supportEmail, 'sameAs': [site.repo] },
+  {
+    '@type': 'FAQPage',
+    'mainEntity': faqs.map(f => ({ '@type': 'Question', 'name': f.q, 'acceptedAnswer': { '@type': 'Answer', 'text': f.a } })),
+  },
+])
 </script>
 
 <template>
@@ -59,6 +88,10 @@ const faqs = [
     <main>
       <!-- Hero -->
       <section class="mx-auto flex max-w-4xl flex-col items-center gap-6 px-4 pt-20 pb-12 text-center sm:pt-28">
+        <NuxtLink to="/alternatives/gummysearch" class="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm text-muted-foreground shadow-xs/5 transition-colors hover:text-foreground">
+          <span class="size-1.5 rounded-full bg-amber-500" />
+          GummySearch shuts down Dec 1. Moving over? <span class="font-medium text-foreground">See how we compare →</span>
+        </NuxtLink>
         <h1 class="text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
           Find the people already asking for your product.
         </h1>
@@ -125,6 +158,21 @@ const faqs = [
             </figure>
           </div>
         </div>
+      </section>
+
+      <!-- Why Mochiscout -->
+      <section class="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-24">
+        <div class="flex max-w-2xl flex-col gap-3">
+          <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">More than keyword alerts.</h2>
+          <p class="text-muted-foreground">Alert tools tell you a word appeared. Mochiscout tells you who is ready to buy, whether you can still reply, and what to say.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div v-for="d in differentiators" :key="d.title" class="flex flex-col gap-2 rounded-2xl border p-5">
+            <h3 class="font-semibold">{{ d.title }}</h3>
+            <p class="text-sm text-muted-foreground">{{ d.body }}</p>
+          </div>
+        </div>
+        <NuxtLink to="/alternatives" class="w-fit text-sm font-medium underline-offset-4 hover:underline">Compare with GummySearch, F5Bot, Syften, Ownfeed and others →</NuxtLink>
       </section>
 
       <!-- How it works -->

@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { COMPETITORS } from '#shared/competitors'
+
 const links = [
   [
     { label: 'Pricing', to: '/#pricing' },
     { label: 'Sign in', to: '/login' },
-    { label: 'GummySearch alternative', to: '/alternatives/gummysearch' },
+    { label: 'Compare', to: '/alternatives' },
+    ...COMPETITORS.map(c => ({ label: c.slug === 'gummysearch' ? 'GummySearch alternative' : `vs ${c.name}`, to: `/alternatives/${c.slug}` })),
   ],
   [
     { label: 'Terms', to: '/terms' },

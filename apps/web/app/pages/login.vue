@@ -2,6 +2,7 @@
 import { toast } from '@/lib/toast'
 
 useHead({ title: 'Sign in · Mochiscout' })
+useNoIndex()
 
 const route = useRoute()
 const { fetch: refreshSession } = useUserSession()

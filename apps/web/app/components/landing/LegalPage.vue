@@ -2,7 +2,7 @@
 const props = defineProps<{ title: string, description: string }>()
 // These pages describe the hosted service; self-hosted instances don't have them.
 if (useRuntimeConfig().public.edition !== 'cloud') throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
-useSeoMeta({ title: `${props.title} · Mochiscout`, description: props.description })
+useMarketingSeo({ title: `${props.title} · Mochiscout`, description: props.description, path: useRoute().path })
 </script>
 
 <template>
