@@ -21,5 +21,6 @@ export default defineNitroPlugin((nitroApp) => {
         message.retry(delaySeconds ? { delaySeconds } : undefined)
       }
     }
+    await flushErrorReports()
   })
 })

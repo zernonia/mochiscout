@@ -4,6 +4,9 @@ import { createDb } from '@mochiscout/db'
 import type { SearchProvider } from '@mochiscout/sources'
 import { blueskyAdapter, brave, createHttp, createSearchClient, hnAdapter, tinyfish, userAgent, xAdapter } from '@mochiscout/sources'
 
+/** Expected, frequent misses that aren't worth an error report. */
+const QUIET_FAILURES = new Set(['thread context failed', 'tracker check failed', 'account check failed'])
+
 /** Leave headroom under the Workers cron wall-clock limit (15 min). */
 const RUN_BUDGET_MS = 10 * 60_000
 
@@ -34,7 +37,13 @@ export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): Jo
     sendEmail: emailProvider(env) || import.meta.dev ? email => sendEmail(env, email) : undefined,
     appUrl: env.APP_URL ?? (import.meta.dev ? 'http://localhost:3000' : undefined),
     now: () => new Date(),
-    log: (message, data) => console.info(`[jobs] ${message}`, data ? JSON.stringify(data) : ''),
+    log: (message, data) => {
+      console.info(`[jobs] ${message}`, data ? JSON.stringify(data) : '')
+      // Job failures also go to PostHog error tracking (per-thread fetch misses are routine and stay out).
+      if (data?.error && /failed$/.test(message) && !QUIET_FAILURES.has(message)) {
+        void reportServerError(env.NUXT_PUBLIC_POSTHOG_KEY ?? useRuntimeConfig().public.posthogKey, new Error(`${message}: ${String(data.error)}`), { source: 'cron', job_message: message, ...data, error: undefined })
+      }
+    },
   }
 }
 

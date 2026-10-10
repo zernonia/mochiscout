@@ -11,6 +11,8 @@ export async function requireUser(event: RequestEvent) {
   const session = await getUserSession(event)
   const userId = session.user?.id
   if (!userId) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  // Lets error reports link a failure to the signed-in user.
+  event.context.mochiscoutUserId = userId
 
   const db = getDb(event)
   const user = await db.select().from(schema.users).where(eq(schema.users.id, userId)).get()

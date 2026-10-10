@@ -10,7 +10,14 @@ export default defineNuxtPlugin(() => {
     ui_host: 'https://us.posthog.com',
     capture_pageview: 'history_change',
     person_profiles: 'identified_only',
+    // Uncaught browser errors and unhandled rejections → error tracking.
+    capture_exceptions: true,
   })
+
+  // Errors Vue/Nuxt catch themselves never reach window.onerror.
+  const nuxtApp = useNuxtApp()
+  nuxtApp.hook('vue:error', (error) => { posthog.captureException(error) })
+  nuxtApp.hook('app:error', (error) => { posthog.captureException(error) })
 
   const { user } = useUserSession()
   watch(() => user.value?.id, (id, previous) => {

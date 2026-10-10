@@ -17,6 +17,8 @@ export interface Env {
   /** Sender, e.g. `Mochiscout <hello@mochiscout.com>`. Its domain must be onboarded to the provider. */
   EMAIL_FROM?: string
   ANTHROPIC_API_KEY?: string
+  /** PostHog project key (cloud): product analytics and server error reports. */
+  NUXT_PUBLIC_POSTHOG_KEY?: string
   /** Optional, e.g. a Cloudflare AI Gateway URL ending in /anthropic. */
   ANTHROPIC_BASE_URL?: string
   LLM_FAST_MODEL?: string

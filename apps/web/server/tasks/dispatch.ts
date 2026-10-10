@@ -10,6 +10,7 @@ export default defineTask({
   async run({ context }) {
     const env = getTaskEnv(context as { cloudflare?: { env?: unknown } })
     const result = await runTick(createJobContext(env))
+    await flushErrorReports()
     return { result }
   },
 })
