@@ -14,9 +14,14 @@ which deploys. Format and field meanings: `packages/rules/README.md` and
 ## 1. Which subreddits
 
 - Arguments, if given (names without `r/`): only those.
-- Otherwise: every file in `packages/rules/subreddits/` plus every name in
-  `packages/rules/wanted.txt` (ignore `#` comments), oldest `last_verified`
-  first, **at most 40 per run**.
+- Otherwise, in this order, **at most 40 per run**:
+  1. Subreddits users watch that the library doesn't have yet: the
+     `subreddits` list from `https://mochiscout.com/api/public/rules-pending`
+     (fetch it with TinyFish `fetch_content`, or `curl`). The app reads their
+     rules on its own in the meantime; adding them here makes them permanent.
+     Add each one to `wanted.txt` too.
+  2. Names in `packages/rules/wanted.txt` (ignore `#` comments) without a file yet.
+  3. Every file in `packages/rules/subreddits/`, oldest `last_verified` first.
 
 ## 2. Fetch the official rules
 

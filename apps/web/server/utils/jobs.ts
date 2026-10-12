@@ -2,7 +2,7 @@ import type { JobContext } from '@mochiscout/core'
 import type { Env } from './env'
 import { createDb } from '@mochiscout/db'
 import type { SearchProvider } from '@mochiscout/sources'
-import { blueskyAdapter, brave, createHttp, createSearchClient, hnAdapter, tinyfish, userAgent, xAdapter } from '@mochiscout/sources'
+import { blueskyAdapter, brave, createHttp, createSearchClient, hnAdapter, tinyfish, tinyfishFetcher, userAgent, xAdapter } from '@mochiscout/sources'
 
 /** Expected, frequent misses that aren't worth an error report. */
 const QUIET_FAILURES = new Set(['thread context failed', 'tracker check failed', 'account check failed'])
@@ -30,6 +30,7 @@ export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): Jo
     queue: env.JOBS,
     http: createHttp({ userAgent: ua, kv: env.CACHE, deadline }),
     search: createSearch(env, ua, deadline),
+    pages: env.TINYFISH_API_KEY ? tinyfishFetcher(env.TINYFISH_API_KEY) : undefined,
     adapters: createAdapters(env, ua, deadline),
     readMode: env.READ_MODE ?? 'server',
     llm: getLlm(env) ?? undefined,

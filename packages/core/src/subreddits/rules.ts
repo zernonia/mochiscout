@@ -1,20 +1,23 @@
 import type { Db } from '@mochiscout/db'
 import type { Llm } from '@mochiscout/llm'
-import type { OfficialRule, SubredditRules } from '@mochiscout/rules'
+import type { OfficialRule } from '@mochiscout/rules'
 import type { Http, PageFetcher } from '@mochiscout/sources'
 import { and, eq, inArray, schema } from '@mochiscout/db'
 import { z } from '@mochiscout/llm'
-import { getRules, LINKS_ALLOWED, PROMO_POLICIES } from '@mochiscout/rules'
+import { getRules, LINKS_ALLOWED, PROMO_POLICIES, SubredditRules } from '@mochiscout/rules'
 import { HttpDeferredError, hotPostsFeedUrl, normalizeSubreddit, parseRedditFeed, parseRedditThread, postFeedUrl, readOfficialRules } from '@mochiscout/sources'
 
 /**
  * Subreddit rules come from the rules library in the repo
  * (packages/rules/subreddits/*.yaml, refreshed from each sub's official rules
- * by `pnpm rules:sync`). A project can keep its own copy of a sub's rules
- * (`project_subreddits.rules_override_json`), which wins for that project.
+ * by the sync routine). A sub someone watches that isn't in the library yet
+ * gets its official rules read right away (`subreddits.auto_rules_json`,
+ * source 'auto') until the routine adds it to the library. A project can keep
+ * its own copy of a sub's rules (`project_subreddits.rules_override_json`),
+ * which wins for that project.
  */
 
-export type RulesSource = 'library' | 'custom'
+export type RulesSource = 'library' | 'auto' | 'custom'
 
 /** The fields a founder can change in their own copy of a sub's rules. */
 export const CustomRules = z.object({
@@ -31,8 +34,10 @@ export type CustomRules = z.infer<typeof CustomRules>
 export interface ResolvedRules {
   rules: SubredditRules | null
   source: RulesSource | null
-  /** The library's version, also when the project uses its own copy. */
+  /** The library's version (or the automatically read one), also when the project uses its own copy. */
   library: SubredditRules | null
+  /** Subs outside the library: when their rules were last read automatically (null: not yet). */
+  readAt: Date | null
 }
 
 /** A project's own copy, on top of the library file (official rules and tags stay the library's). */
@@ -65,12 +70,90 @@ export async function resolveRulesMany(db: Db, names: string[], projectId?: stri
       }
     }
   }
+  // Subs outside the library: rules read automatically, if any.
+  const auto = new Map<string, { rules: SubredditRules | null, at: Date | null }>()
+  const outside = all.filter(name => !getRules(name))
+  for (let i = 0; i < outside.length; i += 90) {
+    const rows = await db.select({ name: schema.subreddits.name, rules: schema.subreddits.autoRules, at: schema.subreddits.autoRulesAt })
+      .from(schema.subreddits).where(inArray(schema.subreddits.name, outside.slice(i, i + 90)))
+    for (const r of rows) {
+      const parsed = r.rules ? SubredditRules.safeParse(r.rules) : null
+      auto.set(r.name, { rules: parsed?.success ? parsed.data : null, at: r.at })
+    }
+  }
+
   const out = new Map<string, ResolvedRules>()
   for (const name of all) {
-    const library = getRules(name) ?? null
+    const fromLibrary = getRules(name) ?? null
+    const read = fromLibrary ? null : auto.get(name)
+    const library = fromLibrary ?? read?.rules ?? null
+    const source: RulesSource | null = fromLibrary ? 'library' : library ? 'auto' : null
+    const readAt = fromLibrary ? null : read?.at ?? null
     const own = custom.get(name)
-    if (own) out.set(name, { rules: applyCustomRules(name, library, own.rules, own.at), source: 'custom', library })
-    else out.set(name, { rules: library, source: library ? 'library' : null, library })
+    if (own) out.set(name, { rules: applyCustomRules(name, library, own.rules, own.at), source: 'custom', library, readAt })
+    else out.set(name, { rules: library, source, library, readAt })
+  }
+  return out
+}
+
+/** Read again after this long; failed or empty reads retry after a day. */
+const AUTO_RULES_TTL_MS = 30 * 86_400_000
+const AUTO_RULES_RETRY_MS = 86_400_000
+
+/** What reading rules needs from a job context. */
+export interface RulesReader {
+  db: Db
+  http: Http
+  llm?: Llm
+  pages?: PageFetcher
+  now: () => Date
+  log: (message: string, data?: Record<string, unknown>) => void
+}
+
+/**
+ * Read the official rules of subs that aren't in the rules library and have
+ * none read yet (or stale ones), so a newly watched sub isn't left without
+ * rules until the next library sync. One page fetch and one small LLM call each.
+ */
+export async function readMissingRules(ctx: RulesReader, names: string[], opts: { max?: number } = {}) {
+  const out = { read: 0, missing: 0, failed: 0 }
+  if (!ctx.llm || !ctx.pages) return out
+  const outside = [...new Set(names.map(normalizeSubreddit))].filter(name => !getRules(name))
+  if (!outside.length) return out
+  const now = ctx.now()
+  const rows = await ctx.db.select({ name: schema.subreddits.name, rules: schema.subreddits.autoRules, at: schema.subreddits.autoRulesAt })
+    .from(schema.subreddits).where(inArray(schema.subreddits.name, outside.slice(0, 90)))
+  const byName = new Map(rows.map(r => [r.name, r]))
+  const due = outside.filter((name) => {
+    const row = byName.get(name)
+    if (!row?.at) return true
+    const age = now.getTime() - row.at.getTime()
+    return age > (row.rules ? AUTO_RULES_TTL_MS : AUTO_RULES_RETRY_MS)
+  }).slice(0, opts.max ?? 3)
+
+  for (const name of due) {
+    const at = ctx.now()
+    let rules: SubredditRules | null | undefined
+    try {
+      const res = await readSubredditRules(ctx.http, ctx.llm, ctx.pages, name, at.toISOString().slice(0, 10))
+      rules = res.status === 'ok' ? res.rules : null
+      if (res.status === 'ok') {
+        out.read++
+        ctx.log('subreddit rules usage', { subreddit: name, ...res.usage })
+      }
+      else {
+        out.missing++
+      }
+    }
+    catch (error) {
+      if (error instanceof HttpDeferredError) break
+      out.failed++
+      ctx.log('subreddit rules failed', { subreddit: name, error: String(error) })
+    }
+    // A failed read keeps any rules from before and only records the attempt.
+    const set = rules === undefined ? { autoRulesAt: at } : { autoRules: rules, autoRulesAt: at }
+    await ctx.db.insert(schema.subreddits).values({ name, ...set })
+      .onConflictDoUpdate({ target: schema.subreddits.name, set })
   }
   return out
 }
@@ -105,7 +188,7 @@ export type ReadRulesResult =
 /**
  * Read a sub's official rules (page fetch service) and pinned posts (Reddit
  * RSS, best effort), and turn them into a rules-library record with one
- * small LLM call. Used by `pnpm rules:sync`, never at request time.
+ * small LLM call. Used by `pnpm rules:sync` and by readMissingRules.
  */
 export async function readSubredditRules(http: Http, llm: Llm, pages: PageFetcher, subreddit: string, today: string): Promise<ReadRulesResult> {
   const name = normalizeSubreddit(subreddit)

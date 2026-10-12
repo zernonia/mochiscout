@@ -3,7 +3,7 @@ import type { SubredditRules } from '@mochiscout/rules'
 import type { JobContext } from '../jobs/context'
 import type { RulesSource } from './rules'
 import { and, eq, gte, inArray, schema, sql } from '@mochiscout/db'
-import { resolveRulesMany } from './rules'
+import { readMissingRules, resolveRulesMany } from './rules'
 
 /**
  * The safe-to-post network: outcomes pooled across every project, per
@@ -90,7 +90,7 @@ export async function computeSubredditStats(ctx: JobContext): Promise<Map<string
   return stats
 }
 
-/** Daily: refresh pooled stats. (Rules live in the repo's rules library, see `pnpm rules:sync`.) */
+/** Daily: refresh pooled stats, and read official rules for watched subs the rules library doesn't have yet. */
 export async function runSubredditInsights(ctx: JobContext) {
   const now = ctx.now()
   const stats = await computeSubredditStats(ctx)
@@ -102,7 +102,11 @@ export async function runSubredditInsights(ctx: JobContext) {
     if (batch.length) await ctx.db.batch(batch as [typeof batch[number], ...typeof batch])
   }
 
-  const result = { subs: stats.size }
+  // Normally read the moment someone watches the sub; this catches misses and stale reads.
+  const watched = await ctx.db.selectDistinct({ name: schema.projectSubreddits.subreddit }).from(schema.projectSubreddits)
+    .where(eq(schema.projectSubreddits.watching, true))
+  const rules = await readMissingRules(ctx, watched.map(w => w.name), { max: 10 })
+  const result = { subs: stats.size, rules }
   ctx.log('insights', result)
   return result
 }

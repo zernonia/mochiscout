@@ -15,6 +15,11 @@ summarises what matters for promotion, validates, and pushes to `main`.
 To add a subreddit, put its name in `wanted.txt`, or ask Claude in this repo to
 "sync the rules for r/<name>".
 
+When a user watches a subreddit that isn't here yet, the app reads its official
+rules right away (stored in D1 as a stopgap, shown as "joins the rules library
+at the next sync"), and lists it at `/api/public/rules-pending`. The routine
+adds those first, and from then on this file is used.
+
 ```sh
 pnpm rules:build                 # validate and regenerate rules.json
 pnpm rules:validate              # CI: validate and check rules.json is up to date

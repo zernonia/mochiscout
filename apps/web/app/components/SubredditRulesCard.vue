@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExternalLinkIcon, PencilIcon, RotateCcwIcon } from '@lucide/vue'
+import { ExternalLinkIcon, LoaderCircleIcon, PencilIcon, RotateCcwIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 type PromoPolicy = 'none' | 'weekly_thread_only' | 'flair_only' | 'allowed_with_value' | 'allowed'
@@ -21,8 +21,11 @@ const props = defineProps<{
   projectId: string
   name: string
   rules: Rules | null
-  source: 'library' | 'custom' | null
+  source: 'library' | 'auto' | 'custom' | null
   libraryRules: Rules | null
+  watching: boolean
+  /** Subs outside the library: when their official rules were last read. */
+  readAt: string | Date | null
 }>()
 const emit = defineEmits<{ updated: [] }>()
 
@@ -106,10 +109,16 @@ function submit() {
         </ol>
       </details>
     </template>
-    <p v-else class="text-xs text-muted-foreground">Not in the rules library yet. Read r/{{ name }}'s rules before posting, or add your own.</p>
+    <p v-else-if="watching && !readAt" class="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+      <LoaderCircleIcon class="size-3 animate-spin" /> Reading r/{{ name }}'s official rules…
+    </p>
+    <p v-else class="text-xs text-muted-foreground">
+      {{ readAt ? `r/${name} doesn't publish rules we can read.` : 'Not in the rules library yet.' }} Read its sidebar before posting, or add your own.
+    </p>
 
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
       <span v-if="source === 'library'">From the rules library, checked {{ date(rules!.last_verified) }}</span>
+      <span v-else-if="source === 'auto'">Read from r/{{ name }}'s official rules {{ date(rules!.last_verified) }}; joins the rules library at the next sync</span>
       <span v-else-if="source === 'custom'" class="font-medium text-violet-700 dark:text-violet-400">Your rules for this project</span>
       <a :href="rulesUrl" target="_blank" rel="noopener" class="inline-flex items-center gap-0.5 underline">On Reddit <ExternalLinkIcon class="size-3" /></a>
       <button type="button" class="inline-flex items-center gap-1 underline" @click="startEdit">

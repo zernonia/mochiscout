@@ -40,5 +40,6 @@ export default defineEventHandler(async (event) => {
     added.push(name)
   }
   if (added.length) track(event, user.id, 'subreddits_imported', { project_id: project.id, count: added.length })
+  readRulesInBackground(event, added)
   return { added, skipped: names.slice(added.length), invalid, limit }
 })

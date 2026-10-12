@@ -90,24 +90,18 @@ export const subreddits = sqliteTable('subreddits', {
   refreshIntervalMin: integer('refresh_interval_min').notNull().default(60),
   /** Public description from the sub's feed. */
   description: text('description'),
-  /** Unused since rules moved to the repo's rules library (packages/rules). */
-  autoRules: text('auto_rules_json', { mode: 'json' }).$type<AutoRules>(),
+  /**
+   * Rules read automatically from the sub's official rules when it isn't in
+   * the rules library yet (a rules-library record; null if it has none). The
+   * sync routine moves them into packages/rules, which then takes over.
+   */
+  autoRules: text('auto_rules_json', { mode: 'json' }).$type<Record<string, unknown>>(),
+  /** Last attempt to read them, successful or not. */
   autoRulesAt: integer('auto_rules_at', { mode: 'timestamp' }),
   /** Pooled, anonymous outcomes across all projects (see core/subreddits/insights). */
   stats: text('stats_json', { mode: 'json' }).$type<SubredditStats>(),
   statsAt: integer('stats_at', { mode: 'timestamp' }),
 })
-
-export interface AutoRules {
-  promo_policy: 'none' | 'weekly_thread_only' | 'flair_only' | 'allowed_with_value' | 'allowed' | 'unknown'
-  self_promo_thread: string | null
-  links_allowed: 'none' | 'in_comments_only' | 'yes' | null
-  min_karma: number | null
-  min_account_age_days: number | null
-  notes: string
-  /** Titles of the posts the rules were read from. */
-  evidence: string[]
-}
 
 export interface SubredditStats {
   /** Posts seen in the last 30 days. */

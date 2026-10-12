@@ -38,8 +38,10 @@ export interface SubredditCandidate {
   /** The project's own copy, else the rules library's (with the sub's official rules). */
   rules: SubredditRules | null
   rulesSource: RulesSource | null
-  /** The library's version, to compare with or reset to. */
+  /** The library's version (or the automatically read one), to compare with or reset to. */
   libraryRules: SubredditRules | null
+  /** Subs outside the library: when their official rules were last read (null: not yet). */
+  rulesReadAt: Date | null
   /** Pooled outcomes across all users, once the sub has enough activity. */
   stats: SubredditStats | null
   verdict: SubredditVerdict
@@ -104,6 +106,7 @@ export async function subredditMap(
         rules: getRules(name) ?? null,
         rulesSource: null,
         libraryRules: null,
+        rulesReadAt: null,
         stats: null,
         verdict: { grade: 'unknown', removalRate: null, linkedReplyRemovalRate: null, reasons: [] },
         sources: [],
@@ -147,6 +150,7 @@ export async function subredditMap(
     c.rules = r?.rules ?? null
     c.rulesSource = r?.source ?? null
     c.libraryRules = r?.library ?? null
+    c.rulesReadAt = r?.readAt ?? null
     c.stats = statsByName.get(c.name) ?? null
     c.verdict = subredditVerdict(c.rules, c.stats)
     c.fit = fitScore(c.evidence, c.rules)

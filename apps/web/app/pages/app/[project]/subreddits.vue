@@ -16,6 +16,15 @@ async function onImported() {
 }
 const discovering = ref(false)
 
+// Rules for a newly watched sub are read in the background: check back a few times.
+let rulesPolls = 0
+watch(map, (m) => {
+  const reading = m?.subreddits.some(s => s.watching && !s.rules && !s.rulesReadAt)
+  if (!reading || rulesPolls >= 6 || import.meta.server) return
+  rulesPolls++
+  setTimeout(() => refresh(), 5000)
+}, { immediate: true })
+
 const watchedCount = computed(() => map.value?.subreddits.filter(s => s.watching).length ?? 0)
 
 function errorMessage(error: unknown) {
@@ -132,6 +141,8 @@ async function discover() {
           :rules="s.rules"
           :source="s.rulesSource"
           :library-rules="s.libraryRules"
+          :watching="s.watching"
+          :read-at="s.rulesReadAt"
           @updated="refresh()"
         />
         <!-- Pooled outcomes across all Mochiscout users -->

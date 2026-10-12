@@ -1,7 +1,7 @@
 import type { KVNamespace, Queue } from '@cloudflare/workers-types'
 import type { Db } from '@mochiscout/db'
 import type { Llm } from '@mochiscout/llm'
-import type { Http, Platform, SearchClient, SourceAdapter } from '@mochiscout/sources'
+import type { Http, PageFetcher, Platform, SearchClient, SourceAdapter } from '@mochiscout/sources'
 import type { Job } from './types'
 
 export interface JobContext {
@@ -13,6 +13,8 @@ export interface JobContext {
   http: Http
   /** Search providers (TinyFish, Brave). Undefined when no key is configured. */
   search?: SearchClient
+  /** Page fetch service (TinyFish Fetch) for pages Reddit won't serve to the Worker, like official rules. */
+  pages?: PageFetcher
   /**
    * How Reddit is read (arch §5): server (RSS from the Worker), extension
    * (only what users' browser extensions send) or search_only.
