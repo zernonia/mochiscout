@@ -16,11 +16,37 @@ onMounted(() => {
   }
 })
 
+/** Already paying: the plan button switches the subscription in place. */
+const subscribed = computed(() => me.value?.org.plan === 'solo' || me.value?.org.plan === 'pro')
+const priceOf = (id: string) => catalogue.value?.plans.find(p => p.id === id)?.price ?? 0
+
+function planAction(id: string, label: string) {
+  if (!subscribed.value) return `Upgrade to ${label}`
+  return priceOf(id) > priceOf(me.value!.org.plan) ? `Upgrade to ${label}` : `Switch to ${label}`
+}
+
+async function choosePlan(id: string, label: string) {
+  if (subscribed.value) {
+    const upgrade = priceOf(id) > priceOf(me.value!.org.plan)
+    const ok = window.confirm(upgrade
+      ? `Switch to ${label} now? You'll be charged the prorated difference for the rest of this billing period.`
+      : `Switch to ${label} now? The unused part of your current plan is credited to your next invoice.`)
+    if (!ok) return
+  }
+  return go('/api/billing/checkout', { plan: id }, id)
+}
+
 async function go(path: '/api/billing/checkout' | '/api/billing/portal', body?: object, key: string = path) {
   busy.value = key
   try {
-    const { url } = await $fetch<{ url: string }>(path, { method: 'POST', body })
-    window.location.href = url
+    const res = await $fetch<{ url: string } | { switched: true, plan: string }>(path, { method: 'POST', body })
+    if ('switched' in res) {
+      toast.success(`You're now on ${catalogue.value?.plans.find(p => p.id === res.plan)?.label ?? res.plan}.`)
+      await Promise.all([refresh(), refreshNuxtData('project-nav')])
+      busy.value = null
+      return
+    }
+    window.location.href = res.url
   }
   catch (error) {
     toast.error(apiErrorMessage(error, 'Billing is unavailable right now'))
@@ -84,9 +110,9 @@ const meters = computed(() => me.value
           <Button
             v-if="plan.id !== 'free' && plan.id !== me.org.plan && me.role === 'owner'"
             :disabled="!!busy || !catalogue.billingConfigured"
-            @click="go('/api/billing/checkout', { plan: plan.id }, plan.id)"
+            @click="choosePlan(plan.id, plan.label)"
           >
-            {{ busy === plan.id ? 'Opening checkout…' : `Upgrade to ${plan.label}` }}
+            {{ busy === plan.id ? (subscribed ? 'Switching…' : 'Opening checkout…') : planAction(plan.id, plan.label) }}
           </Button>
         </template>
       </PlanCards>
