@@ -1,4 +1,4 @@
-import { draftReplyForThread, ThreadClosedError } from '@mochiscout/core'
+import { draftReplyForThread, QuotaError, ThreadClosedError } from '@mochiscout/core'
 import { LlmParseError, LlmRefusalError } from '@mochiscout/llm'
 
 /**
@@ -12,11 +12,13 @@ export default defineEventHandler(async (event) => {
   const llm = getLlm(getEnv(event))
   if (!llm) throw createError({ statusCode: 503, statusMessage: 'No LLM key configured. Set ANTHROPIC_API_KEY to draft replies.' })
   try {
-    const draft = await draftReplyForThread(getDb(event), llm, project, threadId, { tier: 'quality', http: requestHttp(event) })
+    const draft = await draftReplyForThread(getDb(event), llm, project, threadId, { http: requestHttp(event) })
     if (!draft) throw createError({ statusCode: 404, statusMessage: 'Thread not found' })
     return draft
   }
   catch (error) {
+    // Out of AI drafts this month: 402 with the upgrade offer.
+    if (error instanceof QuotaError) await quota(Promise.reject(error))
     if (error instanceof ThreadClosedError) {
       throw createError({ statusCode: 409, statusMessage: error.message, data: { state: error.state } })
     }

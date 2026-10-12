@@ -75,6 +75,7 @@ const meters = computed(() => me.value
   ? [
       { label: 'Projects', used: me.value.usage.projects, limit: me.value.limits.projects },
       { label: 'Watched subreddits', used: me.value.usage.watchedSubreddits, limit: me.value.limits.watchedSubreddits },
+      { label: 'AI drafts this month', used: me.value.usage.drafts, limit: me.value.limits.draftsPerMonth },
     ].filter(m => m.limit !== null)
   : [])
 

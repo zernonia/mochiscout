@@ -102,3 +102,16 @@ describe('max_tokens floor', () => {
     expect(f.bodies[1]!.max_tokens).toBe(8000)
   })
 })
+
+describe('effort and caching', () => {
+  it('overrides the tier effort and marks the system prompt cacheable', async () => {
+    const f = fakeFetch([message('{"intent":1,"kind":"other"}', { model: 'claude-sonnet-5-5', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 900 } })])
+    const llm = createLlm({ anthropicApiKey: 'k', fetch: f.fetch })
+    const res = await llm.generate({ tier: 'balanced', ...call, effort: 'low', cacheSystem: true })
+    const body = f.bodies[0]!
+    expect(body.model).toBe('claude-sonnet-5-5')
+    expect(body.output_config.effort).toBe('low')
+    expect(body.system).toEqual([{ type: 'text', text: 's', cache_control: { type: 'ephemeral' } }])
+    expect(res.usage.inputTokens).toBe(1000)
+  })
+})

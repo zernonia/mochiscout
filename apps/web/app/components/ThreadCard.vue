@@ -225,7 +225,10 @@ async function copyAndOpen() {
       <div v-else-if="reply" class="flex flex-col gap-2 rounded-lg border border-violet-500/25 bg-violet-500/[0.03] p-3">
         <div class="flex items-center justify-between gap-2">
           <span class="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-400"><SparklesIcon class="size-3.5" /> Your reply · AI draft, edit before posting</span>
-          <Button size="xs" variant="ghost" :disabled="drafting" @click="draftReply"><RefreshCwIcon /> Redraft</Button>
+          <div class="flex items-center gap-1">
+            <Button as-child size="xs" variant="ghost"><NuxtLink :to="`/app/${projectId}/profile#reply-instructions`">Instructions</NuxtLink></Button>
+            <Button size="xs" variant="ghost" :disabled="drafting" @click="draftReply"><RefreshCwIcon /> Redraft</Button>
+          </div>
         </div>
         <Textarea :model-value="reply" rows="5" class="bg-background text-sm" aria-label="Reply draft" @update:model-value="(v: string | number) => onEdit(String(v))" />
       </div>

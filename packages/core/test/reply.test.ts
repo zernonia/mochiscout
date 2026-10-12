@@ -20,22 +20,49 @@ function capturingLlm() {
 const thread = { platform: 'reddit', channel: 'SaaS', title: 'Changelog tool that emails users?', snippet: 'Two-person team', kind: 'seeking_tool', reason: 'Asking for a tool', replyAngle: 'Share how you announce releases' }
 
 describe('generateReply', () => {
-  it('allows a disclosed mention when the person asks for a tool', async () => {
+  it('uses the default instructions with the product name, and puts the thread in the user turn', async () => {
     const { llm, calls } = capturingLlm()
-    const res = await generateReply(llm, { project, thread, tier: 'quality' })
+    const res = await generateReply(llm, { project, thread, tier: 'balanced', effort: 'low' })
     expect(res.data.reply).toContain('worked for us')
-    expect(calls[0]!.tier).toBe('quality')
-    expect(calls[0]!.system).toContain('honest disclosure ("I built Shipnote"')
-    expect(calls[0]!.prompt).toContain('Thread in r/SaaS:')
+    expect(calls[0]!.tier).toBe('balanced')
+    expect(calls[0]!.system).toContain('honest disclosure ("I built Shipnote")')
+    expect(calls[0]!.system).not.toContain('{product}')
+    expect(calls[0]!.system).not.toContain('Two-person team')
+    expect(calls[0]!.prompt).toContain('Thread in r/SaaS, the person is looking for a tool.')
     expect(calls[0]!.prompt).toContain('Suggested angle: Share how you announce releases')
   })
 
-  it('steers away from the product when nobody asked for a tool, and uses the platform style', async () => {
+  it('follows the founder\'s own instructions, but the guardrails always apply', async () => {
     const { llm, calls } = capturingLlm()
-    await generateReply(llm, { project, thread: { ...thread, platform: 'hn', channel: null, kind: 'pain' }, tier: 'fast' })
-    expect(calls[0]!.system).toContain('Do not mention Shipnote unless')
-    expect(calls[0]!.system).toContain('Hacker News comment')
-    expect(calls[0]!.prompt).toContain('Thread on hn:')
+    await generateReply(llm, {
+      project: { ...project, replyInstructions: 'Keep it under 50 words. Always mention {product} when relevant.' },
+      thread: { ...thread, platform: 'hn', channel: null, kind: 'pain' },
+      tier: 'balanced',
+    })
+    expect(calls[0]!.system).toContain('Keep it under 50 words. Always mention Shipnote when relevant.')
+    expect(calls[0]!.system).not.toContain('honest disclosure')
+    expect(calls[0]!.system).toContain('never invent facts')
+    expect(calls[0]!.system).toContain('override the founder\'s instructions')
+    expect(calls[0]!.prompt).toContain('Hacker News comment')
+    expect(calls[0]!.prompt).toContain('the person is describing a problem')
+  })
+
+  it('caches the system prompt and trims long threads', async () => {
+    const calls: any[] = []
+    const llm: Llm = {
+      models: { fast: 'f', balanced: 'b', quality: 'q' },
+      generate: async (opts: any) => {
+        calls.push(opts)
+        return { data: { reply: 'ok', mentions_product: false } as any, model: 'b', usage: { inputTokens: 1, outputTokens: 1 } }
+      },
+    }
+    const comments = Array.from({ length: 8 }, (_, i) => ({ author: `u${i}`, text: 'x'.repeat(600) }))
+    await generateReply(llm, { project, thread: { ...thread, body: 'y'.repeat(5000), comments }, tier: 'balanced', effort: 'low' })
+    expect(calls[0].cacheSystem).toBe(true)
+    expect(calls[0].effort).toBe('low')
+    expect(calls[0].prompt).toContain('Replies so far (top 5)')
+    expect(calls[0].prompt).not.toContain('y'.repeat(3001))
+    expect(calls[0].prompt).not.toContain('x'.repeat(401))
   })
 })
 
@@ -45,5 +72,9 @@ describe('auto replies by plan', () => {
     expect(PLANS.solo.autoReplies).toBe(true)
     expect(PLANS.pro.autoReplies).toBe(true)
     expect(PLANS.selfhost.autoReplies).toBe(true)
+  })
+  it('caps AI drafts per month so model cost stays under the price', () => {
+    expect([PLANS.free.draftsPerMonth, PLANS.solo.draftsPerMonth, PLANS.pro.draftsPerMonth]).toEqual([30, 300, 1500])
+    expect(PLANS.selfhost.draftsPerMonth).toBe(Infinity)
   })
 })

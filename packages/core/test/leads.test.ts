@@ -61,13 +61,13 @@ describe('generateReply with context', () => {
     }
     await generateReply(llm, {
       project: { name: 'Shipnote', url: 'https://s.test', category: null, icp: null, problems: [] },
-      thread: { platform: 'reddit', channel: 'SaaS', title: 'Changelog tool?', snippet: 'short', body: 'The full post text', comments: [{ author: 'x', text: 'Try Acme' }], competitorMentions: ['Acme'], kind: 'seeking_tool', reason: null, replyAngle: null },
+      thread: { platform: 'reddit', channel: 'SaaS', title: 'Changelog tool?', snippet: 'SNIPPET-ONLY', body: 'The full post text', comments: [{ author: 'x', text: 'Try Acme' }], competitorMentions: ['Acme'], kind: 'seeking_tool', reason: null, replyAngle: null },
       tier: 'balanced',
       voice: ['honestly we just use a google doc lol'],
     })
     expect(call.tier).toBe('balanced')
     expect(call.prompt).toContain('The full post text')
-    expect(call.prompt).not.toContain('short')
+    expect(call.prompt).not.toContain('SNIPPET-ONLY')
     expect(call.prompt).toContain('- x: Try Acme')
     expect(call.prompt).toContain('Competitors already mentioned in the replies: Acme')
     expect(call.system).toContain('<example>\nhonestly we just use a google doc lol\n</example>')

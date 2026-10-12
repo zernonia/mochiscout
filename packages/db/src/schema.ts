@@ -72,6 +72,8 @@ export const projects = sqliteTable('projects', {
   autoReply: integer('auto_reply', { mode: 'boolean' }).notNull().default(false),
   /** Email members when a hot lead appears (paid plans). */
   hotAlerts: integer('hot_alerts', { mode: 'boolean' }).notNull().default(true),
+  /** The founder's own instructions for reply drafts; null uses the default. */
+  replyInstructions: text('reply_instructions'),
   lastHotAlertAt: integer('last_hot_alert_at', { mode: 'timestamp' }),
   createdAt: createdAt(),
 })
@@ -273,6 +275,8 @@ export const usage = sqliteTable(
     llmInputTokens: integer('llm_input_tokens').notNull().default(0),
     llmOutputTokens: integer('llm_output_tokens').notNull().default(0),
     researchRuns: integer('research_runs').notNull().default(0),
+    /** AI drafts (replies and posts, manual and automatic) this month. */
+    drafts: integer('drafts').notNull().default(0),
   },
   t => [primaryKey({ columns: [t.orgId, t.period] })],
 )

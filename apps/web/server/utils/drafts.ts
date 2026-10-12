@@ -1,7 +1,7 @@
 import type { Angle, CheckReport, DraftInput } from '@mochiscout/core'
 import type { Db } from '@mochiscout/db'
 import type { Env } from './env'
-import { checkDraft, checkTone, generateDraft, normalizeSubredditName, recordUsage, resolveRules, worst } from '@mochiscout/core'
+import { assertCanDraft, checkDraft, checkTone, generateDraft, normalizeSubredditName, recordUsage, resolveRules, worst } from '@mochiscout/core'
 import { eq, schema } from '@mochiscout/db'
 import { LlmRefusalError } from '@mochiscout/llm'
 
@@ -67,6 +67,8 @@ export async function createDraft(db: Db, env: Env, ctx: { userId: string, orgId
   if (input.generate) {
     const llm = getLlm(env)
     if (!llm) throw createError({ statusCode: 503, statusMessage: 'No LLM key configured. Start an empty draft instead, or set ANTHROPIC_API_KEY.' })
+    const org = await db.select({ id: schema.orgs.id, plan: schema.orgs.plan }).from(schema.orgs).where(eq(schema.orgs.id, ctx.orgId)).get()
+    if (org) await quota(assertCanDraft(db, org))
     try {
       const draft = await generateDraft(llm, { project: ctx.project, subreddit, rules, angle: input.angle, promo, topic: input.topic })
       title = draft.data.title
@@ -76,6 +78,7 @@ export async function createDraft(db: Db, env: Env, ctx: { userId: string, orgId
       await recordUsage(db, ctx.orgId, {
         llmInputTokens: draft.usage.inputTokens + check.usage.inputTokens,
         llmOutputTokens: draft.usage.outputTokens + check.usage.outputTokens,
+        drafts: 1,
       })
     }
     catch (error) {

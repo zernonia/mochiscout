@@ -19,6 +19,7 @@ export default defineEventHandler((event) => {
       mcp: PLANS[id].mcp,
       autoReplies: PLANS[id].autoReplies,
       hotAlerts: PLANS[id].hotAlerts,
+      draftsPerMonth: finite(PLANS[id].draftsPerMonth),
       sources: PLANS[id].sources,
     })),
   }

@@ -28,11 +28,13 @@ export default defineEventHandler(async (event) => {
       mcp: limits.mcp,
       autoReplies: limits.autoReplies,
       hotAlerts: limits.hotAlerts,
+      draftsPerMonth: finite(limits.draftsPerMonth),
     },
     usage: {
       projects: projects?.n ?? 0,
       watchedSubreddits: watched,
       researchRuns: usage?.researchRuns ?? 0,
+      drafts: usage?.drafts ?? 0,
       searches: usage?.searches ?? 0,
       llmInputTokens: usage?.llmInputTokens ?? 0,
       llmOutputTokens: usage?.llmOutputTokens ?? 0,

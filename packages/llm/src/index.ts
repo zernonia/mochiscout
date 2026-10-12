@@ -47,12 +47,24 @@ export interface GenerateOptions<S extends z.ZodType> {
   prompt: string
   schema: S
   maxTokens?: number
+  /** Overrides the tier's default effort (lower effort means less thinking, fewer tokens). */
+  effort?: 'low' | 'medium' | 'high'
+  /** Cache the system prompt: worth it when it repeats across calls (e.g. one project's drafts). */
+  cacheSystem?: boolean
 }
 
 export interface GenerateResult<T> {
   data: T
   model: string
   usage: { inputTokens: number, outputTokens: number }
+}
+
+/** Cache writes and reads are input too (billed at 1.25x and 0.1x); count them so usage reflects cost. */
+function inputUsage(u: { input_tokens: number, output_tokens: number, cache_creation_input_tokens?: number | null, cache_read_input_tokens?: number | null }) {
+  return {
+    inputTokens: u.input_tokens + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0),
+    outputTokens: u.output_tokens,
+  }
 }
 
 export class LlmRefusalError extends Error {
@@ -87,7 +99,9 @@ export function createLlm(config: LlmConfig): Llm {
     const base = {
       model,
       max_tokens: Math.max(opts.maxTokens ?? 16000, MIN_MAX_TOKENS[opts.tier]),
-      system: opts.system,
+      system: opts.cacheSystem
+        ? [{ type: 'text' as const, text: opts.system, cache_control: { type: 'ephemeral' as const } }]
+        : opts.system,
       messages: [{ role: 'user' as const, content: opts.prompt }],
     }
 
@@ -97,27 +111,27 @@ export function createLlm(config: LlmConfig): Llm {
         ...base,
         betas: ['server-side-fallback-2026-07-01'],
         fallbacks: 'default',
-        output_config: { format: betaZodOutputFormat(opts.schema), effort: EFFORT[opts.tier] },
+        output_config: { format: betaZodOutputFormat(opts.schema), effort: opts.effort ?? EFFORT[opts.tier] },
       })
       return {
         parsed: res.parsed_output as z.infer<S> | null,
         stopReason: res.stop_reason,
         refusalCategory: res.stop_details?.category ?? null,
         model: res.model,
-        usage: { inputTokens: res.usage.input_tokens, outputTokens: res.usage.output_tokens },
+        usage: inputUsage(res.usage),
       }
     }
 
     const res = await client.messages.parse({
       ...base,
-      output_config: { format: zodOutputFormat(opts.schema), effort: EFFORT[opts.tier] },
+      output_config: { format: zodOutputFormat(opts.schema), effort: opts.effort ?? EFFORT[opts.tier] },
     })
     return {
       parsed: res.parsed_output as z.infer<S> | null,
       stopReason: res.stop_reason,
       refusalCategory: res.stop_details?.category ?? null,
       model: res.model,
-      usage: { inputTokens: res.usage.input_tokens, outputTokens: res.usage.output_tokens },
+      usage: inputUsage(res.usage),
     }
   }
 

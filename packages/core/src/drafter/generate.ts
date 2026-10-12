@@ -68,7 +68,8 @@ ${rulesBrief(subreddit, rules)}`
       : 'Do not mention the product or any link. This post builds trust in the community.',
   ].filter(line => line !== null).join('\n')
 
-  return llm.generate({ tier: 'quality', system, prompt, schema: Draft, maxTokens: 6000 })
+  // Same cost profile as reply drafts (Sonnet-class, low effort): posts count toward the draft allowance.
+  return llm.generate({ tier: 'balanced', effort: 'low', system, prompt, schema: Draft, maxTokens: 6000 })
 }
 
 /** LLM check: tone (too promotional?) and fit with the subreddit's notes. */
@@ -80,7 +81,8 @@ export async function checkTone(llm: Llm, opts: {
   promo: boolean
 }): Promise<{ level: CheckLevel, issues: string[], usage: { inputTokens: number, outputTokens: number } }> {
   const res = await llm.generate({
-    tier: 'quality',
+    tier: 'balanced',
+    effort: 'low',
     system: `You are a strict but fair moderator of r/${opts.subreddit}. Judge whether this post would be welcome or removed as self-promotion or low effort.\n\n${rulesBrief(opts.subreddit, opts.rules)}`,
     prompt: `${opts.promo ? 'The author mentions their own product.' : 'The author says the post does not promote anything.'}\n\nTitle: ${opts.title}\n\n${opts.body}`,
     schema: ToneCheck,

@@ -51,5 +51,7 @@ async function save() {
         <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save profile' }}</Button>
       </div>
     </form>
+    <!-- Separate form: nested forms break hydration. -->
+    <ReplyInstructionsCard :project-id="projectId" :product-name="project.name" />
   </div>
 </template>

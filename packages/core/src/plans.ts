@@ -21,6 +21,8 @@ export interface PlanLimits {
   autoReplies: boolean
   /** Email alerts when a hot lead appears. */
   hotAlerts: boolean
+  /** AI drafts a month (replies and posts, manual and automatic): keeps model cost under the price. */
+  draftsPerMonth: number
   sources: Platform[]
 }
 
@@ -28,13 +30,13 @@ const ALL_SOURCES: Platform[] = ['reddit', 'hn', 'bluesky', 'x', 'web']
 
 /** Plans from docs/arch.md §10. Self-host has no limits. */
 export const PLANS: Record<Plan, PlanLimits> = {
-  selfhost: { label: 'Self-host', price: null, projects: Infinity, watchedSubreddits: Infinity, seats: Infinity, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: Infinity, mcp: true, autoReplies: true, hotAlerts: true, sources: ALL_SOURCES },
-  free: { label: 'Free', price: 0, projects: 1, watchedSubreddits: 3, seats: 1, digest: 'weekly', researchEveryDays: null, manualResearchPerMonth: 1, mcp: false, autoReplies: false, hotAlerts: false, sources: ['reddit'] },
-  solo: { label: 'Solo', price: 19, projects: 1, watchedSubreddits: 15, seats: 1, digest: 'daily', researchEveryDays: 30, manualResearchPerMonth: 2, mcp: false, autoReplies: true, hotAlerts: true, sources: ['reddit', 'hn', 'bluesky'] },
-  pro: { label: 'Pro', price: 49, projects: 5, watchedSubreddits: 50, seats: 3, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: 8, mcp: true, autoReplies: true, hotAlerts: true, sources: ALL_SOURCES },
+  selfhost: { label: 'Self-host', price: null, projects: Infinity, watchedSubreddits: Infinity, seats: Infinity, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: Infinity, mcp: true, autoReplies: true, hotAlerts: true, draftsPerMonth: Infinity, sources: ALL_SOURCES },
+  free: { label: 'Free', price: 0, projects: 1, watchedSubreddits: 3, seats: 1, digest: 'weekly', researchEveryDays: null, manualResearchPerMonth: 1, mcp: false, autoReplies: false, hotAlerts: false, draftsPerMonth: 30, sources: ['reddit'] },
+  solo: { label: 'Solo', price: 19, projects: 1, watchedSubreddits: 15, seats: 1, digest: 'daily', researchEveryDays: 30, manualResearchPerMonth: 2, mcp: false, autoReplies: true, hotAlerts: true, draftsPerMonth: 300, sources: ['reddit', 'hn', 'bluesky'] },
+  pro: { label: 'Pro', price: 49, projects: 5, watchedSubreddits: 50, seats: 3, digest: 'daily', researchEveryDays: 7, manualResearchPerMonth: 8, mcp: true, autoReplies: true, hotAlerts: true, draftsPerMonth: 1500, sources: ALL_SOURCES },
 }
 
-export type QuotaFeature = 'projects' | 'watchedSubreddits' | 'seats' | 'research' | 'mcp' | 'source' | 'autoReplies' | 'hotAlerts'
+export type QuotaFeature = 'projects' | 'watchedSubreddits' | 'seats' | 'research' | 'mcp' | 'source' | 'autoReplies' | 'hotAlerts' | 'drafts'
 
 /** A plan limit was hit. The API turns this into HTTP 402 with an upgrade payload. */
 export class QuotaError extends Error {
@@ -66,6 +68,7 @@ function lifts(plan: Plan, feature: QuotaFeature, current: number | boolean) {
     case 'mcp': return l.mcp
     case 'autoReplies': return l.autoReplies
     case 'hotAlerts': return l.hotAlerts
+    case 'drafts': return l.draftsPerMonth > Number(current)
     case 'source': return true
   }
 }
@@ -158,5 +161,21 @@ export function assertAutoReplies(org: Org) {
 export function assertHotAlerts(org: Org) {
   if (!PLANS[org.plan].hotAlerts) {
     throw new QuotaError('hotAlerts', org.plan, false, 'Hot lead alerts are part of the Solo and Pro plans.')
+  }
+}
+
+/** AI drafts used this month, and the plan's allowance. */
+export async function draftAllowance(db: Db, org: Org, now = new Date()) {
+  const limit = PLANS[org.plan].draftsPerMonth
+  const row = await db.select({ drafts: schema.usage.drafts }).from(schema.usage)
+    .where(and(eq(schema.usage.orgId, org.id), eq(schema.usage.period, now.toISOString().slice(0, 7)))).get()
+  const used = row?.drafts ?? 0
+  return { used, limit, remaining: limit - used }
+}
+
+export async function assertCanDraft(db: Db, org: Org, now = new Date()) {
+  const { used, limit } = await draftAllowance(db, org, now)
+  if (used >= limit) {
+    throw new QuotaError('drafts', org.plan, limit, `The ${PLANS[org.plan].label} plan includes ${limit} AI drafts a month. They reset on the 1st.`)
   }
 }

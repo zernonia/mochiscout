@@ -6,6 +6,7 @@ export interface UsageDelta {
   llmInputTokens?: number
   llmOutputTokens?: number
   researchRuns?: number
+  drafts?: number
 }
 
 /** Add to this month's usage row for an org (cost tracking from day one, arch §13). */
@@ -16,6 +17,7 @@ export async function recordUsage(db: Db, orgId: string, delta: UsageDelta, at =
     llmInputTokens: delta.llmInputTokens ?? 0,
     llmOutputTokens: delta.llmOutputTokens ?? 0,
     researchRuns: delta.researchRuns ?? 0,
+    drafts: delta.drafts ?? 0,
   }
   await db
     .insert(schema.usage)
@@ -27,6 +29,7 @@ export async function recordUsage(db: Db, orgId: string, delta: UsageDelta, at =
         llmInputTokens: sql`${schema.usage.llmInputTokens} + ${values.llmInputTokens}`,
         llmOutputTokens: sql`${schema.usage.llmOutputTokens} + ${values.llmOutputTokens}`,
         researchRuns: sql`${schema.usage.researchRuns} + ${values.researchRuns}`,
+        drafts: sql`${schema.usage.drafts} + ${values.drafts}`,
       },
     })
 }
