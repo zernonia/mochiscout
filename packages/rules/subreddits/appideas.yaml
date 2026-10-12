@@ -1,0 +1,43 @@
+name: AppIdeas
+promo_policy: none
+self_promo_thread: null
+min_karma: 50
+min_account_age_days: 30
+links_allowed: none
+post_formats: []
+cooldown_days: null
+tags:
+- app-ideas
+- mobile
+- validation
+notes: Links to app stores, mailing list invites and other promotion of an existing or upcoming app are removed. Accounts must be over a month old with more than 50 karma to post, and low-effort LLM-wrapper ideas are removed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/AppIdeas/about/rules
+official:
+- title: Posts must be App Ideas
+  text: |-
+    This subreddit is for posting app ideas. It doesn't have to be a fully formed idea, and the goal could be, for example, to share it, give it away, refine it through feedback, or look for people interested in discussing developing it, but there must be some defined app idea that the post is centrally about.
+
+    The post can be about an idea you're working on developing, as long as it doesn't cross into self-promotion.
+  kind: all
+- title: No Self-Promotion or Advertisements
+  text: |-
+    This subreddit is not for sharing completed projects or for advertising an existing or upcoming project. Posts that contain links to apps on app stores, invite people to join mailing lists for projects, or are otherwise promoting or advertising an existing or upcoming app will be removed.
+
+    Note: If you use this subreddit to distribute or promote sideloaded apps (e.g. APK files for Android phones), in addition to your post being removed you will be banned.
+  kind: all
+- title: Always be Civil
+  text: Discussion may be critical of ideas posted, and there may be good-faith discussion about any disagreements, but always keep it civil.
+  kind: all
+- title: No Low-Effort AI Content
+  text: |-
+    The goal of this subreddit is to facilitate human creativity.
+
+    Ideas that centrally revolve around low-effort wrappers of LLM APIs will be removed. Additionally, posts and comments that strongly appear to be AI generated without any actual effort put into them will also likely be removed.
+  kind: all
+- title: Mod Discretion
+  text: It may be necessary to remove content that isn't explicitly covered by one of these rules or which falls into a grey area.
+  kind: all
+- title: 6. Automod
+  text: To prevent spam, only the accounts older than a month and above 50 of karma can post in our community. If not in those requirements, your post will be automatically removed. Thanks for your understanding
+  kind: all

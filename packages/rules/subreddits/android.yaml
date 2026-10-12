@@ -1,0 +1,73 @@
+name: Android
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: 90
+links_allowed: 'yes'
+post_formats: []
+cooldown_days: null
+tags:
+- android
+- mobile
+- consumer-tech
+notes: Developers may post their own app only as a self post with a detailed description, from an account at least three months old with a reasonable posting history on r/Android. You must interact with users in the thread.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/Android/about/rules
+official:
+- title: Rule 1 - Off Topic
+  text: All posts to r/Android must be related to the Android OS or ecosystem in some way. If not obvious, you should submit the link as a self-post and include an explanation. The title and body of self-posts should be translated to English if written in another language. Comments that devolve into purely political discussions may be locked and people in violation may get banned if they are also violating Rule 9.
+  kind: link
+- title: Rule 2 - No support questions/rants/bug-reports
+  text: |-
+    We welcome posts that benefit the community (device reviews, guides, discussions and rumors) and not the individual (seeking help, e.g. tech support). You might be interested in r/AndroidQuestions,  r/PickAnAndroidForMe, or /r/AndroidApps.
+
+    If you're asking a question, include your own analysis first in a few sentences. Discussion-promoting rants are okay at mods' discretion.
+  kind: link
+- title: Rule 3 - Images/videos in self-posts
+  text: |-
+    Please provide an explanation in the self-post body. No memes.
+
+    YouTube videos are fine as links, provided they don't break other rules.
+  kind: link
+- title: Rule 4 - No self-promotional spamming
+  text: "Developers may post their own apps, provided:\n\n1- Their post must be a self post with a detailed description of their app.  \n2- The developer's account must be at least three months old AND have a reasonable posting history on r/Android.  \n3- The developer must interact with users in the thread. We do not allow developers to simply dump a link to their app and leave.\n\nWebsite/blog/YouTube channel owners are generally not allowed to post their own content."
+  kind: link
+- title: Rule 5 - No reposts or blog-spam/rehosted content
+  text: "Submit the original source whenever possible, unless it's not in English, the article adds substantial information, or if sharing via [/c/android](https://lemdro.id/c/android). \n\nReposts are not allowed. This includes an article whose information has already been covered by another article posted on r/Android."
+  kind: link
+- title: Rule 6 - No editorializing titles
+  text: |-
+    Please do not change the link's title when submitting it, unless necessary to accurately sum up the article. You may freely add "[Author]" or "by Author" if it clarifies the article's source (e.g. YouTube video).
+
+    If you want to discuss something specific, use the comments or submit it as a self-post (see rule 2).
+  kind: link
+- title: Rule 7 - No piracy
+  text: Do not link or discuss pirated apps/piracy websites.
+  kind: all
+- title: Rule 8 - No unauthorized polls, bots or giveaways.
+  text: "To prevent scams, we require that all polls or giveaways be approved by the moderators. Modmail us with your request before you post any poll or do any giveaway. \n\nOnly pre-approved bots are allowed on /r/Android. Currently, the only bot we allow is the Play Store Link bot. This bot can be summoned by commenting \"Linkme: APPNAMEHERE.\" without quotes. Wish to use your bot on this sub? Modmail us and explain why it's useful.\n\n[Modmail us](https://www.reddit.com/message/compose?to=%2Fr%2FAndroid)"
+  kind: all
+- title: Rule 9 - No offensive or low-effort comments. All comments must be in English.
+  text: |-
+    Do not be rude to any other user. Be respectful, or you may be banned.
+
+    Do not use hate speech of any kind.
+
+    Do not be disrespectful towards another for their personal choices (excessive fanboyism).
+
+    Do not accuse others of being "paid shills."
+
+    Do not post low-effort/circlejerky comments.
+
+    Most of all, read redditquette
+
+    https://www.reddithelp.com/en/categories/reddit-101/reddit-basics/reddiquette
+
+    All comments must be submitted in English.
+  kind: all
+- title: Rule 10 - No affiliate links
+  text: |-
+    If you are a Redditor, affiliate links are absolutely NOT allowed in either the comments section, within the self-text of your post, or as part of your link.
+
+    If you post an article, affiliate links will NOT be allowed if the article being linked is a simple "deal alert" type post. Instead, simply link directly to the deal (without the affiliate link included).
+  kind: all

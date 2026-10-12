@@ -1,0 +1,66 @@
+name: apple
+promo_policy: weekly_thread_only
+self_promo_thread: Sunday developer self-post
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- apple
+- ios
+- consumer-tech
+notes: Developers may promote their app only on Sundays (California time), as a self-post, and must have organic activity in the sub. Read the linked wiki rule before posting.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/apple/about/rules
+official:
+- title: No reposts, and/or rehosted content.
+  text: "Please refrain from posting an article that has already been posting from the same source as yours, or from a different source. \n\n[Please visit the Rules page for more clarification on this rule](https://www.reddit.com/r/apple/wiki/rules)"
+  kind: all
+- title: No memes, direct images or contextless image/video posts.
+  text: We do not allow posts that directly link to an image or a video. If you would like to submit a video or an image to the subreddit, please do so in a self-post.
+  kind: link
+- title: No NSFW content.
+  text: ''
+  kind: all
+- title: Posts must foster reasonable discussion.
+  text: Posts that are unlikely to promote high-quality discussion are not allowed.
+  kind: link
+- title: No editorialized link titles.
+  text: 'When submitting, please use the source''s original title whenever possible, unless it is necessary to change it to accurately sum up the content (Examples: changing a click-bait title to a more accurate title).'
+  kind: link
+- title: No low-effort, rude/offensive, or hateful comments.
+  text: Please refrain from making rude/offensive comments on the subreddit. We want /r/Apple to be a safe and tolerant place for fans to discuss everything Apple.
+  kind: comment
+- title: No posts that aren’t directly related to Apple.
+  text: All posts must be directly related to Apple. We will remove posts that are only vaguely related to Apple.
+  kind: link
+- title: No tech-support questions.
+  text: As per our Content Philosophy, this subreddit allows content that benefits the community over individual questions. As such, tech support threads and "What Should I Buy?" threads will be removed. Users will be sent to the "Daily Advice Thread" that's posted every day by Automoderator at 6AM EST.
+  kind: link
+- title: Self-promotion is allowed on Sundays, only for developers.
+  text: |-
+    No spam, self-promotion of your own blogs/websites/videos, or surveys are allowed. If you are a developer wanting to promote your app on the subreddit, you may do so on Sundays (California time) self-post only.
+
+    Activity requirements are enforced; developers should participate organically on the subreddit. (Comments/posts)
+
+    Before posting, you MUST [read the detailed rules here.](https://www.reddit.com/r/apple/wiki/rules#wiki_9.__no_spam._no_surveys._self-promotion_is_allowed_on_sundays_only)
+  kind: all
+- title: No content related to piracy or illegal activities.
+  text: ''
+  kind: all
+- title: No posts relating to buying, selling advice.
+  text: As stated in the explanation for the "Tech Support" rule, this subreddit allows content that benefits the community over individual questions. As such "What Should I Buy?" posts threads will be removed and users will be sent to the "Daily Advice Thread" that's posted every day by Automoderator at 6AM EST.
+  kind: all
+- title: No posts about bugs in beta software.
+  text: |-
+    There are dedicated subreddits to share news, bugs and everything else in between in regards to iOS, watchOS, tvOS, and macOS Betas.
+
+    /r/Apple only allows news of beta releases, and major bugs (example: if a beta is bricking devices).
+  kind: link
+- title: No vaccine misinformation
+  text: |-
+    Comments that are spreading COVID vaccine misinformation/claims are not allowed.
+
+    Anyone found spreading misinformation may be found unwelcome on r/Apple
+  kind: comment

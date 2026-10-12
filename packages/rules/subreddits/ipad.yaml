@@ -1,0 +1,60 @@
+name: ipad
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- ipad
+- apple
+- consumer-tech
+notes: Self-promotion isn't allowed unless it gives the community useful content, and accounts mainly used for promotion are banned. Message the moderators first for an exception.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/ipad/about/rules
+official:
+- title: Treat other members with respect
+  text: |-
+    - Be respectful to other members. Do not discriminate, abuse, or otherwise disrespect other members, groups, or minorities.
+
+    - Insulting, agressive, or immature behavior won't be tolerated and first transgressions will result in a 20 day ban.
+  kind: all
+- title: Low-Effort / Repetitive Content
+  text: "- No low-quality/effort posts: iPad in a box, simple photos of an iPad, \"Joined the club\"/\"I just got a new ipad\", Apple ecosystem photos, memes, home screenshots. \n\n- Post must foster discussion, present informative content, and have substance."
+  kind: link
+- title: Purchase Related Content
+  text: "- Any request for purchase related advice/questions, product comparaisons, what product for a specific use case, and shipping discussions, will go to the \"[What Should I Buy](https://www.reddit.com/r/ipad/about/sticky?num=2)\" thread, also located at the top of the subreddit. \n\n- Please, while you wait for an answer to your question, consider helping out someone else in the thread. Also, use the search bar to find similar questions and answers that might have been posted before."
+  kind: link
+- title: Tech-Support Questions
+  text: |-
+    - Any tech-support related questions, hardware or software, will go to the [Discussion & Tech-Support](http://reddit.com/r/ipad/about/sticky?num=1) thread, located at the top of the subreddit. Please, use the search bar to find similar questions that have been posted before, as chances are, your exact issue has already been dealt with in the past. Finally, contact Apple through their Apple Support app, for real expertise.
+
+    Bug reports are also to be posted in that thread or r/iOSBeta.
+  kind: link
+- title: iPad and Setup Photos
+  text: "- iPad Setup photos are only allowed if they showcase at least one third-party accessory, a list and review of the accessories, or a discussion about your workflow/experience with the setup. \n\n- We don't allow Apple ecosystem photos (iPad + iPhone + Apple Watch etc.) or generic iPad photos by themselves with just a smart/magic keyboard, to avoid repetitive content in the subreddit.\n\n- An iPad on the same table as a PC Setup isn't an iPad setup."
+  kind: link
+- title: Selling / Trading
+  text: |-
+    - Posts soliciting the purchase, sale or donation of products or services of any kind, through normal or affiliate links, will be automatically removed, and the account banned.
+
+    - Company accounts or accounts that relate to the distribution or promotion of a product or service will be automatically banned.
+  kind: all
+- title: Jailbreak / Sideloading
+  text: |-
+    - Jailbreaking talk goes in /r/jailbreak, sideloading talk goes to /r/sideloaded.
+    Same goes for emulators.
+  kind: all
+- title: Subreddit Meta / Off-Topic
+  text: '- Out-of-topic content or content that isn''t directly related to iPads will be removed. No drama content, no meta posts. No content from unknown/unsafe sources.'
+  kind: all
+- title: "No Self-\bPromotion"
+  text: "- Self-promotion isn't allowed in this subreddit, unless it provides useful and informative content to the community. \n\n- Reddit accounts that are mainly used for self-promotion or the promotion of a product or service, will be instantly banned.\n\n- Exceptions may be made, if [you message the moderators first](https://www.reddit.com/message/compose?to=r/ipad)."
+  kind: all
+- title: Note-taking / Digital Art
+  text: "We only allow note-taking screenshots and digital art on Sundays. \n\n- Your post might get removed if it appears to be a case of self-promotion.\n\n- You're only allowed to post your art once every two months. Your post will be removed if your account mainly your art posted in every subreddit possible, if it's a case of self-promotion, etc."
+  kind: link
+- title: Updated subreddit content.
+  text: '- Bi-weekly, some of the posts that break the rules above will be left untouched, so to update the information that''s available via the search-bar.'
+  kind: all

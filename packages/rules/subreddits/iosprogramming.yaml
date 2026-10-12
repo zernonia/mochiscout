@@ -1,0 +1,45 @@
+name: iOSProgramming
+promo_policy: flair_only
+self_promo_thread: App Saturday
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: 365
+tags:
+- ios
+- swift
+- mobile-dev
+notes: You may post about one app, once a year, and only on Saturday (App Saturday). Paywalled products need a description, the challenges you faced and ideally a technical overview.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/iOSProgramming/about/rules
+official:
+- title: Be civil
+  text: |-
+    https://www.redditinc.com/policies/content-policy
+
+    As for being rude, this is mostly up to our discretion, but includes correcting someone's grammar in an impolite way. Your comment will be removed for such an offense and you may be banned if you have a history of doing that.
+
+    All content on this subreddit should be appropriate for all ages.
+  kind: comment
+- title: Frequently asked questions
+  text: |-
+    Some questions are now restricted to the Discord server. These questions are often easily searchable, or have been asked many times before.
+
+    You can find the Discord server [here](https://discord.gg/Y38tkC5M9w).
+  kind: all
+- title: Frequently posted topics
+  text: 'Some topics are now restricted to the Discord server. Such topics include: job ads/offers, requests, or app ideas.'
+  kind: link
+- title: Self-promotion is allowed to some extent
+  text: "Self-promotion is permitted to a certain extent. If your product or service is behind a paywall, we expect you to provide a description of your product or service, the challenges you faced, and, perhaps as a bonus, a technical overview of it. For freely accessible products or services, our policy is more lenient. \n\nHowever, we do not allow blatant advertisements or spam. Articles or links that solely exists to promote a paid product or service may be removed at our discretion."
+  kind: all
+- title: Posts must be about Apple platform development
+  text: Posts unrelated to development on any Apple platform (iOS, macOS, etc) may be removed. This includes posts about Android development, and posts not about development at all.
+  kind: link
+- title: No piracy or jailbreaking guidance
+  text: This subreddit is not the place to seek help for piracy or jailbreaking. We do not condone pirating other developers apps or services. For jailbreaking, please visit r/jailbreak
+  kind: all
+- title: Only post your app on Saturday
+  text: "You may post about *one* app, *once* a year. It does not have to be your first app. \nplease refrain from posting few hours before a new day or if you don't have previous activity.\n\nYou cannot make more than one app post per year. You may not post about multiple different apps within the same year.\n\nRead post content guideline at:\n\nhttps://www.reddit.com/r/iOSProgramming/wiki/app-saturday"
+  kind: link

@@ -1,0 +1,49 @@
+name: AppStoreOptimization
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: 'yes'
+post_formats: []
+cooldown_days: null
+tags:
+- aso
+- app-marketing
+- mobile
+notes: 'No shameless self-promo: contribute genuinely and disclose any affiliation with a tool you recommend. If every post or comment links to your own product, it''s treated as spam; unflaired posts may be removed.'
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/AppStoreOptimization/about/rules
+official:
+- title: Keep It On Topic
+  text: This is an ASO and app marketing sub. If it's about growing, optimizing, or marketing an app — you're in the right place. Everything else, not so much.
+  kind: all
+- title: No Shameless Self-Promo
+  text: We're not a free ad board, but we're also not monsters. Contribute genuinely, add value to conversations, and the community will naturally want to know what you're working on. Lead with helpfulness.
+  kind: all
+- title: Put In Some Effort
+  text: '"How do I rank #1?" with zero context is tough for anyone to answer. Share your category, platform, and what you''ve already tried — the more you give, the better advice you''ll get back.'
+  kind: all
+- title: Search First, Post Second
+  text: There's a good chance your question has been answered before — maybe even recently. A quick search can save you the wait and might get you a better answer faster.
+  kind: all
+- title: Get Specific, Share the Numbers
+  text: Vague questions get vague answers. Tell us your platform, category, and rough metrics. You can keep sensitive stuff anonymized — just give us enough to actually help.
+  kind: all
+- title: Disclose Your Affiliations
+  text: If you're recommending a tool you work for or have a stake in, just say so upfront. It builds trust, and honestly — this crowd tends to figure it out anyway.
+  kind: all
+- title: Be Cool
+  text: Challenge ideas, debate strategies, disagree openly — that's what makes a good community. Just keep it respectful. Beginners are especially welcome here.
+  kind: all
+- title: Use Your Flair
+  text: 'Flair your posts: Question, Case Study, Tool Review, iOS, Android, Discussion. It keeps things organized and helps the right people find your post. Unflaired posts may be removed.'
+  kind: all
+- title: Back Up Your Big Claims
+  text: Sharing a win? Awesome, we love those. Just walk us through the how, not just the what. A methodology makes a case study — without it, it's just a screenshot.
+  kind: all
+- title: Job Posts Need Mod Approval
+  text: Hiring, freelancing, or looking for work? Check with the mods first or use the monthly thread if there is one. We want to support the community, just keeping it tidy.
+  kind: all
+- title: We Have Eyes 👀
+  text: Dropping your app link in context every now and then? Totally fine, we get it. But if every post and comment happens to include a link to your stuff — that's spam, even if it's dressed as a question. Don't be greedy, keep it genuine.
+  kind: all

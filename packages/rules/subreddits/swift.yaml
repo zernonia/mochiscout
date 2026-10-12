@@ -1,0 +1,38 @@
+name: swift
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: 60
+links_allowed: 'yes'
+post_formats: []
+cooldown_days: null
+tags:
+- swift
+- ios
+- programming
+notes: 'Self-promotion is tolerated only for people contributing to the community: under 5% of your posts and comments, and not if you have fewer than 5 posts or comments or an account under 2 months old.'
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/swift/about/rules
+official:
+- title: Rule I - Must be relevant to Swift
+  text: Your post should be related to The Swift Programming Language. We get it, Taylor Swift is great but unless she's starting a new career as a Swift developer, we don't need to know about it.
+  kind: all
+- title: Rule II - Be Respectful
+  text: We know you're passionate about Swift but, please be respectful and follow reddiquette. Any form of abuse, discrimination (whether racial, sexual, religious etc) or any vulgar comments/posts are not tolerated.
+  kind: all
+- title: Rule III - Must be an original source
+  text: |-
+    Make the original source of the content your submission, and do not use URL shorteners.
+    If a mirror is necessary, please provide one in comments. No hotlinking or rehosting someone else's work (unless they specifically allow it in their terms of use or request it).
+
+    Post direct links to your source.
+  kind: link
+- title: Rule IV - Asking Questions
+  text: Before posting your question, use the search bar to make sure your question has not been answered before. If you think your question is simple, please post it in the monthly pinned thread titled "Got an easy question? Ask it here!"
+  kind: link
+- title: Rule V - Self Promotion
+  text: |-
+    Self promotion is tolerated for people that are contributing to the community by answering questions and engaging in constructive discussions. Fewer than 5% of your posts (including comments) should be self promotion. If you have fewer than 5 posts/comment on the sub, or your account is less than 2 month old, self promotion is not allowed.
+
+    Note: If your post is about a job opening, you *must* include the name of the company and a salary range, otherwise your post will be removed.
+  kind: all

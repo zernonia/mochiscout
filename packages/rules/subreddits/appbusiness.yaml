@@ -1,0 +1,25 @@
+name: AppBusiness
+promo_policy: weekly_thread_only
+self_promo_thread: Weekly app feedback thread (Friday)
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- app-business
+- mobile
+- indie-hackers
+notes: Promotion of your own apps is not allowed; use the weekly app feedback thread on Friday. Advertising your business or agency services is also not allowed, though posts giving real value to app founders are fine.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/AppBusiness/about/rules
+official:
+- title: Must be relevant to App Business
+  text: You can post about anything related to app business including ideas, validation, development, marketing, launch, analytics, customer dev and ASO as long as it doesn’t conflict with any other rule.
+  kind: all
+- title: No promotion of your own apps
+  text: We do not want this subreddit to turn into a tool for marketing. We will have a weekly app feedback thread on Friday, please use that for feedback.
+  kind: all
+- title: No promotion of your Business
+  text: This subreddit is not meant for advertising your business/agency services. If your posting provides value in the form of information or valuable resources for appreneurs it will be allowed.
+  kind: all

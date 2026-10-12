@@ -1,0 +1,63 @@
+name: FlutterDev
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- flutter
+- dart
+- mobile-dev
+notes: Advertising apps is not allowed; post about an app you built only if you share the source or app-specific build insights. Companies offering development services are banned.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/FlutterDev/about/rules
+official:
+- title: Must be directly related to Flutter
+  text: |-
+    If it is posted here, it must have an unambiguous relation to flutter itself.
+      Articles about mobile programming that do not apply to flutter are against this rule.
+  kind: link
+- title: Help requests go in r/FlutterHelp
+  text: If you need help with your code, including plugin suggestions, and hardware recommendations, please ask in r/FlutterHelp
+  kind: all
+- title: Use link posts whenever possible
+  text: A reddit text post with a link and either no content, or content available at the link, does nothing but make navigation harder.
+  kind: link
+- title: Only english-accessible content
+  text: If you have an article, provide a link to an english version, if you have a video, be sure that the english subtitles are available and understandable.
+  kind: all
+- title: No posts or comments offering to hire, or to be hired.
+  text: |-
+    Either use our [Discord chat](https://discord.gg/rflutterdev), or one of the many subreddits dedicated to this purpose.
+
+    Companies offering development services will be banned on the spot, this is a community for developers to share knowledge, not a job board.
+  kind: all
+- title: No promotion of paywalled or loginwalled articles.
+  text: |-
+    Paid or restricted articles are not allowed here.
+
+    If someone specifically asks for a recommendation, posting a comment with your content is fine.
+  kind: link
+- title: Keep content quality high
+  text: The members of this community expect content made with some effort. If you post a copy/pasted article or a speedcode video with nothing but code being typed at 2x speed with music in the background, your content could get removed.
+  kind: all
+- title: No AI Generated Articles
+  text: |-
+    Low effort posts written by Large Language Models are not welcome here, they're often oversimplified, or sometimes straight up wrong.
+
+    If you want to write content, ChatGPT is okay to generate an outline, but don't use it to do all the hard work.
+
+    People can tell, GPTZero can tell, we can tell.
+  kind: all
+- title: No advertising of apps
+  text: |-
+    r/FlutterDev is not the place to advertise your apps, it is a place for developers to share knowledge.
+
+    If you built an app in Flutter, great! You can advertise on r/AndroidApps , and other places dedicated to this purpose.
+
+    Only post about it here if you are willing to share either:
+     - The source of the app
+     - Insights about building the app (Generic insight is insufficient, it must be specific to your app.)
+  kind: all

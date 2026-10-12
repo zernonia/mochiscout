@@ -1,0 +1,59 @@
+name: iosapps
+promo_policy: weekly_thread_only
+self_promo_thread: App Shelf Megathread
+min_karma: 10
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: 30
+tags:
+- ios
+- apps
+- app-showcase
+notes: Needs 10 local karma earned by commenting, and developers who don't qualify via Trust or Transparency must use the monthly App Shelf Megathread. Disclose your relationship to the app, use the right pricing flair, and note that generative AI and AI-wrapped apps are not allowed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/iosapps/about/rules
+official:
+- title: Read This Before Posting
+  text: |-
+    **Everyone:**
+    - **10pt LOCAL Karma required.** Comment in r/iOSApps to earn it. [Check](https://is.gd/w4wBbl)
+    - Search the sub before posting. Choose flair.
+
+    **App Devs:** No main feed promo unless you qualify via **Trust or Transparency** + **ABC** format (Answer, Better, Cost). [How to qualify](https://is.gd/e5YRcX)
+    - Flair: **Vibe Coded > Lifetime > Subscription > Freemium > Free**
+    - Free flair: not for limited/freemium tiers
+    - Open Source? Prefix title **[OS]**
+  kind: all
+- title: Official Distribution Channels Only
+  text: Download links must link to the App Store or TestFlight. Sideloaded or unnoficial sources are not allowed. Shortened links are not allowed.
+  kind: all
+- title: Limited Self-Promotion
+  text: |-
+    Infrequent self-promotion is permitted; however, it is not permitted more than once per developer in 30 days. This is counted from the last app post, even if it was removed.
+
+    For well-established, recognized devs with an app-flair, once per app per 30 days.
+
+    ALWAYS disclose your relationship to your software in comments promoting your app. Promoting your own app in comments is disallowed until you earn **10 karma** in r/iOSApps, and is in poor taste when hijacking another developer's promotion.
+  kind: all
+- title: Reddit Rules
+  text: We follow the Reddit Rules without exception. Familiarise yourself before posting or commenting.
+  kind: all
+- title: No Affiliate / Referral / Invite Links
+  text: Affiliate, referral, and invite links are not permitted since they attract spam and low-quality content.
+  kind: all
+- title: No AI
+  text: Generative AI apps and AI-wrapped apps are not allowed and will be removed. If your app uses AI as a core feature rather than a tool, it likely doesn't belong here. Check out r/GenAiApps instead. Apps that were vibe coded must be flaired accordingly.
+  kind: all
+- title: No Promo Code Requests
+  text: 'Do not ask for promo codes or discounts in the comments, not even when a publisher suggests it in their post. It''s spam and will be treated as such. DM the publisher if you must, but don''t announce it publicly. Same goes for developers: If you are offering a promotion, do not encourage users to comment for the code. Instead, either give a promo code that works for everyone **inside the post body** (preferred) or ask users to DM you privately.'
+  kind: all
+- title: Promote in Megathread
+  text: As part of the **Trust vs. Transparency Initiative**, ALL who do not qualify through trust or transparency requirements must limit promotion to the monthly **App Shelf Megathread**. *Learn how to qualify to post in the main feed [here](https://www.reddit.com/r/iosapps/comments/1u9aw0f/riosapps_moderation_update_phase_2_trust/).*
+  kind: all
+- title: No Hiring Posts
+  text: This is not the place to find or hire developers for your app idea.
+  kind: link
+- title: Be kind and respectful
+  text: "- Be polite, stay on topic and follow basic [reddiquette](https://reddit.zendesk.com/hc/en-us/articles/205926439-Reddiquette). \n- If a post breaks sub rules, don't leave a rude reply; instead, report it to the mods.\n\n- Rude and hateful comments about the app or developers will not be tolerated. Critiquing, feedback, and discussing is fine but be polite."
+  kind: all

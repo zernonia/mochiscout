@@ -1,0 +1,65 @@
+name: AppleWatch
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- apple-watch
+- wearables
+- apple
+notes: Self-promotion of your own app, product, service or content is not allowed. Promotional content needs explicit moderator approval and must disclose paid sponsorships.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/AppleWatch/about/rules
+official:
+- title: Subreddit Relevance/Low Effort/Duplicate Posts
+  text: "- Submissions must be about Apple Watch or Apple Watch related accessories/topics.\n- No low effort submissions or duplicate posts of recent submissions (past 2 weeks). \n- App recommendations questions should be posted in the Joined the Club Megathread.\n- Non-Question posts must foster reasonable discussion.\n- Low effort activity threads (a simple image of a workout, a badge etc)."
+  kind: all
+- title: Do Not Spam
+  text: "Spam, such as promotional content designed purely for commercial purposes, cannot be posted. Explicit moderator approval must be received to post giveaways or other content that is promotional. Please review Reddit's own guidelines for self-promo rules e.g. 1:10 rule before contacting us. \n\nAll promotional content must disclose any paid sponsorships."
+  kind: all
+- title: Blog Spam / Low Quality Links / Referral Links
+  text: Do not post advert-laden, untrusted, or otherwise malicious websites and news sources. Do not post links where you stand something to gain. If you believe a blog you have linked to is not of low quality, message the moderators. (Amazon Smile is permitted)
+  kind: all
+- title: Respect Other Users
+  text: Follow Reddiquette. Do not discriminate against or abuse other members. Breaking this rule will incur a 2-week ban, followed by a permanent ban for repeat offenders. Any attempt to Dox other members will also result in a ban.
+  kind: all
+- title: No Self Promo
+  text: |-
+    Self-promotion is not allowed in this subreddit. This includes promoting your own app, product, service, or content.
+    We are discussing ways for developers to showcase their apps.
+  kind: all
+- title: Common/Repeated Question
+  text: We've deemed your question as one that gets asked many times that often doesn't have a change in answer. Please use our [search bar](https://www.reddit.com/r/AppleWatch/search?&restrict_sr=on&include_over_18=on&sort=relevance&t=all) before reposting.
+  kind: all
+- title: Common/Frequent Post
+  text: "Common/Frequent Post Do not post screenshots of short activities, such as 10-minute walks. \nFurthermore, posts that are generic AppleWatch band/case combinations, common AppleWatch configurations or AppleWatch boxes should not be posted. Pictures has to be high quality."
+  kind: all
+- title: Reposting Other Users' Posts
+  text: Do not steal posts from other users as this can lead to the subreddit being filled with very similar posts.
+  kind: link
+- title: Buying advices, pre-orders and shipping posts
+  text: Buying advices, pre-orders and shipping posts belong to the [Buying advices, pre-orders and shipping Megathread](https://www.reddit.com/r/AppleWatch//about/sticky?num=1)
+  kind: all
+- title: No “Is this Apple Watch real?”
+  text: |-
+    Posts asking whether an Apple Watch is real or fake are not allowed.
+
+    While some users may be able to spot signs, the best way to verify authenticity is by checking the serial number through Apple or purchasing directly from trusted retailers. Because authenticity cannot be reliably verified through photos or posts alone, these threads often lead to speculation.
+
+    Additionally, allowing these posts may unintentionally help bad actors improve counterfeit products.
+  kind: link
+- title: No Repetitive 100 Sleep Score Posts / Sleep Score Brag Posts
+  text: |-
+    Posts celebrating or showing off a 100 sleep score (or similar sleep score achievement screenshots) are currently not being allowed due to the influx of daily posts.
+
+    While we appreciate you and others sharing their Apple Watch experiences, repeated sleep score achievement posts provide limited discussion value especially as it has been discussed heavily already. This rule applies even if additional context or commentary is included.
+  kind: all
+- title: No Requesting Purchase Advice
+  text: |-
+    Posts whose sole purpose is asking others to make a purchase decision for you are not allowed. This includes posts such as “Watch X for $X or Watch Y for $Y?”, “Which one should I buy?”, or similar price-based purchase comparisons.
+
+    These posts generally provide little value to the broader community and are often highly dependent on the individual buyer's preferences, budget, and circumstances.
+  kind: link

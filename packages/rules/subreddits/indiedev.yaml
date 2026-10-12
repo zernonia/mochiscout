@@ -1,0 +1,19 @@
+name: IndieDev
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- indie-dev
+- gamedev
+- showcase
+notes: The sub has no strict rules and favours GIFs and images over links to Steam, Kickstarter or YouTube. The rules don't mention self-promotion.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/IndieDev/about/rules
+official:
+- title: Capsule Comparison Post Ban, Except on Wednesdays
+  text: "Capsule Comparison Posts are banned by popular demand, except on Wednesdays. You can post to r/gamecapsule for feedback from fellow devs. \n\nThis rule was created based on this community poll and discussion: https://www.reddit.com/r/IndieDev/comments/1rttlbp/should_capsule_comparison_posts_be_banned_on/"
+  kind: link

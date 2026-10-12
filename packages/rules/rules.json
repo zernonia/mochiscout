@@ -1,5 +1,584 @@
 [
   {
+    "name": "Android",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": 90,
+    "links_allowed": "yes",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "android",
+      "mobile",
+      "consumer-tech"
+    ],
+    "notes": "Developers may post their own app only as a self post with a detailed description, from an account at least three months old with a reasonable posting history on r/Android. You must interact with users in the thread.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Rule 1 - Off Topic",
+        "text": "All posts to r/Android must be related to the Android OS or ecosystem in some way. If not obvious, you should submit the link as a self-post and include an explanation. The title and body of self-posts should be translated to English if written in another language. Comments that devolve into purely political discussions may be locked and people in violation may get banned if they are also violating Rule 9.",
+        "kind": "link"
+      },
+      {
+        "title": "Rule 2 - No support questions/rants/bug-reports",
+        "text": "We welcome posts that benefit the community (device reviews, guides, discussions and rumors) and not the individual (seeking help, e.g. tech support). You might be interested in r/AndroidQuestions,  r/PickAnAndroidForMe, or /r/AndroidApps.\n\nIf you're asking a question, include your own analysis first in a few sentences. Discussion-promoting rants are okay at mods' discretion.",
+        "kind": "link"
+      },
+      {
+        "title": "Rule 3 - Images/videos in self-posts",
+        "text": "Please provide an explanation in the self-post body. No memes.\n\nYouTube videos are fine as links, provided they don't break other rules.",
+        "kind": "link"
+      },
+      {
+        "title": "Rule 4 - No self-promotional spamming",
+        "text": "Developers may post their own apps, provided:\n\n1- Their post must be a self post with a detailed description of their app.  \n2- The developer's account must be at least three months old AND have a reasonable posting history on r/Android.  \n3- The developer must interact with users in the thread. We do not allow developers to simply dump a link to their app and leave.\n\nWebsite/blog/YouTube channel owners are generally not allowed to post their own content.",
+        "kind": "link"
+      },
+      {
+        "title": "Rule 5 - No reposts or blog-spam/rehosted content",
+        "text": "Submit the original source whenever possible, unless it's not in English, the article adds substantial information, or if sharing via [/c/android](https://lemdro.id/c/android). \n\nReposts are not allowed. This includes an article whose information has already been covered by another article posted on r/Android.",
+        "kind": "link"
+      },
+      {
+        "title": "Rule 6 - No editorializing titles",
+        "text": "Please do not change the link's title when submitting it, unless necessary to accurately sum up the article. You may freely add \"[Author]\" or \"by Author\" if it clarifies the article's source (e.g. YouTube video).\n\nIf you want to discuss something specific, use the comments or submit it as a self-post (see rule 2).",
+        "kind": "link"
+      },
+      {
+        "title": "Rule 7 - No piracy",
+        "text": "Do not link or discuss pirated apps/piracy websites.",
+        "kind": "all"
+      },
+      {
+        "title": "Rule 8 - No unauthorized polls, bots or giveaways.",
+        "text": "To prevent scams, we require that all polls or giveaways be approved by the moderators. Modmail us with your request before you post any poll or do any giveaway. \n\nOnly pre-approved bots are allowed on /r/Android. Currently, the only bot we allow is the Play Store Link bot. This bot can be summoned by commenting \"Linkme: APPNAMEHERE.\" without quotes. Wish to use your bot on this sub? Modmail us and explain why it's useful.\n\n[Modmail us](https://www.reddit.com/message/compose?to=%2Fr%2FAndroid)",
+        "kind": "all"
+      },
+      {
+        "title": "Rule 9 - No offensive or low-effort comments. All comments must be in English.",
+        "text": "Do not be rude to any other user. Be respectful, or you may be banned.\n\nDo not use hate speech of any kind.\n\nDo not be disrespectful towards another for their personal choices (excessive fanboyism).\n\nDo not accuse others of being \"paid shills.\"\n\nDo not post low-effort/circlejerky comments.\n\nMost of all, read redditquette\n\nhttps://www.reddithelp.com/en/categories/reddit-101/reddit-basics/reddiquette\n\nAll comments must be submitted in English.",
+        "kind": "all"
+      },
+      {
+        "title": "Rule 10 - No affiliate links",
+        "text": "If you are a Redditor, affiliate links are absolutely NOT allowed in either the comments section, within the self-text of your post, or as part of your link.\n\nIf you post an article, affiliate links will NOT be allowed if the article being linked is a simple \"deal alert\" type post. Instead, simply link directly to the deal (without the affiliate link included).",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/Android/about/rules"
+  },
+  {
+    "name": "androidapps",
+    "promo_policy": "none",
+    "self_promo_thread": "r/droidappshowcase",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "android",
+      "apps",
+      "app-showcase"
+    ],
+    "notes": "Self-promotion, tester requests, new app ideas and app feedback are not allowed; they belong in the sister sub r/droidappshowcase. Direct APK links are prohibited.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Conduct & Authority",
+        "text": "Follow Reddiquette. Please be respectful of all redditors present in all discussions. No personal attacks, witch hunting, or otherwise abusive or hostile content. The mod team reserves the right to make final, non-appealable decisions to protect the community.",
+        "kind": "all"
+      },
+      {
+        "title": "No Piracy or Illegal Mods",
+        "text": "Zero tolerance for links to, requests for, or help with pirated/illegally modified APKs. This results in an immediate removal and potential ban.",
+        "kind": "all"
+      },
+      {
+        "title": "Self-Promotion & Dev Content",
+        "text": "Any self-promotion, tester requests, new app ideas or app feedback are *not allowed* in r/androidapps. This type of content can be posted in the dedicated sister-subreddit r/droidappshowcase.",
+        "kind": "all"
+      },
+      {
+        "title": "Quality & Effort",
+        "text": "No low-effort posts. This includes questions easily answered by a web search, topics discussed in recent history, or titles without enough context.",
+        "kind": "all"
+      },
+      {
+        "title": "Approved Sources Only",
+        "text": "Only links to official stores (Play Store, Aurora, Samsung, F-Droid) and GitHub are pre-approved. Direct APK download links are strictly prohibited. Third-party mirrors (APKMirror, etc.) are used at the user's risk and may be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "Spam & External Links",
+        "text": "Blog articles must be specific (e.g., \"App X Version 2 Update\"). No \"Top 10\" lists or low-value roundup articles. Videos are only allowed as links within a text post/comment, not as direct link submissions.",
+        "kind": "all"
+      },
+      {
+        "title": "Restricted Content (NSFW/Accounts)",
+        "text": "Buying or selling Google Play accounts is strictly prohibited (Permanent Ban). NSFW content is subject to individual moderator review and may be removed without notice.",
+        "kind": "all"
+      },
+      {
+        "title": "Off Topic",
+        "text": "All content must be relative to Android and Android apps.",
+        "kind": "all"
+      },
+      {
+        "title": "English Language Requirement",
+        "text": "All posts must include English in both the title and the body. Bilingual content is welcome, but an English translation must be present to ensure the community and moderators can understand the content.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/androidapps/about/rules"
+  },
+  {
+    "name": "androiddev",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "android",
+      "mobile-dev",
+      "kotlin"
+    ],
+    "notes": "Sharing applications or recruiting testers is not allowed, and sales and marketing questions belong in other communities. Posts and comments must be written in your own voice; LLM-style output is removed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Be Respectful and Professional",
+        "text": "Engage respectfully and professionally with the community. Participate in good faith. Do not encourage illegal or inadvisable activity. Do not target users based on race, ethnicity, or other personal qualities. Give feedback in a constructive manner.",
+        "kind": "all"
+      },
+      {
+        "title": "Must be Related to Native Android Development, No App Promotion or Recruiting Testers",
+        "text": "Must be related to native Android application development. Sales and marketing questions should be directed to their respective communities. Sharing applications or recruiting testers is not allowed. Cross-platform posts should be limited to those that are specific to the Android-native aspect of the framework; otherwise, they should be directed to the relevant framework community.",
+        "kind": "link"
+      },
+      {
+        "title": "Research Before Posting",
+        "text": "Research before posting. Avoid trivial posts easily answered with a search engine or that have been posted recently.",
+        "kind": "link"
+      },
+      {
+        "title": "Posts Must be Generally Applicable",
+        "text": "Posts must be applicable to the community as a whole. Posts that focus too much on a user's specific case, including purchasing advice or asking how to solve a personal development problem are not allowed. We also do not allow posts attempting to circumvent android security policy.",
+        "kind": "link"
+      },
+      {
+        "title": "Demonstrate Effort, Do Not Generate Content",
+        "text": "Posts should demonstrate effort.\n\nIf asking a question or seeking discussion, make sure to provide all relevant information and background, and present what you have tried so far, and your current understanding.\n\nMemes, rants, or posts poorly formatted or proofread to the point of being difficult to read will be removed.\n\nPosts and comments must be written in your own voice. Content indicative of LLM output, including excessive flourish, gushing or emojis, will be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "English Only, No Paywall or Sign-Up",
+        "text": "Submissions should be in English and freely available without an account.",
+        "kind": "all"
+      },
+      {
+        "title": "Strict rules for Google Play Issues posts",
+        "text": "Posts regarding application take-downs or account bans should first exhaust official channels, including the official Google support community, effort to resolve the issue, and an appeal. Posts should be presented as neutrally as possible without charged language or emotional appeal. A post in this category must include all relevant information, full copies of all communication with Google,  a link to the support thread or threads on the official forums,  and steps already taken to resolve.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/androiddev/about/rules"
+  },
+  {
+    "name": "AppBusiness",
+    "promo_policy": "weekly_thread_only",
+    "self_promo_thread": "Weekly app feedback thread (Friday)",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "app-business",
+      "mobile",
+      "indie-hackers"
+    ],
+    "notes": "Promotion of your own apps is not allowed; use the weekly app feedback thread on Friday. Advertising your business or agency services is also not allowed, though posts giving real value to app founders are fine.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Must be relevant to App Business",
+        "text": "You can post about anything related to app business including ideas, validation, development, marketing, launch, analytics, customer dev and ASO as long as it doesn’t conflict with any other rule.",
+        "kind": "all"
+      },
+      {
+        "title": "No promotion of your own apps",
+        "text": "We do not want this subreddit to turn into a tool for marketing. We will have a weekly app feedback thread on Friday, please use that for feedback.",
+        "kind": "all"
+      },
+      {
+        "title": "No promotion of your Business",
+        "text": "This subreddit is not meant for advertising your business/agency services. If your posting provides value in the form of information or valuable resources for appreneurs it will be allowed.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/AppBusiness/about/rules"
+  },
+  {
+    "name": "AppIdeas",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": 50,
+    "min_account_age_days": 30,
+    "links_allowed": "none",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "app-ideas",
+      "mobile",
+      "validation"
+    ],
+    "notes": "Links to app stores, mailing list invites and other promotion of an existing or upcoming app are removed. Accounts must be over a month old with more than 50 karma to post, and low-effort LLM-wrapper ideas are removed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Posts must be App Ideas",
+        "text": "This subreddit is for posting app ideas. It doesn't have to be a fully formed idea, and the goal could be, for example, to share it, give it away, refine it through feedback, or look for people interested in discussing developing it, but there must be some defined app idea that the post is centrally about.\n\nThe post can be about an idea you're working on developing, as long as it doesn't cross into self-promotion.",
+        "kind": "all"
+      },
+      {
+        "title": "No Self-Promotion or Advertisements",
+        "text": "This subreddit is not for sharing completed projects or for advertising an existing or upcoming project. Posts that contain links to apps on app stores, invite people to join mailing lists for projects, or are otherwise promoting or advertising an existing or upcoming app will be removed.\n\nNote: If you use this subreddit to distribute or promote sideloaded apps (e.g. APK files for Android phones), in addition to your post being removed you will be banned.",
+        "kind": "all"
+      },
+      {
+        "title": "Always be Civil",
+        "text": "Discussion may be critical of ideas posted, and there may be good-faith discussion about any disagreements, but always keep it civil.",
+        "kind": "all"
+      },
+      {
+        "title": "No Low-Effort AI Content",
+        "text": "The goal of this subreddit is to facilitate human creativity.\n\nIdeas that centrally revolve around low-effort wrappers of LLM APIs will be removed. Additionally, posts and comments that strongly appear to be AI generated without any actual effort put into them will also likely be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "Mod Discretion",
+        "text": "It may be necessary to remove content that isn't explicitly covered by one of these rules or which falls into a grey area.",
+        "kind": "all"
+      },
+      {
+        "title": "6. Automod",
+        "text": "To prevent spam, only the accounts older than a month and above 50 of karma can post in our community. If not in those requirements, your post will be automatically removed. Thanks for your understanding",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/AppIdeas/about/rules"
+  },
+  {
+    "name": "apple",
+    "promo_policy": "weekly_thread_only",
+    "self_promo_thread": "Sunday developer self-post",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "apple",
+      "ios",
+      "consumer-tech"
+    ],
+    "notes": "Developers may promote their app only on Sundays (California time), as a self-post, and must have organic activity in the sub. Read the linked wiki rule before posting.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "No reposts, and/or rehosted content.",
+        "text": "Please refrain from posting an article that has already been posting from the same source as yours, or from a different source. \n\n[Please visit the Rules page for more clarification on this rule](https://www.reddit.com/r/apple/wiki/rules)",
+        "kind": "all"
+      },
+      {
+        "title": "No memes, direct images or contextless image/video posts.",
+        "text": "We do not allow posts that directly link to an image or a video. If you would like to submit a video or an image to the subreddit, please do so in a self-post.",
+        "kind": "link"
+      },
+      {
+        "title": "No NSFW content.",
+        "text": "",
+        "kind": "all"
+      },
+      {
+        "title": "Posts must foster reasonable discussion.",
+        "text": "Posts that are unlikely to promote high-quality discussion are not allowed.",
+        "kind": "link"
+      },
+      {
+        "title": "No editorialized link titles.",
+        "text": "When submitting, please use the source's original title whenever possible, unless it is necessary to change it to accurately sum up the content (Examples: changing a click-bait title to a more accurate title).",
+        "kind": "link"
+      },
+      {
+        "title": "No low-effort, rude/offensive, or hateful comments.",
+        "text": "Please refrain from making rude/offensive comments on the subreddit. We want /r/Apple to be a safe and tolerant place for fans to discuss everything Apple.",
+        "kind": "comment"
+      },
+      {
+        "title": "No posts that aren’t directly related to Apple.",
+        "text": "All posts must be directly related to Apple. We will remove posts that are only vaguely related to Apple.",
+        "kind": "link"
+      },
+      {
+        "title": "No tech-support questions.",
+        "text": "As per our Content Philosophy, this subreddit allows content that benefits the community over individual questions. As such, tech support threads and \"What Should I Buy?\" threads will be removed. Users will be sent to the \"Daily Advice Thread\" that's posted every day by Automoderator at 6AM EST.",
+        "kind": "link"
+      },
+      {
+        "title": "Self-promotion is allowed on Sundays, only for developers.",
+        "text": "No spam, self-promotion of your own blogs/websites/videos, or surveys are allowed. If you are a developer wanting to promote your app on the subreddit, you may do so on Sundays (California time) self-post only.\n\nActivity requirements are enforced; developers should participate organically on the subreddit. (Comments/posts)\n\nBefore posting, you MUST [read the detailed rules here.](https://www.reddit.com/r/apple/wiki/rules#wiki_9.__no_spam._no_surveys._self-promotion_is_allowed_on_sundays_only)",
+        "kind": "all"
+      },
+      {
+        "title": "No content related to piracy or illegal activities.",
+        "text": "",
+        "kind": "all"
+      },
+      {
+        "title": "No posts relating to buying, selling advice.",
+        "text": "As stated in the explanation for the \"Tech Support\" rule, this subreddit allows content that benefits the community over individual questions. As such \"What Should I Buy?\" posts threads will be removed and users will be sent to the \"Daily Advice Thread\" that's posted every day by Automoderator at 6AM EST.",
+        "kind": "all"
+      },
+      {
+        "title": "No posts about bugs in beta software.",
+        "text": "There are dedicated subreddits to share news, bugs and everything else in between in regards to iOS, watchOS, tvOS, and macOS Betas.\n\n/r/Apple only allows news of beta releases, and major bugs (example: if a beta is bricking devices).",
+        "kind": "link"
+      },
+      {
+        "title": "No vaccine misinformation",
+        "text": "Comments that are spreading COVID vaccine misinformation/claims are not allowed.\n\nAnyone found spreading misinformation may be found unwelcome on r/Apple",
+        "kind": "comment"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/apple/about/rules"
+  },
+  {
+    "name": "AppleWatch",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "apple-watch",
+      "wearables",
+      "apple"
+    ],
+    "notes": "Self-promotion of your own app, product, service or content is not allowed. Promotional content needs explicit moderator approval and must disclose paid sponsorships.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Subreddit Relevance/Low Effort/Duplicate Posts",
+        "text": "- Submissions must be about Apple Watch or Apple Watch related accessories/topics.\n- No low effort submissions or duplicate posts of recent submissions (past 2 weeks). \n- App recommendations questions should be posted in the Joined the Club Megathread.\n- Non-Question posts must foster reasonable discussion.\n- Low effort activity threads (a simple image of a workout, a badge etc).",
+        "kind": "all"
+      },
+      {
+        "title": "Do Not Spam",
+        "text": "Spam, such as promotional content designed purely for commercial purposes, cannot be posted. Explicit moderator approval must be received to post giveaways or other content that is promotional. Please review Reddit's own guidelines for self-promo rules e.g. 1:10 rule before contacting us. \n\nAll promotional content must disclose any paid sponsorships.",
+        "kind": "all"
+      },
+      {
+        "title": "Blog Spam / Low Quality Links / Referral Links",
+        "text": "Do not post advert-laden, untrusted, or otherwise malicious websites and news sources. Do not post links where you stand something to gain. If you believe a blog you have linked to is not of low quality, message the moderators. (Amazon Smile is permitted)",
+        "kind": "all"
+      },
+      {
+        "title": "Respect Other Users",
+        "text": "Follow Reddiquette. Do not discriminate against or abuse other members. Breaking this rule will incur a 2-week ban, followed by a permanent ban for repeat offenders. Any attempt to Dox other members will also result in a ban.",
+        "kind": "all"
+      },
+      {
+        "title": "No Self Promo",
+        "text": "Self-promotion is not allowed in this subreddit. This includes promoting your own app, product, service, or content.\nWe are discussing ways for developers to showcase their apps.",
+        "kind": "all"
+      },
+      {
+        "title": "Common/Repeated Question",
+        "text": "We've deemed your question as one that gets asked many times that often doesn't have a change in answer. Please use our [search bar](https://www.reddit.com/r/AppleWatch/search?&restrict_sr=on&include_over_18=on&sort=relevance&t=all) before reposting.",
+        "kind": "all"
+      },
+      {
+        "title": "Common/Frequent Post",
+        "text": "Common/Frequent Post Do not post screenshots of short activities, such as 10-minute walks. \nFurthermore, posts that are generic AppleWatch band/case combinations, common AppleWatch configurations or AppleWatch boxes should not be posted. Pictures has to be high quality.",
+        "kind": "all"
+      },
+      {
+        "title": "Reposting Other Users' Posts",
+        "text": "Do not steal posts from other users as this can lead to the subreddit being filled with very similar posts.",
+        "kind": "link"
+      },
+      {
+        "title": "Buying advices, pre-orders and shipping posts",
+        "text": "Buying advices, pre-orders and shipping posts belong to the [Buying advices, pre-orders and shipping Megathread](https://www.reddit.com/r/AppleWatch//about/sticky?num=1)",
+        "kind": "all"
+      },
+      {
+        "title": "No “Is this Apple Watch real?”",
+        "text": "Posts asking whether an Apple Watch is real or fake are not allowed.\n\nWhile some users may be able to spot signs, the best way to verify authenticity is by checking the serial number through Apple or purchasing directly from trusted retailers. Because authenticity cannot be reliably verified through photos or posts alone, these threads often lead to speculation.\n\nAdditionally, allowing these posts may unintentionally help bad actors improve counterfeit products.",
+        "kind": "link"
+      },
+      {
+        "title": "No Repetitive 100 Sleep Score Posts / Sleep Score Brag Posts",
+        "text": "Posts celebrating or showing off a 100 sleep score (or similar sleep score achievement screenshots) are currently not being allowed due to the influx of daily posts.\n\nWhile we appreciate you and others sharing their Apple Watch experiences, repeated sleep score achievement posts provide limited discussion value especially as it has been discussed heavily already. This rule applies even if additional context or commentary is included.",
+        "kind": "all"
+      },
+      {
+        "title": "No Requesting Purchase Advice",
+        "text": "Posts whose sole purpose is asking others to make a purchase decision for you are not allowed. This includes posts such as “Watch X for $X or Watch Y for $Y?”, “Which one should I buy?”, or similar price-based purchase comparisons.\n\nThese posts generally provide little value to the broader community and are often highly dependent on the individual buyer's preferences, budget, and circumstances.",
+        "kind": "link"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/AppleWatch/about/rules"
+  },
+  {
+    "name": "apps",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "apps",
+      "mobile",
+      "showcase"
+    ],
+    "notes": "Do not make an account to advertise your app here, and no spam. Giveaways must be approved by a moderator.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Follow Reddiquette",
+        "text": "View the Reddiquette [here.](https://www.reddithelp.com/en/categories/reddit-101/reddit-basics/reddiquette)",
+        "kind": "all"
+      },
+      {
+        "title": "Do not make an account to advertise your app here",
+        "text": "",
+        "kind": "all"
+      },
+      {
+        "title": "All submissions are to be related to Applications of any kind",
+        "text": "This includes; iOS, Android, Windows Phone, Blackberry, Macintosh, Windows or Linux.",
+        "kind": "link"
+      },
+      {
+        "title": "Low Quality posts will be removed at the discretion of the mods.",
+        "text": "",
+        "kind": "link"
+      },
+      {
+        "title": "No Derogatory Language, Harassment or Bullying",
+        "text": "",
+        "kind": "all"
+      },
+      {
+        "title": "No Spam",
+        "text": "",
+        "kind": "all"
+      },
+      {
+        "title": "All giveaways must be approved by a moderator",
+        "text": "Please modmail the Moderators if you wish to do a giveaway.",
+        "kind": "link"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/apps/about/rules"
+  },
+  {
+    "name": "AppStoreOptimization",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": "yes",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "aso",
+      "app-marketing",
+      "mobile"
+    ],
+    "notes": "No shameless self-promo: contribute genuinely and disclose any affiliation with a tool you recommend. If every post or comment links to your own product, it's treated as spam; unflaired posts may be removed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Keep It On Topic",
+        "text": "This is an ASO and app marketing sub. If it's about growing, optimizing, or marketing an app — you're in the right place. Everything else, not so much.",
+        "kind": "all"
+      },
+      {
+        "title": "No Shameless Self-Promo",
+        "text": "We're not a free ad board, but we're also not monsters. Contribute genuinely, add value to conversations, and the community will naturally want to know what you're working on. Lead with helpfulness.",
+        "kind": "all"
+      },
+      {
+        "title": "Put In Some Effort",
+        "text": "\"How do I rank #1?\" with zero context is tough for anyone to answer. Share your category, platform, and what you've already tried — the more you give, the better advice you'll get back.",
+        "kind": "all"
+      },
+      {
+        "title": "Search First, Post Second",
+        "text": "There's a good chance your question has been answered before — maybe even recently. A quick search can save you the wait and might get you a better answer faster.",
+        "kind": "all"
+      },
+      {
+        "title": "Get Specific, Share the Numbers",
+        "text": "Vague questions get vague answers. Tell us your platform, category, and rough metrics. You can keep sensitive stuff anonymized — just give us enough to actually help.",
+        "kind": "all"
+      },
+      {
+        "title": "Disclose Your Affiliations",
+        "text": "If you're recommending a tool you work for or have a stake in, just say so upfront. It builds trust, and honestly — this crowd tends to figure it out anyway.",
+        "kind": "all"
+      },
+      {
+        "title": "Be Cool",
+        "text": "Challenge ideas, debate strategies, disagree openly — that's what makes a good community. Just keep it respectful. Beginners are especially welcome here.",
+        "kind": "all"
+      },
+      {
+        "title": "Use Your Flair",
+        "text": "Flair your posts: Question, Case Study, Tool Review, iOS, Android, Discussion. It keeps things organized and helps the right people find your post. Unflaired posts may be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "Back Up Your Big Claims",
+        "text": "Sharing a win? Awesome, we love those. Just walk us through the how, not just the what. A methodology makes a case study — without it, it's just a screenshot.",
+        "kind": "all"
+      },
+      {
+        "title": "Job Posts Need Mod Approval",
+        "text": "Hiring, freelancing, or looking for work? Check with the mods first or use the monthly thread if there is one. We want to support the community, just keeping it tidy.",
+        "kind": "all"
+      },
+      {
+        "title": "We Have Eyes 👀",
+        "text": "Dropping your app link in context every now and then? Totally fine, we get it. But if every post and comment happens to include a link to your stuff — that's spam, even if it's dressed as a question. Don't be greedy, keep it genuine.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/AppStoreOptimization/about/rules"
+  },
+  {
     "name": "B2BSaaS",
     "promo_policy": "allowed_with_value",
     "self_promo_thread": null,
@@ -194,6 +773,72 @@
     "source": "https://www.reddit.com/r/EntrepreneurRideAlong/about/rules"
   },
   {
+    "name": "FlutterDev",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "flutter",
+      "dart",
+      "mobile-dev"
+    ],
+    "notes": "Advertising apps is not allowed; post about an app you built only if you share the source or app-specific build insights. Companies offering development services are banned.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Must be directly related to Flutter",
+        "text": "If it is posted here, it must have an unambiguous relation to flutter itself.\n  Articles about mobile programming that do not apply to flutter are against this rule.",
+        "kind": "link"
+      },
+      {
+        "title": "Help requests go in r/FlutterHelp",
+        "text": "If you need help with your code, including plugin suggestions, and hardware recommendations, please ask in r/FlutterHelp",
+        "kind": "all"
+      },
+      {
+        "title": "Use link posts whenever possible",
+        "text": "A reddit text post with a link and either no content, or content available at the link, does nothing but make navigation harder.",
+        "kind": "link"
+      },
+      {
+        "title": "Only english-accessible content",
+        "text": "If you have an article, provide a link to an english version, if you have a video, be sure that the english subtitles are available and understandable.",
+        "kind": "all"
+      },
+      {
+        "title": "No posts or comments offering to hire, or to be hired.",
+        "text": "Either use our [Discord chat](https://discord.gg/rflutterdev), or one of the many subreddits dedicated to this purpose.\n\nCompanies offering development services will be banned on the spot, this is a community for developers to share knowledge, not a job board.",
+        "kind": "all"
+      },
+      {
+        "title": "No promotion of paywalled or loginwalled articles.",
+        "text": "Paid or restricted articles are not allowed here.\n\nIf someone specifically asks for a recommendation, posting a comment with your content is fine.",
+        "kind": "link"
+      },
+      {
+        "title": "Keep content quality high",
+        "text": "The members of this community expect content made with some effort. If you post a copy/pasted article or a speedcode video with nothing but code being typed at 2x speed with music in the background, your content could get removed.",
+        "kind": "all"
+      },
+      {
+        "title": "No AI Generated Articles",
+        "text": "Low effort posts written by Large Language Models are not welcome here, they're often oversimplified, or sometimes straight up wrong.\n\nIf you want to write content, ChatGPT is okay to generate an outline, but don't use it to do all the hard work.\n\nPeople can tell, GPTZero can tell, we can tell.",
+        "kind": "all"
+      },
+      {
+        "title": "No advertising of apps",
+        "text": "r/FlutterDev is not the place to advertise your apps, it is a place for developers to share knowledge.\n\nIf you built an app in Flutter, great! You can advertise on r/AndroidApps , and other places dedicated to this purpose.\n\nOnly post about it here if you are willing to share either:\n - The source of the app\n - Insights about building the app (Generic insight is insufficient, it must be specific to your app.)",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/FlutterDev/about/rules"
+  },
+  {
     "name": "GrowthHacking",
     "promo_policy": "allowed_with_value",
     "self_promo_thread": null,
@@ -270,6 +915,32 @@
     "source": "https://www.reddit.com/r/GrowthHacking/about/rules"
   },
   {
+    "name": "IndieDev",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "indie-dev",
+      "gamedev",
+      "showcase"
+    ],
+    "notes": "The sub has no strict rules and favours GIFs and images over links to Steam, Kickstarter or YouTube. The rules don't mention self-promotion.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Capsule Comparison Post Ban, Except on Wednesdays",
+        "text": "Capsule Comparison Posts are banned by popular demand, except on Wednesdays. You can post to r/gamecapsule for feedback from fellow devs. \n\nThis rule was created based on this community poll and discussion: https://www.reddit.com/r/IndieDev/comments/1rttlbp/should_capsule_comparison_posts_be_banned_on/",
+        "kind": "link"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/IndieDev/about/rules"
+  },
+  {
     "name": "indiehackers",
     "promo_policy": "flair_only",
     "self_promo_thread": "Self Promotion flair",
@@ -304,6 +975,316 @@
     ],
     "keep": [],
     "source": "https://www.reddit.com/r/indiehackers/about/rules"
+  },
+  {
+    "name": "iosapps",
+    "promo_policy": "weekly_thread_only",
+    "self_promo_thread": "App Shelf Megathread",
+    "min_karma": 10,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": 30,
+    "tags": [
+      "ios",
+      "apps",
+      "app-showcase"
+    ],
+    "notes": "Needs 10 local karma earned by commenting, and developers who don't qualify via Trust or Transparency must use the monthly App Shelf Megathread. Disclose your relationship to the app, use the right pricing flair, and note that generative AI and AI-wrapped apps are not allowed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Read This Before Posting",
+        "text": "**Everyone:**\n- **10pt LOCAL Karma required.** Comment in r/iOSApps to earn it. [Check](https://is.gd/w4wBbl)\n- Search the sub before posting. Choose flair.\n\n**App Devs:** No main feed promo unless you qualify via **Trust or Transparency** + **ABC** format (Answer, Better, Cost). [How to qualify](https://is.gd/e5YRcX)\n- Flair: **Vibe Coded > Lifetime > Subscription > Freemium > Free**\n- Free flair: not for limited/freemium tiers\n- Open Source? Prefix title **[OS]**",
+        "kind": "all"
+      },
+      {
+        "title": "Official Distribution Channels Only",
+        "text": "Download links must link to the App Store or TestFlight. Sideloaded or unnoficial sources are not allowed. Shortened links are not allowed.",
+        "kind": "all"
+      },
+      {
+        "title": "Limited Self-Promotion",
+        "text": "Infrequent self-promotion is permitted; however, it is not permitted more than once per developer in 30 days. This is counted from the last app post, even if it was removed.\n\nFor well-established, recognized devs with an app-flair, once per app per 30 days.\n\nALWAYS disclose your relationship to your software in comments promoting your app. Promoting your own app in comments is disallowed until you earn **10 karma** in r/iOSApps, and is in poor taste when hijacking another developer's promotion.",
+        "kind": "all"
+      },
+      {
+        "title": "Reddit Rules",
+        "text": "We follow the Reddit Rules without exception. Familiarise yourself before posting or commenting.",
+        "kind": "all"
+      },
+      {
+        "title": "No Affiliate / Referral / Invite Links",
+        "text": "Affiliate, referral, and invite links are not permitted since they attract spam and low-quality content.",
+        "kind": "all"
+      },
+      {
+        "title": "No AI",
+        "text": "Generative AI apps and AI-wrapped apps are not allowed and will be removed. If your app uses AI as a core feature rather than a tool, it likely doesn't belong here. Check out r/GenAiApps instead. Apps that were vibe coded must be flaired accordingly.",
+        "kind": "all"
+      },
+      {
+        "title": "No Promo Code Requests",
+        "text": "Do not ask for promo codes or discounts in the comments, not even when a publisher suggests it in their post. It's spam and will be treated as such. DM the publisher if you must, but don't announce it publicly. Same goes for developers: If you are offering a promotion, do not encourage users to comment for the code. Instead, either give a promo code that works for everyone **inside the post body** (preferred) or ask users to DM you privately.",
+        "kind": "all"
+      },
+      {
+        "title": "Promote in Megathread",
+        "text": "As part of the **Trust vs. Transparency Initiative**, ALL who do not qualify through trust or transparency requirements must limit promotion to the monthly **App Shelf Megathread**. *Learn how to qualify to post in the main feed [here](https://www.reddit.com/r/iosapps/comments/1u9aw0f/riosapps_moderation_update_phase_2_trust/).*",
+        "kind": "all"
+      },
+      {
+        "title": "No Hiring Posts",
+        "text": "This is not the place to find or hire developers for your app idea.",
+        "kind": "link"
+      },
+      {
+        "title": "Be kind and respectful",
+        "text": "- Be polite, stay on topic and follow basic [reddiquette](https://reddit.zendesk.com/hc/en-us/articles/205926439-Reddiquette). \n- If a post breaks sub rules, don't leave a rude reply; instead, report it to the mods.\n\n- Rude and hateful comments about the app or developers will not be tolerated. Critiquing, feedback, and discussing is fine but be polite.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/iosapps/about/rules"
+  },
+  {
+    "name": "iOSProgramming",
+    "promo_policy": "flair_only",
+    "self_promo_thread": "App Saturday",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": 365,
+    "tags": [
+      "ios",
+      "swift",
+      "mobile-dev"
+    ],
+    "notes": "You may post about one app, once a year, and only on Saturday (App Saturday). Paywalled products need a description, the challenges you faced and ideally a technical overview.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Be civil",
+        "text": "https://www.redditinc.com/policies/content-policy\n\nAs for being rude, this is mostly up to our discretion, but includes correcting someone's grammar in an impolite way. Your comment will be removed for such an offense and you may be banned if you have a history of doing that.\n\nAll content on this subreddit should be appropriate for all ages.",
+        "kind": "comment"
+      },
+      {
+        "title": "Frequently asked questions",
+        "text": "Some questions are now restricted to the Discord server. These questions are often easily searchable, or have been asked many times before.\n\nYou can find the Discord server [here](https://discord.gg/Y38tkC5M9w).",
+        "kind": "all"
+      },
+      {
+        "title": "Frequently posted topics",
+        "text": "Some topics are now restricted to the Discord server. Such topics include: job ads/offers, requests, or app ideas.",
+        "kind": "link"
+      },
+      {
+        "title": "Self-promotion is allowed to some extent",
+        "text": "Self-promotion is permitted to a certain extent. If your product or service is behind a paywall, we expect you to provide a description of your product or service, the challenges you faced, and, perhaps as a bonus, a technical overview of it. For freely accessible products or services, our policy is more lenient. \n\nHowever, we do not allow blatant advertisements or spam. Articles or links that solely exists to promote a paid product or service may be removed at our discretion.",
+        "kind": "all"
+      },
+      {
+        "title": "Posts must be about Apple platform development",
+        "text": "Posts unrelated to development on any Apple platform (iOS, macOS, etc) may be removed. This includes posts about Android development, and posts not about development at all.",
+        "kind": "link"
+      },
+      {
+        "title": "No piracy or jailbreaking guidance",
+        "text": "This subreddit is not the place to seek help for piracy or jailbreaking. We do not condone pirating other developers apps or services. For jailbreaking, please visit r/jailbreak",
+        "kind": "all"
+      },
+      {
+        "title": "Only post your app on Saturday",
+        "text": "You may post about *one* app, *once* a year. It does not have to be your first app. \nplease refrain from posting few hours before a new day or if you don't have previous activity.\n\nYou cannot make more than one app post per year. You may not post about multiple different apps within the same year.\n\nRead post content guideline at:\n\nhttps://www.reddit.com/r/iOSProgramming/wiki/app-saturday",
+        "kind": "link"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/iOSProgramming/about/rules"
+  },
+  {
+    "name": "ipad",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "ipad",
+      "apple",
+      "consumer-tech"
+    ],
+    "notes": "Self-promotion isn't allowed unless it gives the community useful content, and accounts mainly used for promotion are banned. Message the moderators first for an exception.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Treat other members with respect",
+        "text": "- Be respectful to other members. Do not discriminate, abuse, or otherwise disrespect other members, groups, or minorities.\n\n- Insulting, agressive, or immature behavior won't be tolerated and first transgressions will result in a 20 day ban.",
+        "kind": "all"
+      },
+      {
+        "title": "Low-Effort / Repetitive Content",
+        "text": "- No low-quality/effort posts: iPad in a box, simple photos of an iPad, \"Joined the club\"/\"I just got a new ipad\", Apple ecosystem photos, memes, home screenshots. \n\n- Post must foster discussion, present informative content, and have substance.",
+        "kind": "link"
+      },
+      {
+        "title": "Purchase Related Content",
+        "text": "- Any request for purchase related advice/questions, product comparaisons, what product for a specific use case, and shipping discussions, will go to the \"[What Should I Buy](https://www.reddit.com/r/ipad/about/sticky?num=2)\" thread, also located at the top of the subreddit. \n\n- Please, while you wait for an answer to your question, consider helping out someone else in the thread. Also, use the search bar to find similar questions and answers that might have been posted before.",
+        "kind": "link"
+      },
+      {
+        "title": "Tech-Support Questions",
+        "text": "- Any tech-support related questions, hardware or software, will go to the [Discussion & Tech-Support](http://reddit.com/r/ipad/about/sticky?num=1) thread, located at the top of the subreddit. Please, use the search bar to find similar questions that have been posted before, as chances are, your exact issue has already been dealt with in the past. Finally, contact Apple through their Apple Support app, for real expertise.\n\nBug reports are also to be posted in that thread or r/iOSBeta.",
+        "kind": "link"
+      },
+      {
+        "title": "iPad and Setup Photos",
+        "text": "- iPad Setup photos are only allowed if they showcase at least one third-party accessory, a list and review of the accessories, or a discussion about your workflow/experience with the setup. \n\n- We don't allow Apple ecosystem photos (iPad + iPhone + Apple Watch etc.) or generic iPad photos by themselves with just a smart/magic keyboard, to avoid repetitive content in the subreddit.\n\n- An iPad on the same table as a PC Setup isn't an iPad setup.",
+        "kind": "link"
+      },
+      {
+        "title": "Selling / Trading",
+        "text": "- Posts soliciting the purchase, sale or donation of products or services of any kind, through normal or affiliate links, will be automatically removed, and the account banned.\n\n- Company accounts or accounts that relate to the distribution or promotion of a product or service will be automatically banned.",
+        "kind": "all"
+      },
+      {
+        "title": "Jailbreak / Sideloading",
+        "text": "- Jailbreaking talk goes in /r/jailbreak, sideloading talk goes to /r/sideloaded.\nSame goes for emulators.",
+        "kind": "all"
+      },
+      {
+        "title": "Subreddit Meta / Off-Topic",
+        "text": "- Out-of-topic content or content that isn't directly related to iPads will be removed. No drama content, no meta posts. No content from unknown/unsafe sources.",
+        "kind": "all"
+      },
+      {
+        "title": "No Self-\bPromotion",
+        "text": "- Self-promotion isn't allowed in this subreddit, unless it provides useful and informative content to the community. \n\n- Reddit accounts that are mainly used for self-promotion or the promotion of a product or service, will be instantly banned.\n\n- Exceptions may be made, if [you message the moderators first](https://www.reddit.com/message/compose?to=r/ipad).",
+        "kind": "all"
+      },
+      {
+        "title": "Note-taking / Digital Art",
+        "text": "We only allow note-taking screenshots and digital art on Sundays. \n\n- Your post might get removed if it appears to be a case of self-promotion.\n\n- You're only allowed to post your art once every two months. Your post will be removed if your account mainly your art posted in every subreddit possible, if it's a case of self-promotion, etc.",
+        "kind": "link"
+      },
+      {
+        "title": "Updated subreddit content.",
+        "text": "- Bi-weekly, some of the posts that break the rules above will be left untouched, so to update the information that's available via the search-bar.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/ipad/about/rules"
+  },
+  {
+    "name": "iphone",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "ios",
+      "iphone",
+      "consumer-tech"
+    ],
+    "notes": "Developers wanting to promote their own app or post an AMA must modmail the moderators first. Self-promotion of your own YouTube channel, videos or blog posts is not allowed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Relevancy and Formatting Guidelines",
+        "text": "All posts must be about iPhones and must foster discussion. Posts may relate to announcements, news, tips, discussion, AMAs/promotions, apps or accessories.\n\n\nEnsure that your post is well formatted and has a descriptive title, not a sub for meme..\n\nFor more information, see our [Guidelines wiki](https://www.reddit.com/r/iphone/wiki/guidelines) and [Flairs wiki](https://www.reddit.com/r/iphonemods/wiki/flairs).",
+        "kind": "link"
+      },
+      {
+        "title": "Support Guidance",
+        "text": "We remove basic support issues - before posting, please check the [Support FAQs](https://www.reddit.com/r/iphone/wiki/support-faq), [Apple Support Community](https://discussions.apple.com/welcome) and Google.\n\nWe don't provide support for iCloud, other Apple devices, accessories, or third-party apps.\n\nWe don't provide support for hardware, passcode/activation lock, battery, storage or overheating issues.\n\nRemoved posts should be directed to /r/iOS, /r/AppleHelp or Apple Support instead.",
+        "kind": "link"
+      },
+      {
+        "title": "Use the 'What Should I Buy' thread",
+        "text": "Posts related to buying or selling or trading iPhones, including shipping or pre-orders, are not allowed. \nComment your query in the ['What should I buy?' thread](http://reddit.com/r/iphone/about/sticky?num=1) instead.\n\nUnique, discussion-worthy posts such as \"I’m moving from the Pixel 6 to the 14 Pro, what should I expect?” may be approved.",
+        "kind": "link"
+      },
+      {
+        "title": "Commonly removed posts",
+        "text": "Do not post any of the following:\n\n- Photography, see /r/iPhoneography or /r/shot_on_iPhone\n\n- Battery posts , see [this Megathread](http://reddit.com/r/iphone/about/sticky?num=2)\n\n- iOS Beta bugs, see /r/iOSBeta\n\n- Pictures of iPhones, cases, skins or boxes\n\n- App release notes\n\n- Screenshots of the Homescreen or Lockscreen  or Control Center\n\n- Screenshot of purchases\n\nMore information can be found in the [Guidelines wiki](https://www.reddit.com/r/iphone/wiki/guidelines)",
+        "kind": "link"
+      },
+      {
+        "title": "Civility Guidelines",
+        "text": "All users that participate in this subreddit are expected to act civilly. We encourage all our users to read [Reddiquette](https://www.reddithelp.com/en/categories/reddit-101/reddit-basics/reddiquette) prior to participating on Reddit.\n\nWe will not tolerate the following:\n\n- Insults, discrimination, or hate speech based on race, gender, age, nationality, sexuality, or religion.\n\n- Anything that violates [Reddit’s Content Policy](https://www.redditinc.com/policies/content-policy)",
+        "kind": "all"
+      },
+      {
+        "title": "Promotion & Spam Guidelines",
+        "text": "Do not self-promote your own YouTube channels, videos, or blog posts.\n\nRefrain from posting news with minimal/recycled content.\n\nWhile we support developers, those wishing to promote their own app or post an AMA must [modmail us](https://www.reddit.com/message/compose?to=%2Fr%2Fiphone) first.\n\nPlease read [Reddit's self-promotion guidelines.](https://www.reddit.com/wiki/selfpromotion)",
+        "kind": "all"
+      },
+      {
+        "title": "Common Question",
+        "text": "**Frequently asked question:** Your submission has been deemed as a question very frequently asked that often does not have a change in answer. Please use our search bar",
+        "kind": "all"
+      },
+      {
+        "title": "Must foster a relevant discussion",
+        "text": "Must foster a relevant discussion",
+        "kind": "all"
+      },
+      {
+        "title": "No low-effort posts",
+        "text": "No low-effort posts such as image macros and single sentence text posts, AI content. Moderators may use discretion to upkeep the quality of the subreddit.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/iphone/about/rules"
+  },
+  {
+    "name": "Kotlin",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "kotlin",
+      "android",
+      "programming"
+    ],
+    "notes": "Don't shill your product, post job listings or repeatedly post links to your blog. Self-promotion that isn't for the benefit of the community is not welcome.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Be civil",
+        "text": "Please follow [rediquette](https://www.reddit.com/wiki/reddiquette) (TL;DR: be excellent to each other). If someone has posted in the wrong sub, direct them to a better sub (e.g. /r/AndroidDev). If someone is spamming, report them. In either case, please remain polite and constructive at all times to ensure this remains a friendly and welcoming community.",
+        "kind": "all"
+      },
+      {
+        "title": "No spam",
+        "text": "Don't shill your product. Don't post job listings. Don't repeatedly post links to your blog.\n\nIf you find yourself posting something for self-promotion, rather than for the benefit of the community, please think again as this is neither welcome here, nor on [Reddit in general](https://www.reddit.com/wiki/selfpromotion).",
+        "kind": "all"
+      },
+      {
+        "title": "Stay on-topic",
+        "text": "This is a Kotlin subreddit where we discuss development in/of the Kotlin programming language. Other topics should not be discussed here.\n\nEven if your post involves Kotlin, please check the other subs in the sidebar to ensure that this is the best place for it. This is not the best place to discuss issues which are only incidentally related to Kotlin such as generic [Android development](/r/AndroidDev) questions.",
+        "kind": "all"
+      },
+      {
+        "title": "No fluff",
+        "text": "Please don't post memes, image macros or other low-effort content. We're here to discuss Kotlin the language; other subs are available if you just want to vent or let off steam.",
+        "kind": "link"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/Kotlin/about/rules"
   },
   {
     "name": "marketing",
@@ -558,6 +1539,52 @@
     ],
     "keep": [],
     "source": "https://www.reddit.com/r/ProductManagement/about/rules"
+  },
+  {
+    "name": "reactnative",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "react-native",
+      "mobile-dev",
+      "javascript"
+    ],
+    "notes": "Promoting your company in any way is not allowed. You may post articles linking to your company site only if the article itself isn't self-promoting.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "No self promotion",
+        "text": "It is not allowed to promote your company in any way, shape or form. \n\nHowever, you may post articles that link to your company's website if the article isn't self promoting in any way, shape or form. \n\nAre you not sure if your article is self promoting? Don't hesitate to contact the moderators in advance.",
+        "kind": "all"
+      },
+      {
+        "title": "No low quality content",
+        "text": "It is not allowed to post low quality content, such as short articles that have no value or tutorials that don't explain anything.",
+        "kind": "link"
+      },
+      {
+        "title": "No harassment",
+        "text": "It is not allowed to harass other people in any way, shape or form.\n\nStay polite at all times and respect other opinions.",
+        "kind": "all"
+      },
+      {
+        "title": "No unrelated content",
+        "text": "It is not allowed to post content that is not nearly related to React Native.\n\nIf the post is not entirely related to React Native, but related to Mobile Development, your post may be excluded from this rule.",
+        "kind": "link"
+      },
+      {
+        "title": "No posts to Stackoverflow",
+        "text": "Instead of just posting links to Stackoverflow, try and explain your issue here. However,  you are allowed to post links to Stackoverflow AFTER you explain your issue. People who then feel the need to answer the question on Stackoverflow can do that.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/reactnative/about/rules"
   },
   {
     "name": "roastmystartup",
@@ -971,5 +1998,107 @@
     ],
     "keep": [],
     "source": "https://www.reddit.com/r/startups/about/rules"
+  },
+  {
+    "name": "swift",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": 60,
+    "links_allowed": "yes",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "swift",
+      "ios",
+      "programming"
+    ],
+    "notes": "Self-promotion is tolerated only for people contributing to the community: under 5% of your posts and comments, and not if you have fewer than 5 posts or comments or an account under 2 months old.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Rule I - Must be relevant to Swift",
+        "text": "Your post should be related to The Swift Programming Language. We get it, Taylor Swift is great but unless she's starting a new career as a Swift developer, we don't need to know about it.",
+        "kind": "all"
+      },
+      {
+        "title": "Rule II - Be Respectful",
+        "text": "We know you're passionate about Swift but, please be respectful and follow reddiquette. Any form of abuse, discrimination (whether racial, sexual, religious etc) or any vulgar comments/posts are not tolerated.",
+        "kind": "all"
+      },
+      {
+        "title": "Rule III - Must be an original source",
+        "text": "Make the original source of the content your submission, and do not use URL shorteners.\nIf a mirror is necessary, please provide one in comments. No hotlinking or rehosting someone else's work (unless they specifically allow it in their terms of use or request it).\n\nPost direct links to your source.",
+        "kind": "link"
+      },
+      {
+        "title": "Rule IV - Asking Questions",
+        "text": "Before posting your question, use the search bar to make sure your question has not been answered before. If you think your question is simple, please post it in the monthly pinned thread titled \"Got an easy question? Ask it here!\"",
+        "kind": "link"
+      },
+      {
+        "title": "Rule V - Self Promotion",
+        "text": "Self promotion is tolerated for people that are contributing to the community by answering questions and engaging in constructive discussions. Fewer than 5% of your posts (including comments) should be self promotion. If you have fewer than 5 posts/comment on the sub, or your account is less than 2 month old, self promotion is not allowed.\n\nNote: If your post is about a job opening, you *must* include the name of the company and a salary range, otherwise your post will be removed.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/swift/about/rules"
+  },
+  {
+    "name": "SwiftUI",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": "yes",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "swiftui",
+      "ios",
+      "mobile-dev"
+    ],
+    "notes": "App promotion is only allowed if the source code is provided too (preferably a GitHub link). Selling code, templates or prebuilt apps is not allowed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Posts must be about SwiftUI",
+        "text": "Keep in mind that SwiftUI is a user interface framework. Most apps will use other technologies too, such as Core Data, UIKit, or Combine - but please make sure your post is about a SwiftUI related question or issue. For broader topics and questions, please refer to r/iOSProgramming.\n\nUI/UX feedback is not related to SwiftUI unless you share the code",
+        "kind": "link"
+      },
+      {
+        "title": "Only promote open source apps",
+        "text": "To reduce spam and nurture a useful platform for beginners and experienced programmers, we only allow app promotion if the source code is provided too, preferably using a GitHub link. \n\nThis sub is not a marketplace to promote your app - but if your app is using SwiftUI and you open source it, that could be very useful for the community.",
+        "kind": "all"
+      },
+      {
+        "title": "Paid Content",
+        "text": "Selling code, templates or prebuilt apps is not allowed. We want to cultivate a community of shared learning/growing. \n\nPaid courses or learning material is tolerated for those contributing to the community by helping members and answering questions.",
+        "kind": "all"
+      },
+      {
+        "title": "Use English",
+        "text": "Make sure your posts and comments are in clear English to keep the sub as inclusive as possible.",
+        "kind": "all"
+      },
+      {
+        "title": "No low-effort posts",
+        "text": "Use the search function before posting. Don't post questions that have already been asked and answered many times. If you have a question about a specific problem you are facing, include the source code in question. \n\nTry to contribute something actually value to this subreddit; 'inspiration' style posts are discouraged.",
+        "kind": "link"
+      },
+      {
+        "title": "This is not a design showcase",
+        "text": "Whenever you want to showcase a design, please add source code to it, or general explanations on how it works.",
+        "kind": "all"
+      },
+      {
+        "title": "Be civil",
+        "text": "Treat all members with kindness and respect. Personal attacks, insults, harassment, or inflammatory language are not allowed. Debate ideas, not individuals.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/SwiftUI/about/rules"
   }
 ]

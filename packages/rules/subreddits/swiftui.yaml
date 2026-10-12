@@ -1,0 +1,40 @@
+name: SwiftUI
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: 'yes'
+post_formats: []
+cooldown_days: null
+tags:
+- swiftui
+- ios
+- mobile-dev
+notes: App promotion is only allowed if the source code is provided too (preferably a GitHub link). Selling code, templates or prebuilt apps is not allowed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/SwiftUI/about/rules
+official:
+- title: Posts must be about SwiftUI
+  text: |-
+    Keep in mind that SwiftUI is a user interface framework. Most apps will use other technologies too, such as Core Data, UIKit, or Combine - but please make sure your post is about a SwiftUI related question or issue. For broader topics and questions, please refer to r/iOSProgramming.
+
+    UI/UX feedback is not related to SwiftUI unless you share the code
+  kind: link
+- title: Only promote open source apps
+  text: "To reduce spam and nurture a useful platform for beginners and experienced programmers, we only allow app promotion if the source code is provided too, preferably using a GitHub link. \n\nThis sub is not a marketplace to promote your app - but if your app is using SwiftUI and you open source it, that could be very useful for the community."
+  kind: all
+- title: Paid Content
+  text: "Selling code, templates or prebuilt apps is not allowed. We want to cultivate a community of shared learning/growing. \n\nPaid courses or learning material is tolerated for those contributing to the community by helping members and answering questions."
+  kind: all
+- title: Use English
+  text: Make sure your posts and comments are in clear English to keep the sub as inclusive as possible.
+  kind: all
+- title: No low-effort posts
+  text: "Use the search function before posting. Don't post questions that have already been asked and answered many times. If you have a question about a specific problem you are facing, include the source code in question. \n\nTry to contribute something actually value to this subreddit; 'inspiration' style posts are discouraged."
+  kind: link
+- title: This is not a design showcase
+  text: Whenever you want to showcase a design, please add source code to it, or general explanations on how it works.
+  kind: all
+- title: Be civil
+  text: Treat all members with kindness and respect. Personal attacks, insults, harassment, or inflammatory language are not allowed. Debate ideas, not individuals.
+  kind: all

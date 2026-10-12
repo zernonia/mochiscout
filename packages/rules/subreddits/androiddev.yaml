@@ -1,0 +1,44 @@
+name: androiddev
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- android
+- mobile-dev
+- kotlin
+notes: Sharing applications or recruiting testers is not allowed, and sales and marketing questions belong in other communities. Posts and comments must be written in your own voice; LLM-style output is removed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/androiddev/about/rules
+official:
+- title: Be Respectful and Professional
+  text: Engage respectfully and professionally with the community. Participate in good faith. Do not encourage illegal or inadvisable activity. Do not target users based on race, ethnicity, or other personal qualities. Give feedback in a constructive manner.
+  kind: all
+- title: Must be Related to Native Android Development, No App Promotion or Recruiting Testers
+  text: Must be related to native Android application development. Sales and marketing questions should be directed to their respective communities. Sharing applications or recruiting testers is not allowed. Cross-platform posts should be limited to those that are specific to the Android-native aspect of the framework; otherwise, they should be directed to the relevant framework community.
+  kind: link
+- title: Research Before Posting
+  text: Research before posting. Avoid trivial posts easily answered with a search engine or that have been posted recently.
+  kind: link
+- title: Posts Must be Generally Applicable
+  text: Posts must be applicable to the community as a whole. Posts that focus too much on a user's specific case, including purchasing advice or asking how to solve a personal development problem are not allowed. We also do not allow posts attempting to circumvent android security policy.
+  kind: link
+- title: Demonstrate Effort, Do Not Generate Content
+  text: |-
+    Posts should demonstrate effort.
+
+    If asking a question or seeking discussion, make sure to provide all relevant information and background, and present what you have tried so far, and your current understanding.
+
+    Memes, rants, or posts poorly formatted or proofread to the point of being difficult to read will be removed.
+
+    Posts and comments must be written in your own voice. Content indicative of LLM output, including excessive flourish, gushing or emojis, will be removed.
+  kind: all
+- title: English Only, No Paywall or Sign-Up
+  text: Submissions should be in English and freely available without an account.
+  kind: all
+- title: Strict rules for Google Play Issues posts
+  text: Posts regarding application take-downs or account bans should first exhaust official channels, including the official Google support community, effort to resolve the issue, and an appeal. Posts should be presented as neutrally as possible without charged language or emotional appeal. A post in this category must include all relevant information, full copies of all communication with Google,  a link to the support thread or threads on the official forums,  and steps already taken to resolve.
+  kind: all

@@ -1,0 +1,37 @@
+name: apps
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- apps
+- mobile
+- showcase
+notes: Do not make an account to advertise your app here, and no spam. Giveaways must be approved by a moderator.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/apps/about/rules
+official:
+- title: Follow Reddiquette
+  text: View the Reddiquette [here.](https://www.reddithelp.com/en/categories/reddit-101/reddit-basics/reddiquette)
+  kind: all
+- title: Do not make an account to advertise your app here
+  text: ''
+  kind: all
+- title: All submissions are to be related to Applications of any kind
+  text: This includes; iOS, Android, Windows Phone, Blackberry, Macintosh, Windows or Linux.
+  kind: link
+- title: Low Quality posts will be removed at the discretion of the mods.
+  text: ''
+  kind: link
+- title: No Derogatory Language, Harassment or Bullying
+  text: ''
+  kind: all
+- title: No Spam
+  text: ''
+  kind: all
+- title: All giveaways must be approved by a moderator
+  text: Please modmail the Moderators if you wish to do a giveaway.
+  kind: link

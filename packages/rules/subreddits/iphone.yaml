@@ -1,0 +1,87 @@
+name: iphone
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- ios
+- iphone
+- consumer-tech
+notes: Developers wanting to promote their own app or post an AMA must modmail the moderators first. Self-promotion of your own YouTube channel, videos or blog posts is not allowed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/iphone/about/rules
+official:
+- title: Relevancy and Formatting Guidelines
+  text: |-
+    All posts must be about iPhones and must foster discussion. Posts may relate to announcements, news, tips, discussion, AMAs/promotions, apps or accessories.
+
+
+    Ensure that your post is well formatted and has a descriptive title, not a sub for meme..
+
+    For more information, see our [Guidelines wiki](https://www.reddit.com/r/iphone/wiki/guidelines) and [Flairs wiki](https://www.reddit.com/r/iphonemods/wiki/flairs).
+  kind: link
+- title: Support Guidance
+  text: |-
+    We remove basic support issues - before posting, please check the [Support FAQs](https://www.reddit.com/r/iphone/wiki/support-faq), [Apple Support Community](https://discussions.apple.com/welcome) and Google.
+
+    We don't provide support for iCloud, other Apple devices, accessories, or third-party apps.
+
+    We don't provide support for hardware, passcode/activation lock, battery, storage or overheating issues.
+
+    Removed posts should be directed to /r/iOS, /r/AppleHelp or Apple Support instead.
+  kind: link
+- title: Use the 'What Should I Buy' thread
+  text: "Posts related to buying or selling or trading iPhones, including shipping or pre-orders, are not allowed. \nComment your query in the ['What should I buy?' thread](http://reddit.com/r/iphone/about/sticky?num=1) instead.\n\nUnique, discussion-worthy posts such as \"I’m moving from the Pixel 6 to the 14 Pro, what should I expect?” may be approved."
+  kind: link
+- title: Commonly removed posts
+  text: |-
+    Do not post any of the following:
+
+    - Photography, see /r/iPhoneography or /r/shot_on_iPhone
+
+    - Battery posts , see [this Megathread](http://reddit.com/r/iphone/about/sticky?num=2)
+
+    - iOS Beta bugs, see /r/iOSBeta
+
+    - Pictures of iPhones, cases, skins or boxes
+
+    - App release notes
+
+    - Screenshots of the Homescreen or Lockscreen  or Control Center
+
+    - Screenshot of purchases
+
+    More information can be found in the [Guidelines wiki](https://www.reddit.com/r/iphone/wiki/guidelines)
+  kind: link
+- title: Civility Guidelines
+  text: |-
+    All users that participate in this subreddit are expected to act civilly. We encourage all our users to read [Reddiquette](https://www.reddithelp.com/en/categories/reddit-101/reddit-basics/reddiquette) prior to participating on Reddit.
+
+    We will not tolerate the following:
+
+    - Insults, discrimination, or hate speech based on race, gender, age, nationality, sexuality, or religion.
+
+    - Anything that violates [Reddit’s Content Policy](https://www.redditinc.com/policies/content-policy)
+  kind: all
+- title: Promotion & Spam Guidelines
+  text: |-
+    Do not self-promote your own YouTube channels, videos, or blog posts.
+
+    Refrain from posting news with minimal/recycled content.
+
+    While we support developers, those wishing to promote their own app or post an AMA must [modmail us](https://www.reddit.com/message/compose?to=%2Fr%2Fiphone) first.
+
+    Please read [Reddit's self-promotion guidelines.](https://www.reddit.com/wiki/selfpromotion)
+  kind: all
+- title: Common Question
+  text: '**Frequently asked question:** Your submission has been deemed as a question very frequently asked that often does not have a change in answer. Please use our search bar'
+  kind: all
+- title: Must foster a relevant discussion
+  text: Must foster a relevant discussion
+  kind: all
+- title: No low-effort posts
+  text: No low-effort posts such as image macros and single sentence text posts, AI content. Moderators may use discretion to upkeep the quality of the subreddit.
+  kind: all

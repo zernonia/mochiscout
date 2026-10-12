@@ -1,0 +1,43 @@
+name: androidapps
+promo_policy: none
+self_promo_thread: r/droidappshowcase
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- android
+- apps
+- app-showcase
+notes: Self-promotion, tester requests, new app ideas and app feedback are not allowed; they belong in the sister sub r/droidappshowcase. Direct APK links are prohibited.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/androidapps/about/rules
+official:
+- title: Conduct & Authority
+  text: Follow Reddiquette. Please be respectful of all redditors present in all discussions. No personal attacks, witch hunting, or otherwise abusive or hostile content. The mod team reserves the right to make final, non-appealable decisions to protect the community.
+  kind: all
+- title: No Piracy or Illegal Mods
+  text: Zero tolerance for links to, requests for, or help with pirated/illegally modified APKs. This results in an immediate removal and potential ban.
+  kind: all
+- title: Self-Promotion & Dev Content
+  text: Any self-promotion, tester requests, new app ideas or app feedback are *not allowed* in r/androidapps. This type of content can be posted in the dedicated sister-subreddit r/droidappshowcase.
+  kind: all
+- title: Quality & Effort
+  text: No low-effort posts. This includes questions easily answered by a web search, topics discussed in recent history, or titles without enough context.
+  kind: all
+- title: Approved Sources Only
+  text: Only links to official stores (Play Store, Aurora, Samsung, F-Droid) and GitHub are pre-approved. Direct APK download links are strictly prohibited. Third-party mirrors (APKMirror, etc.) are used at the user's risk and may be removed.
+  kind: all
+- title: Spam & External Links
+  text: Blog articles must be specific (e.g., "App X Version 2 Update"). No "Top 10" lists or low-value roundup articles. Videos are only allowed as links within a text post/comment, not as direct link submissions.
+  kind: all
+- title: Restricted Content (NSFW/Accounts)
+  text: Buying or selling Google Play accounts is strictly prohibited (Permanent Ban). NSFW content is subject to individual moderator review and may be removed without notice.
+  kind: all
+- title: Off Topic
+  text: All content must be relative to Android and Android apps.
+  kind: all
+- title: English Language Requirement
+  text: All posts must include English in both the title and the body. Bilingual content is welcome, but an English translation must be present to ensure the community and moderators can understand the content.
+  kind: all

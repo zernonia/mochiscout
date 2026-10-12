@@ -1,0 +1,37 @@
+name: reactnative
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- react-native
+- mobile-dev
+- javascript
+notes: Promoting your company in any way is not allowed. You may post articles linking to your company site only if the article itself isn't self-promoting.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/reactnative/about/rules
+official:
+- title: No self promotion
+  text: "It is not allowed to promote your company in any way, shape or form. \n\nHowever, you may post articles that link to your company's website if the article isn't self promoting in any way, shape or form. \n\nAre you not sure if your article is self promoting? Don't hesitate to contact the moderators in advance."
+  kind: all
+- title: No low quality content
+  text: It is not allowed to post low quality content, such as short articles that have no value or tutorials that don't explain anything.
+  kind: link
+- title: No harassment
+  text: |-
+    It is not allowed to harass other people in any way, shape or form.
+
+    Stay polite at all times and respect other opinions.
+  kind: all
+- title: No unrelated content
+  text: |-
+    It is not allowed to post content that is not nearly related to React Native.
+
+    If the post is not entirely related to React Native, but related to Mobile Development, your post may be excluded from this rule.
+  kind: link
+- title: No posts to Stackoverflow
+  text: Instead of just posting links to Stackoverflow, try and explain your issue here. However,  you are allowed to post links to Stackoverflow AFTER you explain your issue. People who then feel the need to answer the question on Stackoverflow can do that.
+  kind: all
