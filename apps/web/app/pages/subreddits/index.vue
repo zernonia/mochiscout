@@ -15,6 +15,7 @@ const gradeClass: Record<string, string> = {
   strict: 'bg-red-500/12 text-red-800',
   unknown: 'bg-muted text-muted-foreground',
 }
+const promoLabel: Record<string, string> = { none: 'No self-promotion', weekly_thread_only: 'Promo thread only', flair_only: 'Promo flair only', allowed_with_value: 'Allowed if useful', allowed: 'Promotion allowed' }
 const gradeLabel: Record<string, string> = { friendly: 'Promotion-friendly', careful: 'Promote carefully', strict: 'Strict', unknown: 'Not enough data' }
 </script>
 
@@ -24,16 +25,17 @@ const gradeLabel: Record<string, string> = { friendly: 'Promotion-friendly', car
     <main class="mx-auto flex max-w-4xl flex-col gap-8 px-4 pt-16 pb-24 sm:pt-20">
       <div class="flex flex-col gap-3">
         <h1 class="text-balance text-3xl font-semibold tracking-tight sm:text-5xl">Where can you promote your product on Reddit?</h1>
-        <p class="max-w-2xl text-lg text-muted-foreground">Each subreddit's self-promotion rules, how often moderators remove posts, and how many people there ask for tools. Pooled, anonymous data from the posts Mochiscout checks.</p>
+        <p class="max-w-2xl text-lg text-muted-foreground">Looking for one that isn't here? <NuxtLink to="/tools/subreddit-rules" class="underline">Check any subreddit</NuxtLink>. Each subreddit's self-promotion rules, how often moderators remove posts, and how many people there ask for tools. Pooled, anonymous data from the posts Mochiscout checks.</p>
       </div>
       <div v-if="subs?.length" class="divide-y rounded-xl border">
         <NuxtLink v-for="s in subs" :key="s.name" :to="`/subreddits/${s.name}`" class="flex flex-col gap-1 p-4 transition-colors hover:bg-muted/40 sm:flex-row sm:items-center sm:gap-4">
           <div class="min-w-0 flex-1">
-            <div class="font-medium">r/{{ s.name }}</div>
+            <div class="font-medium">r/{{ s.displayName }}</div>
             <p v-if="s.description" class="line-clamp-1 text-sm text-muted-foreground">{{ s.description }}</p>
           </div>
           <div class="flex items-center gap-3 text-xs text-muted-foreground">
-            <span class="tabular-nums">{{ s.buyingPosts30d }} buying posts / 30d</span>
+            <span v-if="s.buyingPosts30d != null" class="tabular-nums">{{ s.buyingPosts30d }} buying posts / 30d</span>
+            <span v-else-if="s.promo">{{ promoLabel[s.promo] }}</span>
             <span class="rounded-full px-2 py-0.5 font-medium" :class="gradeClass[s.grade]">{{ gradeLabel[s.grade] }}</span>
           </div>
         </NuxtLink>

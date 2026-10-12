@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { COMPETITORS } from '#shared/competitors'
+import { FREE_TOOLS } from '#shared/tools'
 
 const links = [
   [
     { label: 'Pricing', to: '/#pricing' },
     { label: 'Sign in', to: '/login' },
     { label: 'Compare', to: '/alternatives' },
+    { label: 'Free tools', to: '/tools' },
+    ...FREE_TOOLS.map(t => ({ label: t.name, to: `/tools/${t.slug}` })),
     { label: 'Subreddit rules', to: '/subreddits' },
     ...COMPETITORS.filter(c => c.footer).map(c => ({ label: c.slug === 'gummysearch' ? 'GummySearch alternative' : `vs ${c.name}`, to: `/alternatives/${c.slug}` })),
   ],

@@ -29,11 +29,14 @@ const promoLabel: Record<string, string> = {
 const linksLabel: Record<string, string> = { none: 'Not allowed', in_comments_only: 'Only in comments', yes: 'Allowed' }
 const pct = (n: number | null) => (n === null ? null : `${Math.round(n * 100)}%`)
 const hourLabel = (h: number) => `${String(h).padStart(2, '0')}:00`
-const maxShare = Math.max(0.0001, ...s.stats.hours)
+const maxShare = Math.max(0.0001, ...(s.stats?.hours ?? []))
+const dn = s.displayName
 const updated = s.statsAt ? new Date(s.statsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : null
 
-const title = `r/${s.name} self-promotion rules and how to find customers there`
-const description = `Can you promote in r/${s.name}? ${g.label}. ${s.stats.posts30d} posts and ${s.stats.buyingPosts30d} buying-intent posts in the last 30 days${s.verdict.removalRate !== null ? `, ${pct(s.verdict.removalRate)} of checked posts removed` : ''}. Rules, best times to post and how to reply without getting banned.`
+const title = `r/${dn} self-promotion rules: can you promote your product there?`
+const description = s.stats
+  ? `Can you promote in r/${dn}? ${s.rules ? promoLabel[s.rules.promo_policy] : g.label}. ${s.stats.posts30d} posts and ${s.stats.buyingPosts30d} buying-intent posts in the last 30 days${s.verdict.removalRate !== null ? `, ${pct(s.verdict.removalRate)} of checked posts removed` : ''}. Rules, best times to post and how to reply without getting banned.`
+  : `Can you promote in r/${dn}? ${s.rules ? promoLabel[s.rules.promo_policy] : g.label}.${s.rules?.official.length ? ` All ${s.rules.official.length} official rules, summarised for founders:` : ''} what to disclose, where links are allowed and how to reply without getting banned.`
 useMarketingSeo({ title, description, path, type: 'article' })
 if (!s.indexable) useSeoMeta({ robots: 'noindex, follow' })
 
@@ -41,7 +44,7 @@ if (!s.indexable) useSeoMeta({ robots: 'noindex, follow' })
 const tips = computed(() => {
   const out: string[] = []
   const r = s.rules
-  if (r?.promo_policy === 'none') out.push(`Don't mention your product in r/${s.name}. Answer the question; people who want more will check your profile.`)
+  if (r?.promo_policy === 'none') out.push(`Don't mention your product in r/${dn}. Answer the question; people who want more will check your profile.`)
   else if (r?.promo_policy === 'weekly_thread_only') out.push(`Keep promotion to ${r.self_promo_thread ? `the "${r.self_promo_thread}" thread` : 'the recurring self-promotion thread'}. Elsewhere, just help.`)
   else if (r?.promo_policy === 'flair_only') out.push('Use the promotion flair whenever you mention your product.')
   else out.push('Lead with a useful answer. Mention your product once, say you built it, and only when it fits the question.')
@@ -59,7 +62,7 @@ useJsonLd([
     'itemListElement': [
       { '@type': 'ListItem', 'position': 1, 'name': 'Mochiscout', 'item': site.url },
       { '@type': 'ListItem', 'position': 2, 'name': 'Subreddits', 'item': `${site.url}/subreddits` },
-      { '@type': 'ListItem', 'position': 3, 'name': `r/${s.name}`, 'item': `${site.url}${path}` },
+      { '@type': 'ListItem', 'position': 3, 'name': `r/${dn}`, 'item': `${site.url}${path}` },
     ],
   },
 ])
@@ -73,9 +76,9 @@ useJsonLd([
         <nav class="text-sm text-muted-foreground" aria-label="Breadcrumb">
           <NuxtLink to="/subreddits" class="hover:text-foreground">Subreddits</NuxtLink>
           <span class="mx-1.5">/</span>
-          <span>r/{{ s.name }}</span>
+          <span>r/{{ dn }}</span>
         </nav>
-        <h1 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">r/{{ s.name }}: self-promotion rules and how to find customers there</h1>
+        <h1 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">r/{{ dn }}: self-promotion rules and how to find customers there</h1>
         <p v-if="s.description" class="text-lg text-muted-foreground">“{{ s.description }}”</p>
         <div class="flex gap-3 rounded-2xl border p-4" :class="g.class">
           <component :is="g.icon" class="mt-0.5 size-5 shrink-0" />
@@ -90,7 +93,7 @@ useJsonLd([
       </section>
 
       <!-- Numbers -->
-      <section class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <section v-if="s.stats" class="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div class="rounded-xl border p-4"><div class="text-2xl font-semibold tabular-nums">{{ s.stats.posts30d }}</div><div class="text-xs text-muted-foreground">posts, last 30 days</div></div>
         <div class="rounded-xl border p-4"><div class="text-2xl font-semibold tabular-nums">{{ s.stats.buyingPosts30d }}</div><div class="text-xs text-muted-foreground">asking for a tool or comparing</div></div>
         <div class="rounded-xl border p-4"><div class="text-2xl font-semibold tabular-nums">{{ pct(s.verdict.removalRate) ?? '–' }}</div><div class="text-xs text-muted-foreground">of checked posts removed</div></div>
@@ -109,13 +112,13 @@ useJsonLd([
           <div v-if="s.rules.cooldown_days" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">How often</div><div class="text-sm">At most one promotional mention every {{ s.rules.cooldown_days }} days</div></div>
           <div v-if="s.rules.notes" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Also</div><div class="text-sm">{{ s.rules.notes }}</div></div>
         </div>
-        <p v-else class="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">We haven't found r/{{ s.name }}'s promotion rules yet. Check the sidebar on Reddit before posting.</p>
+        <p v-else class="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">We haven't found r/{{ dn }}'s promotion rules yet. Check the sidebar on Reddit before posting.</p>
         <p class="text-xs text-muted-foreground">
-          <template v-if="s.rules">Summarised from r/{{ s.name }}'s official rules, checked on {{ new Date(`${s.rules.last_verified}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) }}. Moderators change rules; always check before posting.</template>
+          <template v-if="s.rules">Summarised from r/{{ dn }}'s official rules, checked on {{ new Date(`${s.rules.last_verified}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) }}. Moderators change rules; always check before posting.</template>
           <a :href="`https://www.reddit.com/r/${s.name}/about/rules`" target="_blank" rel="noopener nofollow" class="ms-1 underline">Official rules</a>
         </p>
         <div v-if="s.rules?.official.length" class="flex flex-col gap-3 pt-2">
-          <h3 class="font-semibold">All {{ s.rules.official.length }} rules of r/{{ s.name }}</h3>
+          <h3 class="font-semibold">All {{ s.rules.official.length }} rules of r/{{ dn }}</h3>
           <ol class="flex list-decimal flex-col gap-3 pl-5 text-sm">
             <li v-for="r in s.rules.official" :key="r.title">
               <span class="font-medium">{{ r.title }}</span><span v-if="r.kind !== 'all'" class="text-muted-foreground"> (applies to {{ r.kind === 'link' ? 'posts' : 'comments' }})</span>
@@ -126,7 +129,7 @@ useJsonLd([
       </section>
 
       <!-- When people post -->
-      <section v-if="s.stats.posts30d" class="flex flex-col gap-3">
+      <section v-if="s.stats?.posts30d" class="flex flex-col gap-3">
         <h2 class="text-xl font-semibold">When people post (UTC)</h2>
         <div class="flex h-28 items-end gap-0.5 rounded-xl border p-3" role="img" :aria-label="`Busiest hours: ${s.peakHours.map(h => hourLabel(h.hour)).join(', ')} UTC`">
           <div v-for="(share, hour) in s.stats.hours" :key="hour" class="flex flex-1 flex-col items-center gap-1">
@@ -138,7 +141,7 @@ useJsonLd([
 
       <!-- Tips -->
       <section class="flex flex-col gap-3">
-        <h2 class="text-xl font-semibold">How to find customers in r/{{ s.name }} without getting banned</h2>
+        <h2 class="text-xl font-semibold">How to find customers in r/{{ dn }} without getting banned</h2>
         <ul class="flex flex-col gap-2">
           <li v-for="t in tips" :key="t" class="flex gap-2 text-sm"><CheckCircle2Icon class="mt-0.5 size-4 shrink-0 text-emerald-600" /> {{ t }}</li>
           <li class="flex gap-2 text-sm"><CircleAlertIcon class="mt-0.5 size-4 shrink-0 text-amber-600" /> Never post the same promotional text across subreddits, and don't ask friends to upvote. Both get accounts banned.</li>
@@ -148,13 +151,13 @@ useJsonLd([
       <!-- CTA -->
       <section class="flex flex-col items-center gap-4 rounded-3xl bg-neutral-100 px-6 py-10 text-center">
         <LandingMochiMascot class="h-14 w-20" />
-        <h2 class="text-balance text-2xl font-semibold tracking-tight">See who in r/{{ s.name }} is asking for what you sell</h2>
+        <h2 class="text-balance text-2xl font-semibold tracking-tight">See who in r/{{ dn }} is asking for what you sell</h2>
         <p class="max-w-lg text-sm text-muted-foreground">Mochiscout scores every new post for buying intent, checks these rules before you reply, and drafts an answer you post yourself.</p>
         <LandingCta :source="`sub-${s.name}`" />
       </section>
 
       <section class="flex flex-col gap-3 border-t pt-8 text-sm text-muted-foreground">
-        <p>
+        <p v-if="s.stats">
           Numbers are pooled, anonymous outcomes from Mochiscout users and the posts we check, over the last 30 days<template v-if="updated">, updated {{ updated }}</template>. We never post or vote on Reddit.
         </p>
         <div v-if="s.related.length" class="flex flex-wrap gap-2">

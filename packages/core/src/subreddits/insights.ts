@@ -3,6 +3,7 @@ import type { SubredditRules } from '@mochiscout/rules'
 import type { JobContext } from '../jobs/context'
 import type { RulesSource } from './rules'
 import { and, eq, gte, inArray, schema, sql } from '@mochiscout/db'
+import { allRules } from '@mochiscout/rules'
 import { readMissingRules, resolveRulesMany } from './rules'
 
 /**
@@ -166,9 +167,13 @@ export function peakHours(stats: SubredditStats, n = 3) {
 }
 
 export interface PublicSubreddit {
+  /** Lowercase, for URLs. */
   name: string
+  /** Reddit's casing, e.g. "SaaS". */
+  displayName: string
   description: string | null
-  stats: SubredditStats
+  /** Pooled stats, once the sub has enough activity in our data. */
+  stats: SubredditStats | null
   statsAt: Date | null
   rules: SubredditRules | null
   rulesSource: RulesSource | null
@@ -179,26 +184,40 @@ export interface PublicSubreddit {
   indexable: boolean
 }
 
-/** Subs with a public page: enough activity for the pooled stats to mean something. */
+/**
+ * Subs with a public page: every sub in the rules library or with rules read
+ * automatically, plus subs with enough activity for pooled stats to mean
+ * something. Busiest first, then by name.
+ */
 export async function publicSubreddits(db: Db, opts: { name?: string } = {}): Promise<PublicSubreddit[]> {
+  const wanted = opts.name?.toLowerCase()
   const rows = await db.select().from(schema.subreddits)
-    .where(opts.name ? eq(schema.subreddits.name, opts.name.toLowerCase()) : sql`${schema.subreddits.stats} is not null`)
-  const eligible = rows.filter(r => r.stats && r.stats.posts30d >= STATS_MIN_POSTS)
-  const resolved = await resolveRulesMany(db, eligible.map(r => r.name))
-  return eligible.map((r) => {
-    const rr = resolved.get(r.name)
+    .where(wanted ? eq(schema.subreddits.name, wanted) : sql`${schema.subreddits.stats} is not null or ${schema.subreddits.autoRules} is not null`)
+  const byName = new Map(rows.map(r => [r.name, r]))
+  const names = new Set(rows.filter(r => (r.stats && r.stats.posts30d >= STATS_MIN_POSTS) || r.autoRules).map(r => r.name))
+  for (const r of allRules()) {
+    const key = r.name.toLowerCase()
+    if (!wanted || key === wanted) names.add(key)
+  }
+  const resolved = await resolveRulesMany(db, [...names])
+  return [...names].flatMap((name) => {
+    const r = byName.get(name)
+    const rr = resolved.get(name)
     const rules = rr?.rules ?? null
-    const verdict = subredditVerdict(rules, r.stats)
-    return {
-      name: r.name,
-      description: r.description,
-      stats: r.stats!,
-      statsAt: r.statsAt,
+    const stats = r?.stats && r.stats.posts30d >= STATS_MIN_POSTS ? r.stats : null
+    if (!rules && !stats) return []
+    const verdict = subredditVerdict(rules, stats)
+    return [{
+      name,
+      displayName: rules?.name ?? name,
+      description: r?.description ?? null,
+      stats,
+      statsAt: r?.statsAt ?? null,
       rules,
       rulesSource: rr?.source ?? null,
       verdict,
-      peakHours: peakHours(r.stats!),
+      peakHours: stats ? peakHours(stats) : [],
       indexable: !!rules || verdict.removalRate !== null,
-    }
-  }).sort((a, b) => b.stats.posts30d - a.stats.posts30d)
+    }]
+  }).sort((a, b) => (b.stats?.posts30d ?? 0) - (a.stats?.posts30d ?? 0) || a.name.localeCompare(b.name))
 }
