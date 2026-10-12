@@ -82,15 +82,23 @@ export function reportServerError(apiKey: string | undefined, error: unknown, ct
   return task
 }
 
-async function send(apiKey: string, error: unknown, ctx: ErrorContext) {
+/** Send one report and return PostHog's HTTP status (0 when unreachable). */
+export async function sendErrorReport(apiKey: string, error: unknown, ctx: ErrorContext): Promise<number> {
   try {
-    await fetch(CAPTURE_URL, {
+    const res = await fetch(CAPTURE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ api_key: apiKey, ...exceptionEvent(error, ctx) }),
     })
+    if (!res.ok) console.error('[report-error] PostHog answered', res.status, await res.text().catch(() => ''))
+    return res.status
   }
   catch (e) {
     console.error('[report-error] could not reach PostHog', String(e))
+    return 0
   }
+}
+
+async function send(apiKey: string, error: unknown, ctx: ErrorContext) {
+  await sendErrorReport(apiKey, error, ctx)
 }

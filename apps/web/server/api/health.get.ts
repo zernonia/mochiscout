@@ -7,9 +7,17 @@ export default defineEventHandler(async (event) => {
   const env = getEnv(event)
   const config = useRuntimeConfig(event)
 
-  // ?test-error=1 raises a 500 so the error-reporting pipeline can be checked end to end.
-  if (getQuery(event)['test-error'] === '1' && !(await env.CACHE.get('health:test-error'))) {
+  // ?test-error=1 raises a 500 so the error-reporting pipeline can be checked end to end;
+  // ?test-report=1 sends a report directly and returns PostHog's status (no error hook involved).
+  const query = getQuery(event)
+  if ((query['test-error'] === '1' || query['test-report'] === '1') && !(await env.CACHE.get('health:test-error'))) {
     await env.CACHE.put('health:test-error', '1', { expirationTtl: TEST_ERROR_GAP_S })
+    if (query['test-report'] === '1') {
+      const status = config.public.posthogKey
+        ? await sendErrorReport(config.public.posthogKey, new Error('Health check direct report (safe to ignore)'), { source: 'health' })
+        : null
+      return { reported: status }
+    }
     throw new Error('Health check test error (safe to ignore)')
   }
 
