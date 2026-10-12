@@ -1,0 +1,55 @@
+name: sales
+promo_policy: none
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- sales
+- b2b
+- prospecting
+notes: Selling, self-promotion and referral links are banned with an immediate permanent ban; posting needs 10 comment upvotes. Company-branded accounts and recommendations by people affiliated with the product are not allowed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/sales/about/rules
+official:
+- title: 10 Community Karma Required to Post and Karma Farming
+  text: Our community requires users to have 10 upvotes received on comments here before you will be allowed to create a new post or lead a discussion. Karma farming is asking for upvotes in the comments section of other users posts and should be reported to the mod team for removal.
+  kind: comment
+- title: No Selling or Self Promotion
+  text: Users are strictly not allowed to promote what they sell here and should refrain from revealing who they sell for unless directly asked. This includes offering your solution in response to recommendation request, free trials, soliciting feedback, and similar conduct. Users found breaking this rule will receive an immediate and permanent ban.
+  kind: all
+- title: No Recruiting Users
+  text: This is not a place to recruit sales people. This includes posts inviting users to private trials for software or other tools/services/platforms. There are other subs for that such as /r/hiring or /r/salesjobs or /r/betatests . This is a *zero-tolerance* policy, and will result in an instant, permanent ban. *No exceptions, contesting, and absolutely no reversals of this ban will be considered!*
+  kind: all
+- title: No Spam, Affiliation to Recommendations or Referral Links
+  text: Spam, affiliation to recommendations posted, and referral links will result in a ban. Company or solution recommendations are only allowed by customers of what is being recommended. Recommendations by users working for or related to what they are recommending are not allowed and should be reported.
+  kind: all
+- title: No Marketing or Blogspam
+  text: We do allow articles but we do not allow marketing blogspam. Any post that looks like blogspam will be removed and you will receive a permanent ban. If you are the writer of an article, a full text version may be posted with identifying information removed and without backlinks to the blog. Company branded user accounts are also prohibited from posting or commenting here.
+  kind: all
+- title: No Sales Memes
+  text: |-
+    No sales memes, period! This sub is for professional sales and quality posts, and memes just don't fit in with that atmosphere. We understand the idea behind lighthearted posts, and discussions. Memes are close to zero effort, and provide less quality than we anticipate for our users. Memes are better represented in /r/saleshumor/ or r/growthmemes or /r/funny.
+
+    First offense is removal of your post, and a 5-day ban. Second offense results in a permanent, indefinite ban.
+  kind: all
+- title: No Off-Site Communities
+  text: Any attempt to create, advertise or recruit r/Sales users to join off-site communities will result in an immediate and permanent ban. This includes Discord channels, other social media sites, masterclass groups, or networking groups and associations that require payment for membership.
+  kind: all
+- title: Failure To Include Details
+  text: If you are asking a question or for advice, include as much information and detail as you can without revealing company or personal information. Generic or low effort posts may be removed at our discretion.
+  kind: all
+- title: No Bot or AI Generated Content
+  text: R/Sales is for real users discussing their own thoughts. Posts and comments that are suspected of being bot reply accounts or AI generated content are subject to removal and may result in a ban.
+  kind: all
+- title: Zero Contribution
+  text: Posts or comments that do not contribute directly to a sales topic, or closely related to a sales topic, will be removed. This includes questions about marketing, HR/workplace related issues and generalized questions already answered by other threads or in the Wiki.
+  kind: all
+- title: Violates Sitewide Policies
+  text: |-
+    Posts and comments will be removed and account could be banned from the sub for breaking sitewide policies.
+
+    https://www.redditinc.com/policies/content-policy
+  kind: all

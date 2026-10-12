@@ -1,5 +1,117 @@
 [
   {
+    "name": "B2BSaaS",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": "yes",
+    "post_formats": [],
+    "cooldown_days": 10,
+    "tags": [
+      "b2b",
+      "saas",
+      "growth"
+    ],
+    "notes": "One self-promotional post per project or domain every 10 days, and it must give genuine value. Disclose affiliation; promoting courses is banned.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "No Spam",
+        "text": "We have a zero-tolerance policy for spam. Posting spam or promoting courses will result in a permanent ban for both the spammer and their friends.",
+        "kind": "all"
+      },
+      {
+        "title": "No Astroturfing",
+        "text": "Fake posts, shill accounts, and coordinated promotion will result in a permanent ban. If you're affiliated with something you're sharing, be transparent.",
+        "kind": "all"
+      },
+      {
+        "title": "Be Nice",
+        "text": "Treat all members with respect and professionalism. Harassment, hate speech, and discrimination are not tolerated. Be nice.",
+        "kind": "all"
+      },
+      {
+        "title": "Provide Value",
+        "text": "Ensure that your posts provide value to the community. Ask questions, share insights, and provide constructive feedback.",
+        "kind": "all"
+      },
+      {
+        "title": "Limit Self-Promotion",
+        "text": "Self-promotion must provide genuine value and is strictly limited to one post per project or domain every 10 days.\n\nPosts exceeding this limit will be removed, and repeat offenders will be banned.",
+        "kind": "all"
+      },
+      {
+        "title": "Follow Reddit's Rules",
+        "text": "Adhere to all of Reddit's site-wide rules and guidelines.",
+        "kind": "all"
+      },
+      {
+        "title": "Flag Inappropriate Content",
+        "text": "Use the report button to flag inappropriate content or rule violations to the moderators.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/B2BSaaS/about/rules"
+  },
+  {
+    "name": "buildinpublic",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "building-in-public",
+      "makers",
+      "founders"
+    ],
+    "notes": "Self-promotion is allowed only with context: share progress, lessons and ask for feedback. Say whether shared tools are paid, free or affiliate-linked.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Be Respectful",
+        "text": "Treat all members with respect. No harassment, hate speech, or personal attacks will be tolerated. Be constructive in your feedback and interactions.",
+        "kind": "all"
+      },
+      {
+        "title": "Stay on Topic",
+        "text": "All posts should be related to \"building in public,\" whether you're working on a product, learning a new skill, or launching something new. Off-topic content will be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "No Self-Promotion Without Context",
+        "text": "Share your work openly, but avoid posting solely for self-promotion. Instead, focus on sharing progress, lessons learned, and asking for feedback.",
+        "kind": "all"
+      },
+      {
+        "title": "No Spam",
+        "text": "Spamming links, irrelevant content, or unsolicited advertisements will lead to immediate removal. Keep the focus on building and learning together.",
+        "kind": "all"
+      },
+      {
+        "title": "No Plagiarism or Misrepresentation",
+        "text": "All work shared should be your own or properly credited if you’re collaborating or using third-party resources. Misrepresenting work as your own will result in immediate action from the moderators.",
+        "kind": "all"
+      },
+      {
+        "title": "Privacy",
+        "text": "Do not share private or sensitive information about yourself or others without consent. This includes sharing someone else's work without permission.",
+        "kind": "all"
+      },
+      {
+        "title": "Transparency in Tools & Resources",
+        "text": "If you share tools or resources, be transparent if they’re paid, free, or affiliate-linked. This helps maintain trust and clarity in the community.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/buildinpublic/about/rules"
+  },
+  {
     "name": "Entrepreneur",
     "promo_policy": "weekly_thread_only",
     "self_promo_thread": "Designated weekly threads",
@@ -44,6 +156,449 @@
     ],
     "keep": [],
     "source": "https://www.reddit.com/r/Entrepreneur/about/rules"
+  },
+  {
+    "name": "EntrepreneurRideAlong",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "entrepreneurship",
+      "founders",
+      "building-in-public"
+    ],
+    "notes": "The rules don't mention self-promotion.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Be Respectful and Kind",
+        "text": "No harassment, personal attacks, or hate speech. Keep the community welcoming.",
+        "kind": "all"
+      },
+      {
+        "title": "Follow Reddit’s Global Rules",
+        "text": "Ensure you’re adhering to Reddit’s terms and conditions in all interactions.",
+        "kind": "all"
+      },
+      {
+        "title": "Engage with Good Intent",
+        "text": "Approach discussions with openness and a desire to help others succeed.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/EntrepreneurRideAlong/about/rules"
+  },
+  {
+    "name": "GrowthHacking",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "growth",
+      "marketing",
+      "startups"
+    ],
+    "notes": "Sharing your own content needs 100 community karma, and SaaS founders must get mod permission before promoting tools. Surveys, beta tests and reviews need mod permission; gated content, TikTok and ProductHunt links are banned.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Don't Share Gated Content",
+        "text": "Please don't block content behind a paywall or an opt-in.",
+        "kind": "all"
+      },
+      {
+        "title": "No Self-Promotion",
+        "text": "If you are sharing your blog post, product, podcast or video, make sure you have at least 100 Community Karma by engaging in the community. Low-value or low-effort posts will be deleted. Write unique summaries while sharing your blog, podcast or videos.",
+        "kind": "all"
+      },
+      {
+        "title": "SaaS Products and Tools",
+        "text": "If you're a founder or employee or marketer of a SaaS product looking to promote your tools, seek permission from the mod.",
+        "kind": "all"
+      },
+      {
+        "title": "Seek Permission for Survey / Feedback / Beta Testing / Review",
+        "text": "If you're asking members to participate in any Surveys / Feedback / Reviews / Beta Testing, ask permission of the moderator if you're collecting contact details of our members or asking them to DM. Also promoting your private groups / communities in the subreddit is not encouraged.",
+        "kind": "all"
+      },
+      {
+        "title": "Link love for original and exclusive content",
+        "text": "If you share a piece of original content, then you can link to your website or social media profile at the end of the post (one link only). This is allowed after you have 100 Community Karma.",
+        "kind": "all"
+      },
+      {
+        "title": "We Discourage Black-hat Tactics",
+        "text": "Inappropriate content is automatically filtered by Reddit. We don't endorse black-hat marketing tools or tactics, if found, they will be deleted.",
+        "kind": "all"
+      },
+      {
+        "title": "Stay Topical",
+        "text": "If posts are not oriented towards growth marketing/hacking, they will be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "No Crowdsourcing Ideas",
+        "text": "Hire a consultant if you want someone to think of ways to grow your startup. This community is about sharing what experiments you have already run and the results. It is not for getting free ideas, consultation or suggestions for your product.",
+        "kind": "all"
+      },
+      {
+        "title": "Publish job posts under the jobs thread",
+        "text": "Here's the link to the job thread: https://www.reddit.com/r/GrowthHacking/comments/ozqyvn/growth_marketing_job_thread_august_2021/",
+        "kind": "all"
+      },
+      {
+        "title": "Avoid links from banned sites",
+        "text": "Links from TikTok and ProductHunt are banned unless approved by the mod team. Do not post anything related to any business that is offering Growth Hacking courses, training, mentorship, job boards, events, communities, etc.",
+        "kind": "all"
+      },
+      {
+        "title": "Always be kind and respectful",
+        "text": "Unlike other subreddits, at r/GrowthHacking we strongly encourage members to always be kind and respectful. If you try to throw shade and negativity, you will be banned.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/GrowthHacking/about/rules"
+  },
+  {
+    "name": "indiehackers",
+    "promo_policy": "flair_only",
+    "self_promo_thread": "Self Promotion flair",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "indie-hackers",
+      "bootstrapping",
+      "makers"
+    ],
+    "notes": "Self-promote your product once, using the Self Promotion flair, and ask for feedback rather than advertising. MRR claims need proof.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Self Promotion",
+        "text": "Users can self promote their product 1 time using the Self Promotion flair. The purpose is for feedback and critique not advertisement.",
+        "kind": "link"
+      },
+      {
+        "title": "MRR",
+        "text": "Posts containing info about MRR should have proof; no proof, no post.",
+        "kind": "all"
+      },
+      {
+        "title": "What you build type thing",
+        "text": "We sometimes allow “what you build” type posts. If we see that this is done to karma farm, we don't have great news for you.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/indiehackers/about/rules"
+  },
+  {
+    "name": "marketing",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": 300,
+    "min_account_age_days": 30,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "marketing",
+      "advertising",
+      "professionals"
+    ],
+    "notes": "Zero tolerance for advertising and self-promotion (permanent ban), and no website or product feedback requests. Posting needs an account over 30 days old with 300+ combined karma; no AI-generated content.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Advertising, Self-Promotion, & Spam (Permanent Ban)",
+        "text": "If you want to advertise in this community, have a look at reddit.com/advertising.\n\nWe have a zero tolerance policy to Advertising, Self-Promotion, & Spam.",
+        "kind": "all"
+      },
+      {
+        "title": "AI Generated Content (Permanent Ban)",
+        "text": "This is a subreddit for humans, not bots, so please don't copy and paste AI generated content.\n\nWe have a zero tolerance policy to AI generated content.",
+        "kind": "all"
+      },
+      {
+        "title": "App Ideas & Feedback (Permanent Ban)",
+        "text": "This includes any sort of \"would you pay for this app/feature/service\" post.",
+        "kind": "all"
+      },
+      {
+        "title": "Research Surveys & Homework Help (Post Removal)",
+        "text": "Don't post them.",
+        "kind": "all"
+      },
+      {
+        "title": "New To Marketing (Post Removal)",
+        "text": "r/Marketing is for marketing professionals to discuss and ask questions related to the marketing industry. Please ask beginner questions in r/AskMarketing,",
+        "kind": "all"
+      },
+      {
+        "title": "Job Hunting, Interview & Resume Feedback (Post Removal)",
+        "text": "We know it can be difficult to find a marketing job, but please don't ask us to help you find a job.",
+        "kind": "all"
+      },
+      {
+        "title": "Low Quality (Post Removal & Possible Ban)",
+        "text": "We're trying to build something great here, help us do that. A post or comment in a poor attempt to shill or sell a product or service, is someone's homework, is asking a question which has already been answered many times, is looking for free marketing instead of paying for a professional, or is a few sentences with a link to their blog. Let's not forget, memes, rants without a source, screenshots, etc. will all be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "Non-Specific Resource Request (Post Removal)",
+        "text": "E.G.  \"I'm thinking about marketing, teach me.\"  Be respectful of the community by searching the posts and asking specific questions.",
+        "kind": "all"
+      },
+      {
+        "title": "Website/Product Reviews (Post Removal & Possible Ban)",
+        "text": "Please don't ask us to review or give feedback for your website or product.",
+        "kind": "all"
+      },
+      {
+        "title": "URL Shorteners (Post Removal & Possible Ban)",
+        "text": "Any post or comment using a URL shortener will be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "Abuse/Rudeness (Post Removal & Possible Ban)",
+        "text": "This is a nice subreddit, where people are nice to each other. Abuse and rudeness are unwelcome, and may result in a ban.",
+        "kind": "all"
+      },
+      {
+        "title": "Posts Must Use A Descriptive Title (Post Removal)",
+        "text": "Help your fellow Redditors understand what your post is about.",
+        "kind": "link"
+      },
+      {
+        "title": "Posting And Commenting Is Restricted To Accounts Over 30 Days Old With 300+ Combined Karma Points",
+        "text": "Posts and comments from accounts which don't meet this threshold will be automatically removed.",
+        "kind": "all"
+      },
+      {
+        "title": "No Politics (Post Removal & Possible Ban)",
+        "text": "This is a nice subreddit with people from all walks of life. Therefore we do not allow political posts as they *always* devolve into fighting and abuse.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/marketing/about/rules"
+  },
+  {
+    "name": "microsaas",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": "yes",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "micro-saas",
+      "saas",
+      "makers"
+    ],
+    "notes": "You can share your Micro SaaS if you include backstory, tech stack, revenue or a lesson learned; bare links and empty build-in-public updates are removed. No requests for DMs and no links to paid courses without mod approval.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Keep it Micro SaaS",
+        "text": "All posts must directly relate to Micro SaaS.",
+        "kind": "all"
+      },
+      {
+        "title": "No Low-Effort Self-Promotion",
+        "text": "You may share your Micro SaaS, but it must add value. Purely promotional links without context, \"Build in Public\" updates with no actual insights, and repetitive link-dropping will be removed.\n\nIf you share your product, you must include the backstory, tech stack, revenue (if comfortable), or a specific lesson learned.",
+        "kind": "all"
+      },
+      {
+        "title": "Be Respectful and Constructive",
+        "text": "Roast the product and the landing page, but not the founder. Insults, harassment, trolling, and toxic behavior will result in an immediate ban.",
+        "kind": "all"
+      },
+      {
+        "title": "No Unethical Tactics or Black Hat",
+        "text": "Do not post, promote, or ask for unethical growth hacks. This includes buying fake reviews, spamming scraped emails, astroturfing, or stealing intellectual property.",
+        "kind": "all"
+      },
+      {
+        "title": "Keep it high quality",
+        "text": "Avoid vague motivational posts, generic \"How to get rich\", or links to paid courses/newsletters without prior mod approval.",
+        "kind": "all"
+      },
+      {
+        "title": "No DM ME",
+        "text": "We can't guarantee the safety of conversations outside our sub. Any post or comment requesting private messaging will be removed.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/microsaas/about/rules"
+  },
+  {
+    "name": "nocode",
+    "promo_policy": "flair_only",
+    "self_promo_thread": "Promoted flair and monthly product launch post",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "nocode",
+      "makers",
+      "tools"
+    ],
+    "notes": "Disclose your connection to a tool and use the Promoted flair; launches go in the monthly product launch post. Undisclosed affiliate links get the whole post removed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Promoted Posts/Comments",
+        "text": "If you are posting or commenting about a new tool/resource and you must disclose your connection to said tool/resource or risk your post/comment being deleted. Repeated violations will result in us taking the appropriate action. As we build the no-code/low-code community, obviously this will involve a lot of companies and innovators coming onto our forum to discuss their products, we just want people to be forthcoming about said connection.\n\nPlease use the appropriate \"Promoted\" flair on posts.",
+        "kind": "all"
+      },
+      {
+        "title": "Flair",
+        "text": "If you are from a company, you are more than welcome to add to the discussion and make posts here. However, you will need to add your own flair that indicates which company you are representing so that everyone can place your posts and comments in the appropriate context.",
+        "kind": "all"
+      },
+      {
+        "title": "Product Launch Outside of Designated Launch Post",
+        "text": "All product launch posts should be made on the monthly product launch post.",
+        "kind": "all"
+      },
+      {
+        "title": "Value-Add Post",
+        "text": "Promoting your own products is allowed, but the post must be first and foremost a value-add post for the community.",
+        "kind": "all"
+      },
+      {
+        "title": "Undisclosed Affiliate Link",
+        "text": "Using an affiliate link without disclosing will result in the entire post/comment being removed.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/nocode/about/rules"
+  },
+  {
+    "name": "ProductManagement",
+    "promo_policy": "weekly_thread_only",
+    "self_promo_thread": "Friday Show and Tell thread",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "product-management",
+      "careers",
+      "discussion"
+    ],
+    "notes": "Self-promotion and product research are allowed only in the Friday Show and Tell thread. AI-generated posts and comments are not allowed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "No self-promotion or spam",
+        "text": "https://web.archive.org/web/20240509074349/https://www.reddit.com/wiki/selfpromotion The exception to this rule is the Friday Show and Tell thread.",
+        "kind": "all"
+      },
+      {
+        "title": "Post career related comment in the quarterly thread",
+        "text": "Questions about how to move into product management, including requests for resume reviews, and interview questions must be posted in the quarterly thread. It's stickied at the top. This also includes deciding between offers, what job next, and all other career-related questions. It also includes posts with sankey charts about your job searches.",
+        "kind": "all"
+      },
+      {
+        "title": "Follow Rediquette",
+        "text": "https://support.reddithelp.com/hc/en-us/articles/205926439-Reddiquette",
+        "kind": "all"
+      },
+      {
+        "title": "No research, product or otherwise",
+        "text": "Specifically conducting product research, even if there is no self-promotion, isn't allowed. Nor is academic research without advance approval. The exception to this is when posting a project to the Friday Show and Tell thread.",
+        "kind": "all"
+      },
+      {
+        "title": "No AI Generated Posts",
+        "text": "this includes top level posts and comments",
+        "kind": "all"
+      },
+      {
+        "title": "No off-topic posts, low quality posts, or memes",
+        "text": "This may include posts on topics that have been repeated too frequently",
+        "kind": "link"
+      },
+      {
+        "title": "No posts about how to get started as a PM",
+        "text": "If you are getting started as a PM, use the search function and the wiki.",
+        "kind": "all"
+      },
+      {
+        "title": "Post rants in the weekly rant thread",
+        "text": "",
+        "kind": "all"
+      },
+      {
+        "title": "Moderators Discretion",
+        "text": "Not all content neatly falls into one of the other rules. Moderators can remove any post that they believe isn't contributing to the community and discussion of the practice of product management",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/ProductManagement/about/rules"
+  },
+  {
+    "name": "roastmystartup",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "feedback",
+      "startups",
+      "roast"
+    ],
+    "notes": "Posts with ProductHunt or Vercel links or free subdomains are removed, so use your own domain. Effortless posts, questions and AI-written posts are removed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "No ProductHunt Links, Vercel Links, just a Link or free subdomains",
+        "text": "Unfortunately we experience a ridiculous amount of spam that all have one thing in common - ProductHunt links and.......now Vercel links. Any post with a producthunt or vercel link will be removed. If you don't believe in your startup enough to buy a domain its not worth our time to roast.",
+        "kind": "all"
+      },
+      {
+        "title": "No Reporting People for BS",
+        "text": "Don't like a roast? That doesnt mean you get to report it. Also if you report somebody and claim they did something to you in another subreddit - we don't care. We will not ban people for things done in other subreddits. Period.",
+        "kind": "all"
+      },
+      {
+        "title": "Lack Of Effort or not Roast",
+        "text": "If you simply repost from another subreddit the post will removed, if you just post a two sentence post it will be removed, if you post something asking a question it will be removed. \n\nThis is to prevent spamming if the sub and low quality nonsense.",
+        "kind": "all"
+      },
+      {
+        "title": "AI Slop",
+        "text": "Post that are written by AI will be removed at our sole discretion. You know what we are talking about.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/roastmystartup/about/rules"
   },
   {
     "name": "SaaS",
@@ -120,5 +675,301 @@
     ],
     "keep": [],
     "source": "https://www.reddit.com/r/SaaS/about/rules"
+  },
+  {
+    "name": "SaaSMarketing",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": "yes",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "saas",
+      "marketing",
+      "growth"
+    ],
+    "notes": "Mention your SaaS only when relevant and helpful; unsolicited direct sales and DM requests are banned. Build in Public and What are you building posts and AI-written content are removed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Submission Guidelines",
+        "text": "Follow the Reddit site-wide rules and please treat others with respect, stay on-topic, and avoid non-productive self-promotion.\n\nNo spam. If you do you'll get one warning, then you'll be banned.\n\nIf you're not sure if you can post something, ask one of the mods first. Definitely as for permission rather than forgiveness ;)",
+        "kind": "all"
+      },
+      {
+        "title": "No Direct Sales Or Non-Productive Self-Promotion",
+        "text": "It's ok to mention your SaaS/blog/company IF it's relevant, adds value and is actually helpful for someone reading. Overdoing it is considered spam and will result in a ban.\n\nDirect sales that are unsolicited are forbidden as well. No PM requests please, and no promotion for other communities outside Reddit.\n\nNo promotion of other communities.",
+        "kind": "all"
+      },
+      {
+        "title": "SaaS-Focused Content Only",
+        "text": "Please keep the discussions oriented around SaaS, tech companies, business in general or even personal aspects of the business world.\n\nIf posts are not somehow helping anyone in regards to the topic, removals and bans will be enforced.",
+        "kind": "all"
+      },
+      {
+        "title": "Blog Posts",
+        "text": "You may submit your blog post BUT please post the main ideas rather than just a link without context.\n\nYou need to provide value to people through your post and not simply present what you're talking about in your article.\n\nThe more value you provide in the body of the Reddit post, the safer it is to say that it won't be removed.\n\nThe only way a link is allowed is at the end of the post (“Originally posted here”), unless highly relevant (don't abuse this).\n\nAnything else will be removed/banned.",
+        "kind": "all"
+      },
+      {
+        "title": "Be Nice",
+        "text": "AKA Don't Be A Dick. \n\nAt the end of the day, we're all trying to build something we're proud of. \n\nBe nice to others. Constructive criticism is welcome - we're trying to help each other after all. Personal attacks or being downright mean without adding any value is not cool.",
+        "kind": "all"
+      },
+      {
+        "title": "Bad Behaviour",
+        "text": "Doxing－Posting or seeking personal information, dox attempts or threats\n\nFlooding－Posting excessively frequently\n\nDuplicates－Reposting news or information\n\nPlagiarism－Not giving credit properly\n\nHyping－Pushing speculative, volatile, illiquid, or meme investments, especially flippantly, tersely, or implying huge returns\n\nMissing－Disappearing after posting a discussion, posting for another with inadequate information",
+        "kind": "all"
+      },
+      {
+        "title": "No Politics",
+        "text": "Let's keep politics out of this sub. \n\nWe don't allow:\n\nMoralizing issues\n\nPetitions or calls-to-action\n\nPolitical discussions\n\nPolitical baiting\n\nSoapboxing",
+        "kind": "all"
+      },
+      {
+        "title": "No \"Build in Public\" Posts",
+        "text": "Don't post these. 99% add zero value whatsoever, and are just spammy self-promo. Nobody cares about the random feature you just built. Unless you have valuable insights to share, it will be removed.",
+        "kind": "all"
+      },
+      {
+        "title": "No \"What are you building?\" Posts",
+        "text": "These are just spammy self-promo and will be removed. If you want to show up in AI and Google search results, find a way to add value.",
+        "kind": "all"
+      },
+      {
+        "title": "No AI Slop",
+        "text": "Don't be lazy and copy/paste from ChatGPT to boost karma or fake engagement. It's obvious, it's spammy, and it creates a lot of noise that distracts attention away from legitimately valuable and helpful discussion. If you do this, you'll be banned. In particular, don't use any tools that monitor Reddit and then respond with an AI comment. The world doesn't need more of that. Solve a real problem instead.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/SaaSMarketing/about/rules"
+  },
+  {
+    "name": "sales",
+    "promo_policy": "none",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "sales",
+      "b2b",
+      "prospecting"
+    ],
+    "notes": "Selling, self-promotion and referral links are banned with an immediate permanent ban; posting needs 10 comment upvotes. Company-branded accounts and recommendations by people affiliated with the product are not allowed.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "10 Community Karma Required to Post and Karma Farming",
+        "text": "Our community requires users to have 10 upvotes received on comments here before you will be allowed to create a new post or lead a discussion. Karma farming is asking for upvotes in the comments section of other users posts and should be reported to the mod team for removal.",
+        "kind": "comment"
+      },
+      {
+        "title": "No Selling or Self Promotion",
+        "text": "Users are strictly not allowed to promote what they sell here and should refrain from revealing who they sell for unless directly asked. This includes offering your solution in response to recommendation request, free trials, soliciting feedback, and similar conduct. Users found breaking this rule will receive an immediate and permanent ban.",
+        "kind": "all"
+      },
+      {
+        "title": "No Recruiting Users",
+        "text": "This is not a place to recruit sales people. This includes posts inviting users to private trials for software or other tools/services/platforms. There are other subs for that such as /r/hiring or /r/salesjobs or /r/betatests . This is a *zero-tolerance* policy, and will result in an instant, permanent ban. *No exceptions, contesting, and absolutely no reversals of this ban will be considered!*",
+        "kind": "all"
+      },
+      {
+        "title": "No Spam, Affiliation to Recommendations or Referral Links",
+        "text": "Spam, affiliation to recommendations posted, and referral links will result in a ban. Company or solution recommendations are only allowed by customers of what is being recommended. Recommendations by users working for or related to what they are recommending are not allowed and should be reported.",
+        "kind": "all"
+      },
+      {
+        "title": "No Marketing or Blogspam",
+        "text": "We do allow articles but we do not allow marketing blogspam. Any post that looks like blogspam will be removed and you will receive a permanent ban. If you are the writer of an article, a full text version may be posted with identifying information removed and without backlinks to the blog. Company branded user accounts are also prohibited from posting or commenting here.",
+        "kind": "all"
+      },
+      {
+        "title": "No Sales Memes",
+        "text": "No sales memes, period! This sub is for professional sales and quality posts, and memes just don't fit in with that atmosphere. We understand the idea behind lighthearted posts, and discussions. Memes are close to zero effort, and provide less quality than we anticipate for our users. Memes are better represented in /r/saleshumor/ or r/growthmemes or /r/funny.\n\nFirst offense is removal of your post, and a 5-day ban. Second offense results in a permanent, indefinite ban.",
+        "kind": "all"
+      },
+      {
+        "title": "No Off-Site Communities",
+        "text": "Any attempt to create, advertise or recruit r/Sales users to join off-site communities will result in an immediate and permanent ban. This includes Discord channels, other social media sites, masterclass groups, or networking groups and associations that require payment for membership.",
+        "kind": "all"
+      },
+      {
+        "title": "Failure To Include Details",
+        "text": "If you are asking a question or for advice, include as much information and detail as you can without revealing company or personal information. Generic or low effort posts may be removed at our discretion.",
+        "kind": "all"
+      },
+      {
+        "title": "No Bot or AI Generated Content",
+        "text": "R/Sales is for real users discussing their own thoughts. Posts and comments that are suspected of being bot reply accounts or AI generated content are subject to removal and may result in a ban.",
+        "kind": "all"
+      },
+      {
+        "title": "Zero Contribution",
+        "text": "Posts or comments that do not contribute directly to a sales topic, or closely related to a sales topic, will be removed. This includes questions about marketing, HR/workplace related issues and generalized questions already answered by other threads or in the Wiki.",
+        "kind": "all"
+      },
+      {
+        "title": "Violates Sitewide Policies",
+        "text": "Posts and comments will be removed and account could be banned from the sub for breaking sitewide policies.\n\nhttps://www.redditinc.com/policies/content-policy",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/sales/about/rules"
+  },
+  {
+    "name": "smallbusiness",
+    "promo_policy": "weekly_thread_only",
+    "self_promo_thread": "Weekly Promote-your-business thread",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": "none",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "small-business",
+      "questions",
+      "advice"
+    ],
+    "notes": "Promote your business only in the weekly thread (a relevant reply elsewhere is tolerated), and promotional product mentions are removed. Posts must be questions about small business; market research posts are banned.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Post only questions about small business.",
+        "text": "r/smallbusiness is a question and answer subreddit. You ask a question about starting, owning, and growing a small business and the community answers.\n\n**Exceptions** None, no exceptions.  \n**Note:** You can post own experience in the *new* weekly stickied or pinned share-your-experience thread.",
+        "kind": "link"
+      },
+      {
+        "title": "No links, product recommendations, unsolicited advice, blog content, or SEO shaping.",
+        "text": "We are not here to help your SEO, promote your product, or provide an audience for your unsolicited advice or stories. As of June 2026 product mentions will be removed from new posts or comments if they appear directly or indirectly promotional.\n\n**Exceptions**  \nUnsolicited advice (best practices, stories, lessons) are allowed in the stickied post dedicated to them.\n\nSurveys related to small business are allowed as posts providing they are from academic sources and pre-approved",
+        "kind": "all"
+      },
+      {
+        "title": "No business promotion posts",
+        "text": "No business promotion posts are allowed. Promote your business in the weekly Promote-your-business thread only. \n\n**Exceptions**\nYou can mention your business in a relevant reply to a post or comment in other threads when relevant to the conversation but deliberate abuse of this exception to promote will be recognized and removed.",
+        "kind": "all"
+      },
+      {
+        "title": "No personal attacks.",
+        "text": "",
+        "kind": "all"
+      },
+      {
+        "title": "No market research posts - not for developing apps, not for AI, not for business offerings",
+        "text": "Posts asking about \"pain points\" or trying to find a problem to solve aren't the focus of our sub and those posts will be removed. Our deep library of past posts are your guide to what everyone needs if you are willing to search and analyze. Academics may contact the mods to discuss exceptions for academic research.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/smallbusiness/about/rules"
+  },
+  {
+    "name": "startup",
+    "promo_policy": "allowed_with_value",
+    "self_promo_thread": null,
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": null,
+    "post_formats": [
+      "text"
+    ],
+    "cooldown_days": null,
+    "tags": [
+      "startups",
+      "founders"
+    ],
+    "notes": "No spam meant to drive traffic off-site and no solicitation; self posts only. The rules don't mention self-promotion otherwise.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Posts must be relevant",
+        "text": "",
+        "kind": "link"
+      },
+      {
+        "title": "No spam. No Solicitations",
+        "text": "No spam meant to drive traffic off-site. No solicitation/",
+        "kind": "all"
+      },
+      {
+        "title": "Self posts only (Enforced)",
+        "text": "",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/startup/about/rules"
+  },
+  {
+    "name": "startups",
+    "promo_policy": "weekly_thread_only",
+    "self_promo_thread": "Monthly Share Your Startup thread",
+    "min_karma": null,
+    "min_account_age_days": null,
+    "links_allowed": "in_comments_only",
+    "post_formats": [],
+    "cooldown_days": null,
+    "tags": [
+      "startups",
+      "founders",
+      "feedback"
+    ],
+    "notes": "Share your startup only in the Monthly Share Your Startup thread; feedback requests go in the weekly Feedback thread. Links in comments need a sentence of relevance and no affiliation, and posts need at least 250 characters.",
+    "last_verified": "2026-10-12",
+    "official": [
+      {
+        "title": "Relevant Content Only",
+        "text": "We are a community of discussion based around startups, not traditional businesses.\n\nAll content must be relevant to startups.\n\nYou are welcome to ask how to apply startup methodologies to your traditional business if you frame your question in a non-promotional way. We want you to be able to ask any question that helps your startup.",
+        "kind": "all"
+      },
+      {
+        "title": "No direct sales, advertisements, or promotion",
+        "text": "**No direct sales, advertisements, or promotional posts of any kind**. We have designated places that are an exception to this rule and they will always be stickied at the top of /r/startups.\n\n* You MAY share your startup in the Monthly Share Your Startup thread\n\nSelf-promotion is anything you have an interest, stake or relationship with including being friends with someone at the company.\n\nAt the end of the day, /r/startups moderators have the final say if your comments are promotional or not.",
+        "kind": "all"
+      },
+      {
+        "title": "Submissions Serve a Specific Purpose",
+        "text": "Submissions are for discussing methodologies, experiences, strategies, techniques, markets, and other such things WITHOUT tying them directly to your own project using its name or URL.\n\nTitles must be clear and descriptive.\n\nSubmissions must have at least 250 characters of content. The more details you provide us the better support our community can provide you with. Like life, the more you put into something the more you get out of it.\n\nNo legal questions. Use our Legal Office Hours.",
+        "kind": "link"
+      },
+      {
+        "title": "Feedback Has a Place",
+        "text": "All Feedback Requests (including surveys/polls) belong in our [Feedback Thread or other appropriate weekly thread](https://www.reddit.com/r/startups/comments/boq669/your_weekly_threads_guide_learn_about_the_new/).\nYou are invited to repost each week. \n\nBe sure to contribute to the others in the thread and ask them to return the favor to increase engagement.\n\nYou may not publicly offer feedback or direct support outside of the Stickied Threads.",
+        "kind": "all"
+      },
+      {
+        "title": "Rules for Links in Comments/Discussion",
+        "text": "Sometimes you think the best solution is simply to link to a resource that might answer someone's question. We want you to be able to link in discussion to relevant content. We also don't want the discussion to turn into a self promotional mess and link farm.\n\nIf you are going to link to something in the comments please make sure to:\n\n* Write at least a sentence explaining why the link is relevant to the discussion.\n\n* Link only content you have no affiliation with. Affiliate links = banned.",
+        "kind": "all"
+      },
+      {
+        "title": "Do Not Solicit PM Requests / Post DM Notices",
+        "text": "The purpose of making a submission or comment is to engage in a public discussion with the community. \n\nIt is not to request a PM/DM from someone. Do not post a notice that you DMed someone.\n\nYou are more than welcome to engage privately with one another, but it is up to you to take the initiative directly.",
+        "kind": "all"
+      },
+      {
+        "title": "Sharing Your Blog is To Start a Discussion, Never For Self-Promotion",
+        "text": "Sharing your blog is not a means to self promote.\n\nA link to the original blog post is allowed with **prior** Mod approval.\n\nIf you are submitting your own blog content, the full body of the content must be included in the post, properly formatted for reddit.\n\nInclude an outline & timestamps with a video.\n\nIf your blog is over 2000 words you may ask for an exemption. \n\nAll other rules still apply.\n\nNo blogs about your \"startup\" journey allowed.",
+        "kind": "all"
+      },
+      {
+        "title": "Always Be Kind and Supportive",
+        "text": "The goal of this community is to encourage people to learn and be inspired to pursue ventures related to startups.\n\nDo not troll, harass people, or be an asshole. **This does not mean to lie. It means to give support and explain why you don't like something.**\n\nTry to remember people likely do not have much experience yet or might be simply ignorant to what you know.\n\nBe willing to hold a discussion and try to explain your opinion or point of view to the benefit of the entire community.",
+        "kind": "all"
+      },
+      {
+        "title": "No Unscheduled AMAs",
+        "text": "We do not allow unscheduled AMAs.\n\nWe need to verify and approve all AMAs. \n\nIf you wish to do an AMA you must use the \"Message the Moderators\" feature in the side bar and you must give us at least TWO (2) Weeks Lead Time to organize it with you.",
+        "kind": "all"
+      }
+    ],
+    "keep": [],
+    "source": "https://www.reddit.com/r/startups/about/rules"
   }
 ]

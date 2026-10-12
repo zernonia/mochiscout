@@ -1,0 +1,76 @@
+name: startups
+promo_policy: weekly_thread_only
+self_promo_thread: Monthly Share Your Startup thread
+min_karma: null
+min_account_age_days: null
+links_allowed: in_comments_only
+post_formats: []
+cooldown_days: null
+tags:
+- startups
+- founders
+- feedback
+notes: Share your startup only in the Monthly Share Your Startup thread; feedback requests go in the weekly Feedback thread. Links in comments need a sentence of relevance and no affiliation, and posts need at least 250 characters.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/startups/about/rules
+official:
+- title: Relevant Content Only
+  text: |-
+    We are a community of discussion based around startups, not traditional businesses.
+
+    All content must be relevant to startups.
+
+    You are welcome to ask how to apply startup methodologies to your traditional business if you frame your question in a non-promotional way. We want you to be able to ask any question that helps your startup.
+  kind: all
+- title: No direct sales, advertisements, or promotion
+  text: |-
+    **No direct sales, advertisements, or promotional posts of any kind**. We have designated places that are an exception to this rule and they will always be stickied at the top of /r/startups.
+
+    * You MAY share your startup in the Monthly Share Your Startup thread
+
+    Self-promotion is anything you have an interest, stake or relationship with including being friends with someone at the company.
+
+    At the end of the day, /r/startups moderators have the final say if your comments are promotional or not.
+  kind: all
+- title: Submissions Serve a Specific Purpose
+  text: |-
+    Submissions are for discussing methodologies, experiences, strategies, techniques, markets, and other such things WITHOUT tying them directly to your own project using its name or URL.
+
+    Titles must be clear and descriptive.
+
+    Submissions must have at least 250 characters of content. The more details you provide us the better support our community can provide you with. Like life, the more you put into something the more you get out of it.
+
+    No legal questions. Use our Legal Office Hours.
+  kind: link
+- title: Feedback Has a Place
+  text: "All Feedback Requests (including surveys/polls) belong in our [Feedback Thread or other appropriate weekly thread](https://www.reddit.com/r/startups/comments/boq669/your_weekly_threads_guide_learn_about_the_new/).\nYou are invited to repost each week. \n\nBe sure to contribute to the others in the thread and ask them to return the favor to increase engagement.\n\nYou may not publicly offer feedback or direct support outside of the Stickied Threads."
+  kind: all
+- title: Rules for Links in Comments/Discussion
+  text: |-
+    Sometimes you think the best solution is simply to link to a resource that might answer someone's question. We want you to be able to link in discussion to relevant content. We also don't want the discussion to turn into a self promotional mess and link farm.
+
+    If you are going to link to something in the comments please make sure to:
+
+    * Write at least a sentence explaining why the link is relevant to the discussion.
+
+    * Link only content you have no affiliation with. Affiliate links = banned.
+  kind: all
+- title: Do Not Solicit PM Requests / Post DM Notices
+  text: "The purpose of making a submission or comment is to engage in a public discussion with the community. \n\nIt is not to request a PM/DM from someone. Do not post a notice that you DMed someone.\n\nYou are more than welcome to engage privately with one another, but it is up to you to take the initiative directly."
+  kind: all
+- title: Sharing Your Blog is To Start a Discussion, Never For Self-Promotion
+  text: "Sharing your blog is not a means to self promote.\n\nA link to the original blog post is allowed with **prior** Mod approval.\n\nIf you are submitting your own blog content, the full body of the content must be included in the post, properly formatted for reddit.\n\nInclude an outline & timestamps with a video.\n\nIf your blog is over 2000 words you may ask for an exemption. \n\nAll other rules still apply.\n\nNo blogs about your \"startup\" journey allowed."
+  kind: all
+- title: Always Be Kind and Supportive
+  text: |-
+    The goal of this community is to encourage people to learn and be inspired to pursue ventures related to startups.
+
+    Do not troll, harass people, or be an asshole. **This does not mean to lie. It means to give support and explain why you don't like something.**
+
+    Try to remember people likely do not have much experience yet or might be simply ignorant to what you know.
+
+    Be willing to hold a discussion and try to explain your opinion or point of view to the benefit of the entire community.
+  kind: all
+- title: No Unscheduled AMAs
+  text: "We do not allow unscheduled AMAs.\n\nWe need to verify and approve all AMAs. \n\nIf you wish to do an AMA you must use the \"Message the Moderators\" feature in the side bar and you must give us at least TWO (2) Weeks Lead Time to organize it with you."
+  kind: all

@@ -1,0 +1,25 @@
+name: startup
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats:
+- text
+cooldown_days: null
+tags:
+- startups
+- founders
+notes: No spam meant to drive traffic off-site and no solicitation; self posts only. The rules don't mention self-promotion otherwise.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/startup/about/rules
+official:
+- title: Posts must be relevant
+  text: ''
+  kind: link
+- title: No spam. No Solicitations
+  text: No spam meant to drive traffic off-site. No solicitation/
+  kind: all
+- title: Self posts only (Enforced)
+  text: ''
+  kind: all

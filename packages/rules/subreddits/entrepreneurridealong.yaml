@@ -1,0 +1,25 @@
+name: EntrepreneurRideAlong
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- entrepreneurship
+- founders
+- building-in-public
+notes: The rules don't mention self-promotion.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/EntrepreneurRideAlong/about/rules
+official:
+- title: Be Respectful and Kind
+  text: No harassment, personal attacks, or hate speech. Keep the community welcoming.
+  kind: all
+- title: Follow Reddit’s Global Rules
+  text: Ensure you’re adhering to Reddit’s terms and conditions in all interactions.
+  kind: all
+- title: Engage with Good Intent
+  text: Approach discussions with openness and a desire to help others succeed.
+  kind: all

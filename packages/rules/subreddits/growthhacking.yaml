@@ -1,0 +1,49 @@
+name: GrowthHacking
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- growth
+- marketing
+- startups
+notes: Sharing your own content needs 100 community karma, and SaaS founders must get mod permission before promoting tools. Surveys, beta tests and reviews need mod permission; gated content, TikTok and ProductHunt links are banned.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/GrowthHacking/about/rules
+official:
+- title: Don't Share Gated Content
+  text: Please don't block content behind a paywall or an opt-in.
+  kind: all
+- title: No Self-Promotion
+  text: If you are sharing your blog post, product, podcast or video, make sure you have at least 100 Community Karma by engaging in the community. Low-value or low-effort posts will be deleted. Write unique summaries while sharing your blog, podcast or videos.
+  kind: all
+- title: SaaS Products and Tools
+  text: If you're a founder or employee or marketer of a SaaS product looking to promote your tools, seek permission from the mod.
+  kind: all
+- title: Seek Permission for Survey / Feedback / Beta Testing / Review
+  text: If you're asking members to participate in any Surveys / Feedback / Reviews / Beta Testing, ask permission of the moderator if you're collecting contact details of our members or asking them to DM. Also promoting your private groups / communities in the subreddit is not encouraged.
+  kind: all
+- title: Link love for original and exclusive content
+  text: If you share a piece of original content, then you can link to your website or social media profile at the end of the post (one link only). This is allowed after you have 100 Community Karma.
+  kind: all
+- title: We Discourage Black-hat Tactics
+  text: Inappropriate content is automatically filtered by Reddit. We don't endorse black-hat marketing tools or tactics, if found, they will be deleted.
+  kind: all
+- title: Stay Topical
+  text: If posts are not oriented towards growth marketing/hacking, they will be removed.
+  kind: all
+- title: No Crowdsourcing Ideas
+  text: Hire a consultant if you want someone to think of ways to grow your startup. This community is about sharing what experiments you have already run and the results. It is not for getting free ideas, consultation or suggestions for your product.
+  kind: all
+- title: Publish job posts under the jobs thread
+  text: 'Here''s the link to the job thread: https://www.reddit.com/r/GrowthHacking/comments/ozqyvn/growth_marketing_job_thread_august_2021/'
+  kind: all
+- title: Avoid links from banned sites
+  text: Links from TikTok and ProductHunt are banned unless approved by the mod team. Do not post anything related to any business that is offering Growth Hacking courses, training, mentorship, job boards, events, communities, etc.
+  kind: all
+- title: Always be kind and respectful
+  text: Unlike other subreddits, at r/GrowthHacking we strongly encourage members to always be kind and respectful. If you try to throw shade and negativity, you will be banned.
+  kind: all

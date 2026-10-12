@@ -1,0 +1,37 @@
+name: microsaas
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: 'yes'
+post_formats: []
+cooldown_days: null
+tags:
+- micro-saas
+- saas
+- makers
+notes: You can share your Micro SaaS if you include backstory, tech stack, revenue or a lesson learned; bare links and empty build-in-public updates are removed. No requests for DMs and no links to paid courses without mod approval.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/microsaas/about/rules
+official:
+- title: Keep it Micro SaaS
+  text: All posts must directly relate to Micro SaaS.
+  kind: all
+- title: No Low-Effort Self-Promotion
+  text: |-
+    You may share your Micro SaaS, but it must add value. Purely promotional links without context, "Build in Public" updates with no actual insights, and repetitive link-dropping will be removed.
+
+    If you share your product, you must include the backstory, tech stack, revenue (if comfortable), or a specific lesson learned.
+  kind: all
+- title: Be Respectful and Constructive
+  text: Roast the product and the landing page, but not the founder. Insults, harassment, trolling, and toxic behavior will result in an immediate ban.
+  kind: all
+- title: No Unethical Tactics or Black Hat
+  text: Do not post, promote, or ask for unethical growth hacks. This includes buying fake reviews, spamming scraped emails, astroturfing, or stealing intellectual property.
+  kind: all
+- title: Keep it high quality
+  text: Avoid vague motivational posts, generic "How to get rich", or links to paid courses/newsletters without prior mod approval.
+  kind: all
+- title: No DM ME
+  text: We can't guarantee the safety of conversations outside our sub. Any post or comment requesting private messaging will be removed.
+  kind: all

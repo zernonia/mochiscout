@@ -1,0 +1,25 @@
+name: indiehackers
+promo_policy: flair_only
+self_promo_thread: Self Promotion flair
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- indie-hackers
+- bootstrapping
+- makers
+notes: Self-promote your product once, using the Self Promotion flair, and ask for feedback rather than advertising. MRR claims need proof.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/indiehackers/about/rules
+official:
+- title: Self Promotion
+  text: Users can self promote their product 1 time using the Self Promotion flair. The purpose is for feedback and critique not advertisement.
+  kind: link
+- title: MRR
+  text: Posts containing info about MRR should have proof; no proof, no post.
+  kind: all
+- title: What you build type thing
+  text: We sometimes allow “what you build” type posts. If we see that this is done to karma farm, we don't have great news for you.
+  kind: all

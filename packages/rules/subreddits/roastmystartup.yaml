@@ -1,0 +1,28 @@
+name: roastmystartup
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- feedback
+- startups
+- roast
+notes: Posts with ProductHunt or Vercel links or free subdomains are removed, so use your own domain. Effortless posts, questions and AI-written posts are removed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/roastmystartup/about/rules
+official:
+- title: No ProductHunt Links, Vercel Links, just a Link or free subdomains
+  text: Unfortunately we experience a ridiculous amount of spam that all have one thing in common - ProductHunt links and.......now Vercel links. Any post with a producthunt or vercel link will be removed. If you don't believe in your startup enough to buy a domain its not worth our time to roast.
+  kind: all
+- title: No Reporting People for BS
+  text: Don't like a roast? That doesnt mean you get to report it. Also if you report somebody and claim they did something to you in another subreddit - we don't care. We will not ban people for things done in other subreddits. Period.
+  kind: all
+- title: Lack Of Effort or not Roast
+  text: "If you simply repost from another subreddit the post will removed, if you just post a two sentence post it will be removed, if you post something asking a question it will be removed. \n\nThis is to prevent spamming if the sub and low quality nonsense."
+  kind: all
+- title: AI Slop
+  text: Post that are written by AI will be removed at our sole discretion. You know what we are talking about.
+  kind: all

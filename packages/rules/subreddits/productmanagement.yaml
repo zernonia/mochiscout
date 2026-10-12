@@ -1,0 +1,43 @@
+name: ProductManagement
+promo_policy: weekly_thread_only
+self_promo_thread: Friday Show and Tell thread
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- product-management
+- careers
+- discussion
+notes: Self-promotion and product research are allowed only in the Friday Show and Tell thread. AI-generated posts and comments are not allowed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/ProductManagement/about/rules
+official:
+- title: No self-promotion or spam
+  text: https://web.archive.org/web/20240509074349/https://www.reddit.com/wiki/selfpromotion The exception to this rule is the Friday Show and Tell thread.
+  kind: all
+- title: Post career related comment in the quarterly thread
+  text: Questions about how to move into product management, including requests for resume reviews, and interview questions must be posted in the quarterly thread. It's stickied at the top. This also includes deciding between offers, what job next, and all other career-related questions. It also includes posts with sankey charts about your job searches.
+  kind: all
+- title: Follow Rediquette
+  text: https://support.reddithelp.com/hc/en-us/articles/205926439-Reddiquette
+  kind: all
+- title: No research, product or otherwise
+  text: Specifically conducting product research, even if there is no self-promotion, isn't allowed. Nor is academic research without advance approval. The exception to this is when posting a project to the Friday Show and Tell thread.
+  kind: all
+- title: No AI Generated Posts
+  text: this includes top level posts and comments
+  kind: all
+- title: No off-topic posts, low quality posts, or memes
+  text: This may include posts on topics that have been repeated too frequently
+  kind: link
+- title: No posts about how to get started as a PM
+  text: If you are getting started as a PM, use the search function and the wiki.
+  kind: all
+- title: Post rants in the weekly rant thread
+  text: ''
+  kind: all
+- title: Moderators Discretion
+  text: Not all content neatly falls into one of the other rules. Moderators can remove any post that they believe isn't contributing to the community and discussion of the practice of product management
+  kind: all

@@ -29,3 +29,5 @@ freelance
 productivity
 selfhosted
 juststart
+SaaSMarketing
+B2BSaaS

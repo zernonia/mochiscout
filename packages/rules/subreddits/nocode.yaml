@@ -1,0 +1,34 @@
+name: nocode
+promo_policy: flair_only
+self_promo_thread: Promoted flair and monthly product launch post
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- nocode
+- makers
+- tools
+notes: Disclose your connection to a tool and use the Promoted flair; launches go in the monthly product launch post. Undisclosed affiliate links get the whole post removed.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/nocode/about/rules
+official:
+- title: Promoted Posts/Comments
+  text: |-
+    If you are posting or commenting about a new tool/resource and you must disclose your connection to said tool/resource or risk your post/comment being deleted. Repeated violations will result in us taking the appropriate action. As we build the no-code/low-code community, obviously this will involve a lot of companies and innovators coming onto our forum to discuss their products, we just want people to be forthcoming about said connection.
+
+    Please use the appropriate "Promoted" flair on posts.
+  kind: all
+- title: Flair
+  text: If you are from a company, you are more than welcome to add to the discussion and make posts here. However, you will need to add your own flair that indicates which company you are representing so that everyone can place your posts and comments in the appropriate context.
+  kind: all
+- title: Product Launch Outside of Designated Launch Post
+  text: All product launch posts should be made on the monthly product launch post.
+  kind: all
+- title: Value-Add Post
+  text: Promoting your own products is allowed, but the post must be first and foremost a value-add post for the community.
+  kind: all
+- title: Undisclosed Affiliate Link
+  text: Using an affiliate link without disclosing will result in the entire post/comment being removed.
+  kind: all

@@ -1,0 +1,37 @@
+name: buildinpublic
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- building-in-public
+- makers
+- founders
+notes: 'Self-promotion is allowed only with context: share progress, lessons and ask for feedback. Say whether shared tools are paid, free or affiliate-linked.'
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/buildinpublic/about/rules
+official:
+- title: Be Respectful
+  text: Treat all members with respect. No harassment, hate speech, or personal attacks will be tolerated. Be constructive in your feedback and interactions.
+  kind: all
+- title: Stay on Topic
+  text: All posts should be related to "building in public," whether you're working on a product, learning a new skill, or launching something new. Off-topic content will be removed.
+  kind: all
+- title: No Self-Promotion Without Context
+  text: Share your work openly, but avoid posting solely for self-promotion. Instead, focus on sharing progress, lessons learned, and asking for feedback.
+  kind: all
+- title: No Spam
+  text: Spamming links, irrelevant content, or unsolicited advertisements will lead to immediate removal. Keep the focus on building and learning together.
+  kind: all
+- title: No Plagiarism or Misrepresentation
+  text: All work shared should be your own or properly credited if you’re collaborating or using third-party resources. Misrepresenting work as your own will result in immediate action from the moderators.
+  kind: all
+- title: Privacy
+  text: Do not share private or sensitive information about yourself or others without consent. This includes sharing someone else's work without permission.
+  kind: all
+- title: Transparency in Tools & Resources
+  text: If you share tools or resources, be transparent if they’re paid, free, or affiliate-linked. This helps maintain trust and clarity in the community.
+  kind: all

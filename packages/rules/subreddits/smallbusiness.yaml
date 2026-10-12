@@ -1,0 +1,31 @@
+name: smallbusiness
+promo_policy: weekly_thread_only
+self_promo_thread: Weekly Promote-your-business thread
+min_karma: null
+min_account_age_days: null
+links_allowed: none
+post_formats: []
+cooldown_days: null
+tags:
+- small-business
+- questions
+- advice
+notes: Promote your business only in the weekly thread (a relevant reply elsewhere is tolerated), and promotional product mentions are removed. Posts must be questions about small business; market research posts are banned.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/smallbusiness/about/rules
+official:
+- title: Post only questions about small business.
+  text: "r/smallbusiness is a question and answer subreddit. You ask a question about starting, owning, and growing a small business and the community answers.\n\n**Exceptions** None, no exceptions.  \n**Note:** You can post own experience in the *new* weekly stickied or pinned share-your-experience thread."
+  kind: link
+- title: No links, product recommendations, unsolicited advice, blog content, or SEO shaping.
+  text: "We are not here to help your SEO, promote your product, or provide an audience for your unsolicited advice or stories. As of June 2026 product mentions will be removed from new posts or comments if they appear directly or indirectly promotional.\n\n**Exceptions**  \nUnsolicited advice (best practices, stories, lessons) are allowed in the stickied post dedicated to them.\n\nSurveys related to small business are allowed as posts providing they are from academic sources and pre-approved"
+  kind: all
+- title: No business promotion posts
+  text: "No business promotion posts are allowed. Promote your business in the weekly Promote-your-business thread only. \n\n**Exceptions**\nYou can mention your business in a relevant reply to a post or comment in other threads when relevant to the conversation but deliberate abuse of this exception to promote will be recognized and removed."
+  kind: all
+- title: No personal attacks.
+  text: ''
+  kind: all
+- title: No market research posts - not for developing apps, not for AI, not for business offerings
+  text: Posts asking about "pain points" or trying to find a problem to solve aren't the focus of our sub and those posts will be removed. Our deep library of past posts are your guide to what everyone needs if you are willing to search and analyze. Academics may contact the mods to discuss exceptions for academic research.
+  kind: all

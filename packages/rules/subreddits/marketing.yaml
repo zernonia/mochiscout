@@ -1,0 +1,64 @@
+name: marketing
+promo_policy: none
+self_promo_thread: null
+min_karma: 300
+min_account_age_days: 30
+links_allowed: null
+post_formats: []
+cooldown_days: null
+tags:
+- marketing
+- advertising
+- professionals
+notes: Zero tolerance for advertising and self-promotion (permanent ban), and no website or product feedback requests. Posting needs an account over 30 days old with 300+ combined karma; no AI-generated content.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/marketing/about/rules
+official:
+- title: Advertising, Self-Promotion, & Spam (Permanent Ban)
+  text: |-
+    If you want to advertise in this community, have a look at reddit.com/advertising.
+
+    We have a zero tolerance policy to Advertising, Self-Promotion, & Spam.
+  kind: all
+- title: AI Generated Content (Permanent Ban)
+  text: |-
+    This is a subreddit for humans, not bots, so please don't copy and paste AI generated content.
+
+    We have a zero tolerance policy to AI generated content.
+  kind: all
+- title: App Ideas & Feedback (Permanent Ban)
+  text: This includes any sort of "would you pay for this app/feature/service" post.
+  kind: all
+- title: Research Surveys & Homework Help (Post Removal)
+  text: Don't post them.
+  kind: all
+- title: New To Marketing (Post Removal)
+  text: r/Marketing is for marketing professionals to discuss and ask questions related to the marketing industry. Please ask beginner questions in r/AskMarketing,
+  kind: all
+- title: Job Hunting, Interview & Resume Feedback (Post Removal)
+  text: We know it can be difficult to find a marketing job, but please don't ask us to help you find a job.
+  kind: all
+- title: Low Quality (Post Removal & Possible Ban)
+  text: We're trying to build something great here, help us do that. A post or comment in a poor attempt to shill or sell a product or service, is someone's homework, is asking a question which has already been answered many times, is looking for free marketing instead of paying for a professional, or is a few sentences with a link to their blog. Let's not forget, memes, rants without a source, screenshots, etc. will all be removed.
+  kind: all
+- title: Non-Specific Resource Request (Post Removal)
+  text: E.G.  "I'm thinking about marketing, teach me."  Be respectful of the community by searching the posts and asking specific questions.
+  kind: all
+- title: Website/Product Reviews (Post Removal & Possible Ban)
+  text: Please don't ask us to review or give feedback for your website or product.
+  kind: all
+- title: URL Shorteners (Post Removal & Possible Ban)
+  text: Any post or comment using a URL shortener will be removed.
+  kind: all
+- title: Abuse/Rudeness (Post Removal & Possible Ban)
+  text: This is a nice subreddit, where people are nice to each other. Abuse and rudeness are unwelcome, and may result in a ban.
+  kind: all
+- title: Posts Must Use A Descriptive Title (Post Removal)
+  text: Help your fellow Redditors understand what your post is about.
+  kind: link
+- title: Posting And Commenting Is Restricted To Accounts Over 30 Days Old With 300+ Combined Karma Points
+  text: Posts and comments from accounts which don't meet this threshold will be automatically removed.
+  kind: all
+- title: No Politics (Post Removal & Possible Ban)
+  text: This is a nice subreddit with people from all walks of life. Therefore we do not allow political posts as they *always* devolve into fighting and abuse.
+  kind: all

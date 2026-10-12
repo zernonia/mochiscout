@@ -1,0 +1,40 @@
+name: B2BSaaS
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: 'yes'
+post_formats: []
+cooldown_days: 10
+tags:
+- b2b
+- saas
+- growth
+notes: One self-promotional post per project or domain every 10 days, and it must give genuine value. Disclose affiliation; promoting courses is banned.
+last_verified: '2026-10-12'
+source: https://www.reddit.com/r/B2BSaaS/about/rules
+official:
+- title: No Spam
+  text: We have a zero-tolerance policy for spam. Posting spam or promoting courses will result in a permanent ban for both the spammer and their friends.
+  kind: all
+- title: No Astroturfing
+  text: Fake posts, shill accounts, and coordinated promotion will result in a permanent ban. If you're affiliated with something you're sharing, be transparent.
+  kind: all
+- title: Be Nice
+  text: Treat all members with respect and professionalism. Harassment, hate speech, and discrimination are not tolerated. Be nice.
+  kind: all
+- title: Provide Value
+  text: Ensure that your posts provide value to the community. Ask questions, share insights, and provide constructive feedback.
+  kind: all
+- title: Limit Self-Promotion
+  text: |-
+    Self-promotion must provide genuine value and is strictly limited to one post per project or domain every 10 days.
+
+    Posts exceeding this limit will be removed, and repeat offenders will be banned.
+  kind: all
+- title: Follow Reddit's Rules
+  text: Adhere to all of Reddit's site-wide rules and guidelines.
+  kind: all
+- title: Flag Inappropriate Content
+  text: Use the report button to flag inappropriate content or rule violations to the moderators.
+  kind: all
