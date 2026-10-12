@@ -22,6 +22,13 @@ export const DEFAULT_MODELS: Record<Tier, string> = {
 
 const EFFORT: Record<Tier, 'low' | 'medium' | 'high'> = { fast: 'low', balanced: 'medium', quality: 'high' }
 
+/**
+ * Thinking is always on for the current models and counts toward max_tokens,
+ * so a small cap truncates the answer before the JSON is complete. Each tier
+ * gets a floor with room for thinking; unused tokens cost nothing.
+ */
+const MIN_MAX_TOKENS: Record<Tier, number> = { fast: 4000, balanced: 12000, quality: 16000 }
+
 /** Models that accept server-side refusal fallback (`fallbacks: "default"`). */
 const SERVER_FALLBACK_MODELS = new Set(['claude-opus-5-5', 'claude-opus-5', 'claude-fable-5-1', 'claude-sonnet-5-5'])
 
@@ -79,7 +86,7 @@ export function createLlm(config: LlmConfig): Llm {
     const model = models[opts.tier]
     const base = {
       model,
-      max_tokens: opts.maxTokens ?? 16000,
+      max_tokens: Math.max(opts.maxTokens ?? 16000, MIN_MAX_TOKENS[opts.tier]),
       system: opts.system,
       messages: [{ role: 'user' as const, content: opts.prompt }],
     }

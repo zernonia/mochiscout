@@ -12,8 +12,9 @@ export default defineNitroPlugin((nitroApp) => {
       distinctId: session,
       ...(event ? { method: event.method, path: event.path?.split('?')[0], $current_url: getRequestURL(event).href, status_code: status } : {}),
     })
-    // Keep the Worker alive until the report is sent (called as a method: it needs its context).
-    const cf = (event?.context.cloudflare as { context?: { waitUntil?: (p: Promise<unknown>) => void } } | undefined)?.context
-    cf?.waitUntil?.(task)
+    // Keep the Worker alive until the report is sent. h3's event.waitUntil is wired to the
+    // Worker's ExecutionContext; the raw context is the fallback (called as a method: it needs its this).
+    if (event && typeof event.waitUntil === 'function') event.waitUntil(task)
+    else (event?.context.cloudflare as { context?: { waitUntil?: (p: Promise<unknown>) => void } } | undefined)?.context?.waitUntil?.(task)
   })
 })

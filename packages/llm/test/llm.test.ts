@@ -91,3 +91,14 @@ describe('createLlm', () => {
   })
 })
 
+
+describe('max_tokens floor', () => {
+  it('leaves room for thinking on the quality tier, and keeps larger requested caps', async () => {
+    const f = fakeFetch([message('{"intent":1,"kind":"other"}', { model: 'claude-opus-5-5' }), message('{"intent":1,"kind":"other"}')])
+    const llm = createLlm({ anthropicApiKey: 'k', fetch: f.fetch })
+    await llm.generate({ tier: 'quality', ...call, maxTokens: 3000 })
+    await llm.generate({ tier: 'fast', ...call, maxTokens: 8000 })
+    expect(f.bodies[0]!.max_tokens).toBe(16000)
+    expect(f.bodies[1]!.max_tokens).toBe(8000)
+  })
+})
