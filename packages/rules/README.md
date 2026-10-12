@@ -6,21 +6,21 @@ nothing is read from Reddit at request time.
 
 ## How files are made
 
-`pnpm rules:sync` reads each subreddit's **official rules**
-(`reddit.com/r/<sub>/about/rules.json`, through TinyFish Fetch) and its pinned
-posts, has a small model summarise what matters for promotion, and writes the
-file with the official rules kept verbatim under `official`. It runs monthly in
-`.github/workflows/rules-sync.yml` (repository secrets `TINYFISH_API_KEY` and
-`ANTHROPIC_API_KEY`) and commits any changes to `main`.
+A monthly Claude routine ("Sync subreddit rules") follows
+`.claude/skills/sync-subreddit-rules/SKILL.md`: it fetches each subreddit's
+**official rules** (`reddit.com/r/<sub>/about/rules.json`, through the TinyFish
+connector, since Reddit blocks cloud IPs), keeps them verbatim under `official`,
+summarises what matters for promotion, validates, and pushes to `main`.
+
+To add a subreddit, put its name in `wanted.txt`, or ask Claude in this repo to
+"sync the rules for r/<name>".
 
 ```sh
-pnpm rules:sync                  # the whole library, plus wanted.txt
-pnpm rules:sync SaaS startups     # just these (added if new)
 pnpm rules:build                 # validate and regenerate rules.json
 pnpm rules:validate              # CI: validate and check rules.json is up to date
+pnpm rules:sync SaaS startups    # optional, outside Claude: same sync as a script
+                                 # (needs TINYFISH_API_KEY and ANTHROPIC_API_KEY)
 ```
-
-To add a subreddit, put its name in `wanted.txt` (or run the workflow with it).
 
 ## Correcting a file
 

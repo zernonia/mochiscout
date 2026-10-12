@@ -7,7 +7,8 @@
 // Needs TINYFISH_API_KEY (reads reddit.com/r/<sub>/about/rules.json, which
 // Reddit blocks for datacenter IPs) and ANTHROPIC_API_KEY (one small Haiku
 // call per sub). Fields listed in a file's `keep` were corrected by hand and
-// are left alone. Runs monthly in .github/workflows/rules-sync.yml.
+// are left alone. The monthly Claude routine does the same without keys
+// (.claude/skills/sync-subreddit-rules/SKILL.md); this script is for running it elsewhere.
 import type { SubredditRules } from '@mochiscout/rules'
 import { execFileSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
