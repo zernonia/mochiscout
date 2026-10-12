@@ -14,7 +14,7 @@ const Body = z.object({
 }).refine(b => b.status !== undefined || b.replyDraft !== undefined || b.replyUrl !== undefined, 'Nothing to update')
 
 export default defineEventHandler(async (event) => {
-  const { project } = await requireProject(event)
+  const { user, project } = await requireProject(event)
   const threadId = decodeURIComponent(getRouterParam(event, 'threadId')!)
   const { status, replyDraft, dismissReason, replyUrl } = await readValidatedBody(event, Body.parse)
   const db = getDb(event)
@@ -25,6 +25,7 @@ export default defineEventHandler(async (event) => {
     await db.update(schema.threadScores)
       .set({ replyUrl: replyUrl || null, replyStatus: null, replyCheckedAt: null })
       .where(and(eq(schema.threadScores.projectId, project.id), eq(schema.threadScores.threadId, threadId)))
+    if (replyUrl) track(event, user.id, 'reply_link_added', { project_id: project.id })
   }
   if (replyDraft !== undefined) {
     await db.update(schema.threadScores)
@@ -34,5 +35,6 @@ export default defineEventHandler(async (event) => {
   if (status === undefined) return { ok: true, replyUrl: replyUrl ?? undefined }
   const row = await setThreadStatus(db, project.id, threadId, status, dismissReason)
   if (!row) throw createError({ statusCode: 404, statusMessage: 'Thread not found' })
+  track(event, user.id, 'thread_marked', { project_id: project.id, status, dismiss_reason: dismissReason ?? null })
   return row
 })

@@ -55,6 +55,8 @@ export default defineEventHandler(async (event) => {
           currentPeriodEnd: sub.current_period_end ? new Date(sub.current_period_end) : null,
         }).where(eq(schema.orgs.id, orgId))
         console.info(`[polar] ${payload.type} org=${orgId} plan=${plan} status=${sub.status}`)
+        // Conversion events, attributed to the org owner (the person who checked out).
+        if (plan !== org.plan) track(event, org.ownerId, 'plan_changed', { from_plan: org.plan, to_plan: plan, status: sub.status })
       }
     }
   }

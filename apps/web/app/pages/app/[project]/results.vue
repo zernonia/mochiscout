@@ -82,6 +82,33 @@ function when(d: string | Date | null) {
       <p class="text-xs text-muted-foreground">No cookies and no IP addresses are stored: the script only reports that a visit or sign-up came from a tracking link, and remembers the link for 30 days in the visitor's browser.</p>
     </div>
 
+    <!-- Lead quality: how often a scored lead turned out to be real, from your own decisions -->
+    <div v-if="results" class="flex flex-col gap-3 rounded-xl border bg-card p-5 shadow-xs/5">
+      <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 class="font-semibold">Lead quality</h2>
+        <span class="text-xs text-muted-foreground">From {{ results.quality.decisions }} decision{{ results.quality.decisions === 1 ? '' : 's' }}: replied or saved counts as a real lead, dismissed as "not relevant" or "not my audience" as a miss</span>
+      </div>
+      <p v-if="results.quality.precision === null" class="text-sm text-muted-foreground">
+        Reply, save or dismiss a few more threads in the inbox and we'll show how many of your leads are real, by score.
+      </p>
+      <template v-else>
+        <p class="text-sm">
+          <span class="text-2xl font-semibold tabular-nums">{{ Math.round(results.quality.precision * 100) }}%</span>
+          <span class="text-muted-foreground"> of inbox threads (score {{ results.threshold }}+) you acted on were real leads.</span>
+        </p>
+        <div class="grid gap-2 sm:grid-cols-3">
+          <div v-for="b in results.quality.bands" :key="b.label" class="flex flex-col gap-1.5 rounded-lg bg-muted/50 p-3">
+            <div class="flex justify-between text-xs"><span class="font-medium">Score {{ b.label }}</span><span class="text-muted-foreground tabular-nums">{{ b.good }} real · {{ b.bad }} misses</span></div>
+            <div class="h-1.5 overflow-hidden rounded-full bg-background">
+              <div class="h-full rounded-full bg-emerald-500" :style="{ width: `${Math.round((b.precision ?? 0) * 100)}%` }" />
+            </div>
+            <span class="text-xs tabular-nums" :class="b.precision === null ? 'text-muted-foreground' : ''">{{ b.precision === null ? 'Not enough decisions yet' : `${Math.round(b.precision * 100)}% real` }}</span>
+          </div>
+        </div>
+        <p class="text-xs text-muted-foreground">Scoring also learns from these decisions: your recent replies and dismissals are shown to the scorer as examples.</p>
+      </template>
+    </div>
+
     <!-- Replies -->
     <SkeletonCards v-if="!results" :count="2" :lines="2" />
     <Empty v-else-if="!results.rows.length" class="rounded-xl border border-dashed">

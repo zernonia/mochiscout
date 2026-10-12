@@ -1,8 +1,8 @@
-import { assertCanCreateProject, assertSources, runDiscovery } from '@mochiscout/core'
+import { assertCanCreateProject, assertSources } from '@mochiscout/core'
 import { schema } from '@mochiscout/db'
 
 export default defineEventHandler(async (event) => {
-  const { org } = await requireUser(event)
+  const { user, org } = await requireUser(event)
   const input = await readValidatedBody(event, ProjectInput.parse)
   await quota(assertCanCreateProject(getDb(event), org))
   await quota(() => assertSources(org, input.sources))
@@ -11,11 +11,8 @@ export default defineEventHandler(async (event) => {
     .values({ id: crypto.randomUUID(), orgId: org.id, ...input })
     .returning()
 
-  // Kick off discovery so the subreddit map and inbox have something to show.
-  const ctx = createJobContext(getEnv(event))
-  if (ctx.search && project) {
-    event.waitUntil(runDiscovery(ctx, { projectIds: [project.id] }).catch(error => ctx.log('discovery failed', { error: String(error) })))
-  }
+  // The first feed is built by /kickstart while the user watches (the inbox calls it); scheduled jobs take over after.
+  if (project) track(event, user.id, 'project_created', { project_id: project.id, sources: input.sources })
 
   setResponseStatus(event, 201)
   return project

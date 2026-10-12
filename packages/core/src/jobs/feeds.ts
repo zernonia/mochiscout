@@ -52,7 +52,7 @@ export async function upsertPosts(ctx: JobContext, posts: Post[], source: 'api' 
  * Hourly: search each project's terms on its enabled feed sources (HN,
  * Bluesky, X) and queue new posts for intent scoring.
  */
-export async function runFeedDiscovery(ctx: JobContext & { adapters?: Partial<Record<Platform, SourceAdapter>> }) {
+export async function runFeedDiscovery(ctx: JobContext & { adapters?: Partial<Record<Platform, SourceAdapter>> }, opts: { projectId?: string, termsPerRun?: number } = {}) {
   const adapters = ctx.adapters ?? {}
   if (!Object.keys(adapters).length) return { skipped: 'no feed sources configured' }
 
@@ -62,11 +62,12 @@ export async function runFeedDiscovery(ctx: JobContext & { adapters?: Partial<Re
   const projects = await ctx.db.select({ project: schema.projects, plan: schema.orgs.plan })
     .from(schema.projects)
     .innerJoin(schema.orgs, eq(schema.orgs.id, schema.projects.orgId))
+    .where(opts.projectId ? eq(schema.projects.id, opts.projectId) : undefined)
 
   const result = { queries: 0, newPosts: 0, deferred: false }
   outer: for (const { project, plan } of projects) {
     const allowed = new Set(PLANS[plan].sources)
-    const terms = termsForRun(projectTerms(project), runIndex)
+    const terms = termsForRun(projectTerms(project), runIndex, opts.termsPerRun)
     for (const sourceId of project.sources) {
       const adapter = adapters[sourceId]
       if (!adapter || !allowed.has(sourceId)) continue

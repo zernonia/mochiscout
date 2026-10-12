@@ -96,7 +96,7 @@ export async function scoreThreads(llm: Llm, project: ScoringProject, threads: S
 }
 
 /** Drain the score queue in batches of 20 threads per project per LLM call. */
-export async function runScoring(ctx: JobContext, opts: { maxBatches?: number } = {}) {
+export async function runScoring(ctx: JobContext, opts: { maxBatches?: number, projectId?: string } = {}) {
   if (!ctx.llm) return { skipped: 'no LLM configured' }
   const maxBatches = opts.maxBatches ?? MAX_BATCHES_PER_RUN
   let batches = 0
@@ -104,9 +104,11 @@ export async function runScoring(ctx: JobContext, opts: { maxBatches?: number } 
   let dropped = 0
 
   while (batches < maxBatches) {
+    // One project only (e.g. right after onboarding), or whichever queued first.
     const next = await ctx.db
       .select({ projectId: schema.scoreQueue.projectId })
       .from(schema.scoreQueue)
+      .where(opts.projectId ? eq(schema.scoreQueue.projectId, opts.projectId) : undefined)
       .orderBy(asc(schema.scoreQueue.queuedAt))
       .limit(1)
       .get()

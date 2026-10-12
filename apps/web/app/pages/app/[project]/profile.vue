@@ -53,5 +53,6 @@ async function save() {
     </form>
     <!-- Separate form: nested forms break hydration. -->
     <ReplyInstructionsCard :project-id="projectId" :product-name="project.name" />
+    <AlertWebhookCard :project-id="projectId" :initial-url="project.alertWebhookUrl" />
   </div>
 </template>

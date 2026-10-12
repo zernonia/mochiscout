@@ -7,13 +7,14 @@ import { LlmParseError, LlmRefusalError } from '@mochiscout/llm'
  * 409 with its state. The user edits and posts the reply themselves.
  */
 export default defineEventHandler(async (event) => {
-  const { project } = await requireProject(event)
+  const { user, project } = await requireProject(event)
   const threadId = decodeURIComponent(getRouterParam(event, 'threadId')!)
   const llm = getLlm(getEnv(event))
   if (!llm) throw createError({ statusCode: 503, statusMessage: 'No LLM key configured. Set ANTHROPIC_API_KEY to draft replies.' })
   try {
     const draft = await draftReplyForThread(getDb(event), llm, project, threadId, { http: requestHttp(event) })
     if (!draft) throw createError({ statusCode: 404, statusMessage: 'Thread not found' })
+    track(event, user.id, 'reply_drafted', { project_id: project.id, auto: false })
     return draft
   }
   catch (error) {

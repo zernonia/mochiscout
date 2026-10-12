@@ -11,6 +11,9 @@ const { data: map, refresh } = useCachedFetch(() => `/api/projects/${projectId.v
 useHead({ title: () => `Subreddits · ${project.value?.name ?? 'Project'}` })
 
 const newSub = ref('')
+async function onImported() {
+  await Promise.all([refresh(), refreshNuxtData('project-nav')])
+}
 const discovering = ref(false)
 
 const promo: Record<string, { label: string, class: string }> = {
@@ -82,6 +85,10 @@ async function discover() {
       </InputGroup>
       <Button type="submit"><EyeIcon /> Watch</Button>
     </form>
+    <details class="-mt-3 rounded-lg border p-3">
+      <summary class="cursor-pointer text-sm font-medium">Import a list of subreddits</summary>
+      <div class="mt-3"><SubredditImport :project-id="projectId" @imported="onImported" /></div>
+    </details>
     <p v-if="map && !map.searchConfigured" class="-mt-3 text-xs text-muted-foreground">
       Set TINYFISH_API_KEY (free) to discover threads and subreddits through search.
     </p>

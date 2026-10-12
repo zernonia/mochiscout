@@ -41,9 +41,46 @@ export function renderHotAlert(appUrl: string, project: { id: string, name: stri
   }
 }
 
+/** Only Slack and Discord incoming webhooks: never an arbitrary URL (the server would POST to it). */
+export function alertWebhookKind(url: string): 'slack' | 'discord' | null {
+  let u: URL
+  try {
+    u = new URL(url)
+  }
+  catch {
+    return null
+  }
+  if (u.protocol !== 'https:') return null
+  if (u.hostname === 'hooks.slack.com' && u.pathname.startsWith('/services/')) return 'slack'
+  if (['discord.com', 'discordapp.com', 'ptb.discord.com', 'canary.discord.com'].includes(u.hostname) && u.pathname.startsWith('/api/webhooks/')) return 'discord'
+  return null
+}
+
+/** The chat message for a Slack or Discord webhook. */
+export function renderHotAlertWebhook(kind: 'slack' | 'discord', appUrl: string, project: { id: string, name: string }, leads: HotLead[]) {
+  const inbox = `${appUrl}/app/${project.id}/inbox`
+  const n = leads.length
+  const heading = `${n} hot lead${n === 1 ? '' : 's'} for ${project.name}`
+  if (kind === 'slack') {
+    // Slack mrkdwn: <url|text>; angle brackets and ampersands in titles must be escaped.
+    const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const lines = leads.map(l => `• <${l.url}|${esc(l.title)}>\n   ${esc(where(l))}${l.drafted ? ' · reply drafted' : ''}`)
+    return { text: `*${esc(heading)}*\n${lines.join('\n')}\n<${inbox}|Open your inbox →>`, unfurl_links: false }
+  }
+  // Discord markdown; <url> suppresses link embeds.
+  const clean = (t: string) => t.replace(/[[\]]/g, '')
+  const lines = leads.map(l => `• [${clean(l.title)}](<${l.url}>)\n  ${where(l)}${l.drafted ? ' · reply drafted' : ''}`)
+  return { content: `**${heading}**\n${lines.join('\n')}\n[Open your inbox →](<${inbox}>)`.slice(0, 2000), allowed_mentions: { parse: [] } }
+}
+
+export async function postAlertWebhook(url: string, body: unknown, doFetch: typeof fetch = fetch) {
+  const res = await doFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  if (!res.ok) throw new Error(`Webhook answered ${res.status}`)
+}
+
 /** Cron: email a project's members when new hot leads appear (paid plans; at most hourly per project). */
 export async function runHotAlerts(ctx: JobContext) {
-  if (!ctx.sendEmail || !ctx.appUrl) return { skipped: 'no email sender or app URL' }
+  if (!ctx.appUrl) return { skipped: 'no app URL' }
   const now = ctx.now()
   const plans = Object.entries(PLANS).filter(([, l]) => l.hotAlerts).map(([p]) => p as keyof typeof PLANS)
   const projects = await ctx.db.select({ project: schema.projects }).from(schema.projects)
@@ -75,10 +112,7 @@ export async function runHotAlerts(ctx: JobContext) {
       .sort((a, b) => b.lead.opportunity - a.lead.opportunity)
     if (!hot.length) continue
 
-    const members = await ctx.db.select({ email: schema.users.email }).from(schema.orgMembers)
-      .innerJoin(schema.users, eq(schema.users.id, schema.orgMembers.userId))
-      .where(eq(schema.orgMembers.orgId, project.orgId))
-    const email = renderHotAlert(ctx.appUrl, project, hot.slice(0, LEADS_PER_EMAIL).map(({ r, lead }) => ({
+    const top = hot.slice(0, LEADS_PER_EMAIL).map(({ r, lead }) => ({
       title: r.thread.title,
       url: r.thread.url,
       channel: r.thread.channel,
@@ -87,15 +121,34 @@ export async function runHotAlerts(ctx: JobContext) {
       commentCount: lead.commentCount,
       replyAngle: r.replyAngle,
       drafted: !!r.replyDraft,
-    })))
-    try {
-      for (const m of members) await ctx.sendEmail({ to: m.email, ...email })
-      sent++
+    }))
+    let delivered = false
+    if (ctx.sendEmail) {
+      const members = await ctx.db.select({ email: schema.users.email }).from(schema.orgMembers)
+        .innerJoin(schema.users, eq(schema.users.id, schema.orgMembers.userId))
+        .where(eq(schema.orgMembers.orgId, project.orgId))
+      const email = renderHotAlert(ctx.appUrl, project, top)
+      try {
+        for (const m of members) await ctx.sendEmail({ to: m.email, ...email })
+        delivered = true
+      }
+      catch (error) {
+        ctx.log('hot alert failed', { project: project.id, error: String(error) })
+      }
     }
-    catch (error) {
-      ctx.log('hot alert failed', { project: project.id, error: String(error) })
-      continue
+    const kind = project.alertWebhookUrl ? alertWebhookKind(project.alertWebhookUrl) : null
+    if (kind) {
+      try {
+        await postAlertWebhook(project.alertWebhookUrl!, renderHotAlertWebhook(kind, ctx.appUrl, project, top))
+        delivered = true
+      }
+      catch (error) {
+        ctx.log('hot alert webhook failed', { project: project.id, error: String(error) })
+      }
     }
+    if (!delivered) continue
+    sent++
+
     // Everything hot now counts as alerted, including leads past the email's top 5.
     const statements = [
       ctx.db.update(schema.projects).set({ lastHotAlertAt: now }).where(eq(schema.projects.id, project.id)),

@@ -69,6 +69,7 @@ async function createUser(event: RequestEvent, db: Db, input: { email: string, n
     emailVerified: input.emailVerified,
   }).returning()
   await setUpMembership(event, db, user!)
+  track(event as Parameters<typeof track>[0], user!.id, 'signed_up', { method: input.emailVerified ? 'oauth' : 'password' })
   return user!
 }
 

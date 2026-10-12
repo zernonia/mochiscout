@@ -170,6 +170,7 @@ const replyStatusInfo = {
 } as const
 
 async function copyAndOpen() {
+  trackClient('reply_copied', { project_id: props.projectId, platform: props.thread.platform })
   try {
     await navigator.clipboard.writeText(reply.value)
     copied.value = true

@@ -75,6 +75,8 @@ export const projects = sqliteTable('projects', {
   /** The founder's own instructions for reply drafts; null uses the default. */
   replyInstructions: text('reply_instructions'),
   lastHotAlertAt: integer('last_hot_alert_at', { mode: 'timestamp' }),
+  /** Slack or Discord incoming-webhook URL for hot-lead alerts. */
+  alertWebhookUrl: text('alert_webhook_url'),
   createdAt: createdAt(),
 })
 

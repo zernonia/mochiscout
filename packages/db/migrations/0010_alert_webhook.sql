@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `alert_webhook_url` text;

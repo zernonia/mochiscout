@@ -8,6 +8,13 @@ type Status = 'new' | 'saved' | 'replied' | 'dismissed'
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
+// Right after onboarding: build the first feed while the user watches.
+const welcome = ref(route.query.welcome === '1')
+async function onKickstartDone() {
+  await Promise.all([refresh(), refreshNuxtData('project-nav')])
+  // Drop the flag so a reload doesn't search again.
+  await navigateTo({ query: { ...route.query, welcome: undefined } }, { replace: true })
+}
 const status = ref<Status>('new')
 const sort = ref<'opportunity' | 'intent' | 'newest'>('opportunity')
 const sorts = [
@@ -29,6 +36,18 @@ const { data: inbox, refresh, status: loadState } = useCachedFetch(() => `/api/p
   query: { status, platform, sort },
 })
 useHead({ title: () => `Inbox · ${project.value?.name ?? 'Project'}` })
+
+// Activation: the first time leads are on screen for this project in this browser.
+watch(() => inbox.value?.threads.length, (n) => {
+  if (!import.meta.client || !n || status.value !== 'new') return
+  const key = `ms:leads-seen:${projectId.value}`
+  try {
+    if (localStorage.getItem(key)) return
+    localStorage.setItem(key, '1')
+  }
+  catch { /* storage blocked: still count it */ }
+  trackClient('leads_seen', { project_id: projectId.value, leads: n })
+}, { immediate: true })
 const { data: me } = useCachedFetch('/api/me')
 
 // Auto-draft replies for new threads (paid plans). A 402 opens the upgrade sheet.
@@ -141,7 +160,7 @@ async function setStatus(threadId: string, next: Status, dismissReason?: string)
                 Hot lead alerts
                 <span v-if="me && !me.limits.hotAlerts" class="rounded-full bg-violet-500/12 px-1.5 text-[10px] leading-4 font-medium text-violet-700 dark:text-violet-400">Solo+</span>
               </span>
-              <span class="text-xs text-muted-foreground">By email, at most hourly</span>
+              <span class="text-xs text-muted-foreground">Email<NuxtLink :to="`/app/${projectId}/profile`" class="hover:underline">, Slack or Discord</NuxtLink>, at most hourly</span>
             </span>
             <Switch :model-value="hotAlerts && (!me || me.limits.hotAlerts)" :disabled="savingAlerts" class="ms-1" @update:model-value="(v: boolean) => setHotAlerts(v)" />
           </Label>
@@ -181,6 +200,10 @@ async function setStatus(threadId: string, next: Status, dismissReason?: string)
         </button>
       </div>
     </div>
+
+    <ClientOnly>
+      <KickstartPanel v-if="welcome && project" :project-id="projectId" :product-name="project.name" @done="onKickstartDone" />
+    </ClientOnly>
 
     <div v-if="inbox" class="-mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
       <span v-if="status === 'new' && inbox.hot" class="inline-flex items-center gap-1 font-medium text-orange-700 dark:text-orange-400"><FlameIcon class="size-3.5" /> {{ inbox.hot }} hot lead{{ inbox.hot === 1 ? '' : 's' }}: reply while {{ inbox.hot === 1 ? 'it\'s' : 'they\'re' }} fresh</span>

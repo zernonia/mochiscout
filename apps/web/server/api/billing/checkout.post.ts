@@ -22,5 +22,6 @@ export default defineEventHandler(async (event) => {
     success_url: `${base}/app/billing?checkout=success`,
     metadata: { org_id: org.id, plan },
   })
+  track(event, user.id, 'checkout_started', { plan, from_plan: org.plan })
   return { url: checkout.url }
 })

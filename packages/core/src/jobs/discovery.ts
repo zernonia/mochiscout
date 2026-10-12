@@ -15,7 +15,7 @@ export interface DiscoveryResult {
 /** Run search-provider queries per project and upsert the Reddit threads found (source=search). */
 export async function runDiscovery(
   ctx: JobContext,
-  opts: { projectIds?: string[] } = {},
+  opts: { projectIds?: string[], mode?: DiscoveryMode, maxQueries?: number } = {},
 ): Promise<DiscoveryResult | { skipped: string }> {
   if (!ctx.search) return { skipped: 'no search provider configured' }
 
@@ -26,7 +26,9 @@ export async function runDiscovery(
 
   for (const project of projects) {
     const found: string[] = []
-    for (const q of buildDiscoveryQueries(project)) {
+    // A first run can ask for fresh threads only, and fewer queries, so it finishes while the user waits.
+    const queries = buildDiscoveryQueries(project).filter(q => !opts.mode || q.mode === opts.mode).slice(0, opts.maxQueries)
+    for (const q of queries) {
       try {
         const res = await ctx.search.search(q.search)
         result.queries++

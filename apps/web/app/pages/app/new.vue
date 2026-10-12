@@ -49,7 +49,8 @@ async function save() {
   saving.value = true
   try {
     const project = await $fetch('/api/projects', { method: 'POST', body: profile.value })
-    await navigateTo(`/app/${project!.id}/today`)
+    // The inbox builds the first feed while the user watches (?welcome=1).
+    await navigateTo(`/app/${project!.id}/inbox?welcome=1`)
   }
   catch (error) {
     if (!isPlanLimit(error)) toast.error(errorMessage(error))
