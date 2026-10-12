@@ -1,37 +1,40 @@
 import type { SubredditStats } from '@mochiscout/db'
+import type { SubredditRules } from '@mochiscout/rules'
 import { describe, expect, it } from 'vitest'
 import { refLink, sameSite } from '../src/leads/attribution'
 import { dueJobs } from '../src/schedule'
 import { peakHours, subredditVerdict } from '../src/subreddits/insights'
 import { rulesBrief } from '../src/drafter/generate'
-import { autoToRules } from '../src/subreddits/rules'
+import type { CustomRules } from '../src/subreddits/rules'
+import { applyCustomRules } from '../src/subreddits/rules'
 
 const stats = (over: Partial<SubredditStats> = {}): SubredditStats => ({
   posts30d: 100, hours: Array.from({ length: 24 }, (_, h) => (h === 14 ? 0.3 : h === 15 ? 0.2 : 0.5 / 22)), buyingPosts30d: 12,
   checked: 0, removed: 0, ownPosts: 0, ownPostsRemoved: 0, ownReplies: 0, ownRepliesRemoved: 0, linkedReplies: 0, linkedRepliesRemoved: 0, ...over,
 })
 
-describe('autoToRules', () => {
-  it('turns auto rules into a rules record, and ignores unknown policies', () => {
-    const auto = { promo_policy: 'weekly_thread_only' as const, self_promo_thread: 'Share Your Startup', links_allowed: 'none' as const, min_karma: 50, min_account_age_days: null, notes: '', evidence: ['Rules'] }
-    expect(autoToRules('saas', auto, new Date('2026-10-01'))).toMatchObject({ name: 'saas', promo_policy: 'weekly_thread_only', self_promo_thread: 'Share Your Startup', last_verified: '2026-10-01', tags: ['auto'] })
-    expect(autoToRules('saas', { ...auto, promo_policy: 'unknown' }, null)).toBeNull()
-  })
+const library = (patch: Partial<SubredditRules> = {}): SubredditRules => ({
+  name: 'SaaS', promo_policy: 'allowed_with_value', self_promo_thread: null, min_karma: null, min_account_age_days: null, links_allowed: null,
+  post_formats: [], cooldown_days: null, tags: ['saas'], notes: '', last_verified: '2026-10-01', official: [], keep: [], source: 'https://www.reddit.com/r/SaaS/about/rules', ...patch,
+})
 
-  it('keeps official rules, and reads silence about promotion in them as "if valuable"', () => {
-    const official = [{ title: 'Be civil', text: 'No personal attacks.', kind: 'all' as const }]
-    const auto = { promo_policy: 'unknown' as const, self_promo_thread: null, links_allowed: null, min_karma: null, min_account_age_days: null, cooldown_days: null, notes: '', evidence: [], official }
-    expect(autoToRules('civil', auto, null)).toMatchObject({ promo_policy: 'allowed_with_value', tags: ['official'], official, notes: 'The rules don\'t mention self-promotion.' })
-    expect(autoToRules('civil', { ...auto, promo_policy: 'allowed_with_value', cooldown_days: 60, notes: 'Disclose affiliation.' }, null))
-      .toMatchObject({ cooldown_days: 60, notes: 'Disclose affiliation.' })
+describe('applyCustomRules', () => {
+  const custom: CustomRules = { promo_policy: 'none', self_promo_thread: '', min_karma: 100, min_account_age_days: null, links_allowed: 'none', cooldown_days: 30, notes: 'Mods are strict.' }
+  it('puts the project\'s fields over the library file and keeps its official rules and tags', () => {
+    const official = [{ title: 'No spam', text: '', kind: 'all' as const }]
+    expect(applyCustomRules('saas', library({ official }), custom, new Date('2026-10-12'))).toMatchObject({
+      name: 'SaaS', promo_policy: 'none', self_promo_thread: null, min_karma: 100, cooldown_days: 30, notes: 'Mods are strict.', tags: ['saas'], official, last_verified: '2026-10-12',
+    })
+  })
+  it('works for subs that aren\'t in the library', () => {
+    expect(applyCustomRules('tinysub', null, custom, new Date('2026-10-12'))).toMatchObject({ name: 'tinysub', tags: ['custom'], official: [], source: 'https://www.reddit.com/r/tinysub/about/rules' })
   })
 })
 
 describe('rulesBrief', () => {
   it('adds the official rules, abridged, to the prompt', () => {
     const long = 'x'.repeat(500)
-    const rules = autoToRules('saas', { promo_policy: 'allowed_with_value', self_promo_thread: null, links_allowed: null, min_karma: null, min_account_age_days: null, cooldown_days: 60, notes: '', evidence: [], official: [{ title: 'No vendor spam', text: `Max 1 mention every 60 days. ${long}`, kind: 'all' }, { title: 'Text only', text: '', kind: 'link' }] }, null)
-    const brief = rulesBrief('saas', rules)
+    const brief = rulesBrief('saas', library({ cooldown_days: 60, official: [{ title: 'No vendor spam', text: `Max 1 mention every 60 days. ${long}`, kind: 'all' }, { title: 'Text only', text: '', kind: 'link' }] }))
     expect(brief).toContain('at most one promotional mention every 60 days')
     expect(brief).toContain('1. No vendor spam: Max 1 mention every 60 days.')
     expect(brief).toContain('2. Text only [posts]')
@@ -40,7 +43,7 @@ describe('rulesBrief', () => {
 })
 
 describe('subredditVerdict', () => {
-  const rules = autoToRules('saas', { promo_policy: 'allowed_with_value', self_promo_thread: null, links_allowed: null, min_karma: null, min_account_age_days: null, notes: '', evidence: [] }, null)
+  const rules = library()
   it('starts from the rules', () => {
     expect(subredditVerdict(rules, null).grade).toBe('friendly')
     expect(subredditVerdict({ ...rules!, promo_policy: 'none' }, null).grade).toBe('strict')

@@ -122,7 +122,7 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
       angle: 'story',
       promo: true,
       topic,
-      why: `r/${promoSub.name} fits best${promoSub.rules ? '' : ' (check its rules: not in the rules DB yet)'}, and you can post a promo today.`,
+      why: `r/${promoSub.name} fits best${promoSub.rules ? '' : ' (check its rules: not in the rules library yet)'}, and you can post a promo today.`,
     }
   }
   else if (anySub) {

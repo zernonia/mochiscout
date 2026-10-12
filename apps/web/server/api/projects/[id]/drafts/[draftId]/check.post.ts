@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     try {
       const res = await checkTone(llm, {
         subreddit: draft.subreddit,
-        rules: (await resolveRules(getDb(event), draft.subreddit)).rules,
+        rules: (await resolveRules(getDb(event), draft.subreddit, draft.projectId)).rules,
         title: draft.title,
         body: draft.body,
         promo: draft.promo,
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   }
   const check = buildReport(
     { subreddit: draft.subreddit, title: draft.title, body: draft.body, promo: draft.promo },
-    await draftCheckContext(getDb(event), user.id, org.id, draft.subreddit),
+    await draftCheckContext(getDb(event), user.id, org.id, draft.subreddit, draft.projectId),
     tone,
   )
   const [row] = await getDb(event).update(schema.drafts).set({ check }).where(eq(schema.drafts.id, draft.id)).returning()

@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const promo = draft.angle === 'showcase' ? true : input.promo
   const check = buildReport(
     { subreddit: draft.subreddit, title: input.title, body: input.body, promo },
-    await draftCheckContext(getDb(event), user.id, org.id, draft.subreddit),
+    await draftCheckContext(getDb(event), user.id, org.id, draft.subreddit, draft.projectId),
   )
   const [row] = await getDb(event)
     .update(schema.drafts)

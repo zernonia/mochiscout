@@ -13,6 +13,8 @@ const rules = (patch: Partial<SubredditRules> = {}): SubredditRules => ({
   min_account_age_days: null,
   links_allowed: 'yes',
   post_formats: ['text'],
+  official: [],
+  keep: [],
   cooldown_days: 7,
   tags: ['x'],
   notes: '',

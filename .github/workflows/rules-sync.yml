@@ -1,0 +1,48 @@
+name: Sync subreddit rules
+
+# Refreshes packages/rules from each subreddit's official rules and commits
+# the result to main (which deploys). Needs the TINYFISH_API_KEY and
+# ANTHROPIC_API_KEY repository secrets.
+on:
+  schedule:
+    - cron: '17 4 1 * *'
+  workflow_dispatch:
+    inputs:
+      subreddits:
+        description: Only these subreddits, space-separated (empty = the whole library plus wanted.txt)
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rules-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Sync rules
+        env:
+          TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUBREDDITS: ${{ inputs.subreddits }}
+        run: pnpm rules:sync $SUBREDDITS
+      - run: pnpm rules:validate
+      - name: Commit changes
+        run: |
+          git add packages/rules
+          if git diff --cached --quiet; then echo "No rule changes."; exit 0; fi
+          git config user.name "mochiscout-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(rules): sync subreddit rules from official rules"
+          git push

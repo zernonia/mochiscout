@@ -48,6 +48,8 @@ export interface OfficialRule {
 }
 
 export interface SubredditAbout {
+  /** Display name with Reddit's casing (e.g. "SaaS"). */
+  name: string | null
   subscribers: number | null
   description: string | null
   type: string | null
@@ -83,10 +85,11 @@ export function parseRulesJson(text: string): OfficialRule[] | null {
 }
 
 export function parseAboutJson(text: string): SubredditAbout | null {
-  const data = jsonFromText(text) as { data?: { subscribers?: number, public_description?: string, subreddit_type?: string, over18?: boolean } } | null
+  const data = jsonFromText(text) as { data?: { display_name?: string, subscribers?: number, public_description?: string, subreddit_type?: string, over18?: boolean } } | null
   if (!data?.data) return null
   const d = data.data
   return {
+    name: d.display_name ?? null,
     subscribers: typeof d.subscribers === 'number' ? d.subscribers : null,
     description: d.public_description ? decode(d.public_description).trim() || null : null,
     type: d.subreddit_type ?? null,

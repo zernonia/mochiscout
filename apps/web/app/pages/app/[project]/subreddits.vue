@@ -131,8 +131,7 @@ async function discover() {
           :name="s.name"
           :rules="s.rules"
           :source="s.rulesSource"
-          :checked-at="s.rulesCheckedAt"
-          :watching="s.watching"
+          :library-rules="s.libraryRules"
           @updated="refresh()"
         />
         <!-- Pooled outcomes across all Mochiscout users -->

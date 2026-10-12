@@ -169,7 +169,7 @@ export async function draftReplyForThread(db: Db, llm: Llm, project: typeof sche
 
   const [voice, resolved] = await Promise.all([
     voiceExamples(db, project.id),
-    thread.platform === 'reddit' && thread.channel ? resolveRules(db, thread.channel) : Promise.resolve({ rules: null }),
+    thread.platform === 'reddit' && thread.channel ? resolveRules(db, thread.channel, project.id) : Promise.resolve({ rules: null }),
   ])
   const { data, usage } = await generateReply(llm, {
     project,

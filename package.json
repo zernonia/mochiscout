@@ -16,6 +16,7 @@
     "db:migrate:local": "pnpm --filter @mochiscout/web db:migrate:local",
     "test": "pnpm -r --if-present test",
     "rules:build": "pnpm --filter @mochiscout/rules build",
-    "rules:validate": "pnpm --filter @mochiscout/rules validate"
+    "rules:validate": "pnpm --filter @mochiscout/rules validate",
+    "rules:sync": "pnpm --filter @mochiscout/core rules:sync"
   }
 }

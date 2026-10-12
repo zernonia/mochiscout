@@ -27,6 +27,5 @@ export default defineEventHandler(async (event) => {
         set: { watching },
       }),
   ])
-  if (watching) readRulesInBackground(event, [name])
   return { name, watching }
 })

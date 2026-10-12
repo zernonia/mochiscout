@@ -68,7 +68,7 @@ export function checkDraft(opts: {
 
   // Promo policy
   if (!rules) {
-    add('rules', 'warn', `${sub} is not in the rules DB yet. Read its rules and sidebar before posting.`)
+    add('rules', 'warn', `${sub} is not in the rules library yet. Read its rules before posting, or add your own on the Subreddits page.`)
   }
   else if (draft.promo) {
     switch (rules.promo_policy) {

@@ -2,7 +2,7 @@ import type { Db } from '@mochiscout/db'
 import type { SubredditStats } from '@mochiscout/db'
 import type { SubredditRules } from '@mochiscout/rules'
 import type { SubredditVerdict } from './insights'
-import type { ResolvedSubredditRules, RulesSource } from './rules'
+import type { RulesSource } from './rules'
 import { and, count, eq, inArray, schema, sql } from '@mochiscout/db'
 import { getRules, rulesForTags } from '@mochiscout/rules'
 import { subredditVerdict } from './insights'
@@ -35,12 +35,11 @@ export interface SubredditCandidate {
   watching: boolean
   fit: number
   evidence: SubredditEvidence
-  /** Includes the sub's official rules verbatim (`official`) when they were read. */
-  rules: ResolvedSubredditRules | null
-  /** The sub's official rules, a curated file, or read from its pinned posts. */
+  /** The project's own copy, else the rules library's (with the sub's official rules). */
+  rules: SubredditRules | null
   rulesSource: RulesSource | null
-  /** When the rules were last read from Reddit. */
-  rulesCheckedAt: Date | null
+  /** The library's version, to compare with or reset to. */
+  libraryRules: SubredditRules | null
   /** Pooled outcomes across all users, once the sub has enough activity. */
   stats: SubredditStats | null
   verdict: SubredditVerdict
@@ -104,7 +103,7 @@ export async function subredditMap(
         evidence: { scored: 0, hits: 0, avgIntent: 0, pending: 0 },
         rules: getRules(name) ?? null,
         rulesSource: null,
-        rulesCheckedAt: null,
+        libraryRules: null,
         stats: null,
         verdict: { grade: 'unknown', removalRate: null, linkedReplyRemovalRate: null, reasons: [] },
         sources: [],
@@ -137,7 +136,7 @@ export async function subredditMap(
 
   const names = [...byName.keys()]
   const [resolved, statRows] = await Promise.all([
-    resolveRulesMany(db, names),
+    resolveRulesMany(db, names, project.id),
     names.length
       ? db.select({ name: schema.subreddits.name, stats: schema.subreddits.stats }).from(schema.subreddits).where(inArray(schema.subreddits.name, names.slice(0, 90)))
       : Promise.resolve([]),
@@ -147,7 +146,7 @@ export async function subredditMap(
     const r = resolved.get(c.name)
     c.rules = r?.rules ?? null
     c.rulesSource = r?.source ?? null
-    c.rulesCheckedAt = r?.checkedAt ?? null
+    c.libraryRules = r?.library ?? null
     c.stats = statsByName.get(c.name) ?? null
     c.verdict = subredditVerdict(c.rules, c.stats)
     c.fit = fitScore(c.evidence, c.rules)

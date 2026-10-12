@@ -1,0 +1,31 @@
+# Subreddits to add to the library on the next `pnpm rules:sync`.
+# One per line. Synced subs get a file in subreddits/ and can stay here.
+SaaS
+startups
+Entrepreneur
+indiehackers
+SideProject
+smallbusiness
+EntrepreneurRideAlong
+microsaas
+buildinpublic
+Startup_Ideas
+alphaandbetausers
+roastmystartup
+nocode
+webdev
+marketing
+digital_marketing
+socialmedia
+content_marketing
+SEO
+growthhacking
+sales
+ProductManagement
+startup
+ecommerce
+shopify
+freelance
+productivity
+selfhosted
+juststart

@@ -24,8 +24,8 @@ describe('parseRulesJson', () => {
 
 describe('parseAboutJson', () => {
   it('reads subscribers and the public description', () => {
-    expect(parseAboutJson(fence({ kind: 't5', data: { subscribers: 824770, public_description: 'For SaaS owners', subreddit_type: 'public', over18: false } })))
-      .toEqual({ subscribers: 824770, description: 'For SaaS owners', type: 'public', over18: false })
+    expect(parseAboutJson(fence({ kind: 't5', data: { display_name: 'SaaS', subscribers: 824770, public_description: 'For SaaS owners', subreddit_type: 'public', over18: false } })))
+      .toEqual({ name: 'SaaS', subscribers: 824770, description: 'For SaaS owners', type: 'public', over18: false })
   })
 })
 

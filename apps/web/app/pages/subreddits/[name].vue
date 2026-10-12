@@ -111,15 +111,13 @@ useJsonLd([
         </div>
         <p v-else class="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">We haven't found r/{{ s.name }}'s promotion rules yet. Check the sidebar on Reddit before posting.</p>
         <p class="text-xs text-muted-foreground">
-          <template v-if="s.rulesSource === 'official'">Summarised from r/{{ s.name }}'s official rules<template v-if="s.rulesCheckedAt">, read on {{ new Date(s.rulesCheckedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}</template>.</template>
-          <template v-else-if="s.rulesSource === 'auto'">Read automatically from the subreddit's pinned posts<template v-if="s.rulesEvidence.length"> ({{ s.rulesEvidence.slice(0, 2).map(t => `“${t}”`).join(', ') }})</template>. Moderators change rules; always check the sidebar.</template>
-          <template v-else-if="s.rulesSource === 'curated'">Checked by a person on {{ s.rules?.last_verified }}.</template>
+          <template v-if="s.rules">Summarised from r/{{ s.name }}'s official rules, checked on {{ new Date(`${s.rules.last_verified}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) }}. Moderators change rules; always check before posting.</template>
           <a :href="`https://www.reddit.com/r/${s.name}/about/rules`" target="_blank" rel="noopener nofollow" class="ms-1 underline">Official rules</a>
         </p>
-        <div v-if="s.officialRules.length" class="flex flex-col gap-3 pt-2">
-          <h3 class="font-semibold">All {{ s.officialRules.length }} rules of r/{{ s.name }}</h3>
+        <div v-if="s.rules?.official.length" class="flex flex-col gap-3 pt-2">
+          <h3 class="font-semibold">All {{ s.rules.official.length }} rules of r/{{ s.name }}</h3>
           <ol class="flex list-decimal flex-col gap-3 pl-5 text-sm">
-            <li v-for="r in s.officialRules" :key="r.title">
+            <li v-for="r in s.rules.official" :key="r.title">
               <span class="font-medium">{{ r.title }}</span><span v-if="r.kind !== 'all'" class="text-muted-foreground"> (applies to {{ r.kind === 'link' ? 'posts' : 'comments' }})</span>
               <p v-if="r.text" class="mt-1 whitespace-pre-line text-muted-foreground">{{ r.text }}</p>
             </li>

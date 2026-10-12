@@ -7,8 +7,8 @@ import { LlmRefusalError } from '@mochiscout/llm'
 
 type Project = typeof schema.projects.$inferSelect
 
-/** The sub's rules (curated or read from pinned posts), the user's Reddit account info and the org's post history, for rule checks. */
-export async function draftCheckContext(db: Db, userId: string, orgId: string, subreddit: string) {
+/** The sub's rules (the project's own copy, else the rules library), the user's Reddit account info and the org's post history, for rule checks. */
+export async function draftCheckContext(db: Db, userId: string, orgId: string, subreddit: string, projectId?: string) {
   const [user, history, resolved] = await Promise.all([
     db.select().from(schema.users).where(eq(schema.users.id, userId)).get(),
     db
@@ -16,7 +16,7 @@ export async function draftCheckContext(db: Db, userId: string, orgId: string, s
       .from(schema.trackedPosts)
       .innerJoin(schema.projects, eq(schema.projects.id, schema.trackedPosts.projectId))
       .where(eq(schema.projects.orgId, orgId)),
-    resolveRules(db, subreddit),
+    resolveRules(db, subreddit, projectId),
   ])
   return {
     rules: resolved.rules,
@@ -54,7 +54,7 @@ export async function createDraft(db: Db, env: Env, ctx: { userId: string, orgId
   const subreddit = normalizeSubredditName(input.subreddit)
   if (!subreddit) throw createError({ statusCode: 400, statusMessage: 'Not a valid subreddit name' })
   const promo = input.angle === 'showcase' ? true : input.promo
-  const { rules } = await resolveRules(db, subreddit)
+  const { rules } = await resolveRules(db, subreddit, ctx.project.id)
 
   // Hard block (arch §7.6): no promo drafts for subs that forbid promotion.
   if (promo && rules?.promo_policy === 'none') {
@@ -87,7 +87,7 @@ export async function createDraft(db: Db, env: Env, ctx: { userId: string, orgId
     }
   }
 
-  const check = buildReport({ subreddit, title, body, promo }, await draftCheckContext(db, ctx.userId, ctx.orgId, subreddit), tone)
+  const check = buildReport({ subreddit, title, body, promo }, await draftCheckContext(db, ctx.userId, ctx.orgId, subreddit, ctx.project.id), tone)
   const [draft] = await db.insert(schema.drafts).values({
     id: crypto.randomUUID(),
     projectId: ctx.project.id,

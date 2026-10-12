@@ -1,0 +1,95 @@
+name: SaaS
+promo_policy: allowed_with_value
+self_promo_thread: null
+min_karma: null
+min_account_age_days: null
+links_allowed: yes
+post_formats: []
+cooldown_days: 60
+tags:
+  - saas
+  - startups
+  - b2b
+notes: At most 1 mention or 3 links every 60 days, with your affiliation disclosed; no shortened or tracking links. Products for promotional outreach, lead or opportunity detection, or ad and content generation are banned outright.
+last_verified: 2026-10-12
+source: https://www.reddit.com/r/SaaS/about/rules
+official:
+  - title: Submission Guidelines
+    text: Follow the Reddit site-wide rules and please treat others with respect, stay on-topic, and avoid non-productive self-promotion.
+    kind: all
+  - title: Posting SaaS Relevant Content Only
+    text: |-
+      Please keep the discussions oriented around the SaaS ecosystem, tech companies, business, operational or even personal aspects of the tech business world.
+
+      - __Strict Focus:__ Content must touch on SaaS-specific topics.
+      - __No Generic Business:__ General entrepreneurship or broad news without a SaaS angle will be removed.
+      - __Enforcement:__ Irrelevant content will be removed to keep the sub relevant for SaaS professionals.
+      - __Violation:__ Repeated infringement warrants a ban
+    kind: all
+  - title: No Vendor Spam on posts or comments
+    text: |-
+      Promotion is allowed occasionally, but accounts focused solely on it will be removed.
+      - __Limit:__ Max 1 mention  or 3 links can be shared every 60 days
+      - __Transparency:__ Must clearly disclose affiliation at the beginning or end of the post or comment
+      - __Alts:__ Secondary accounts promoting the same product count toward the limit.
+      - __Value:__ Content must provide context and value, "naked" links or product descriptions are spam.
+      - __Penalty:__ Violation leads to a ban and URL blacklisting.
+    kind: all
+  - title: No Low-Effort / Low-Quality Content
+    text: |-
+      - **Posts and comments must provide actual value:** Content that is spammy, repetitive, or lacks depth will be removed.
+      - **Originality is required:** All posts must showcase original human thought, clear context, and meaningful contribution to the SaaS community.
+      - **Prohibited content includes (but is not limited to):** AI-generated text (even if you "made all the effort" to copy-paste it yourself), unedited prompt dumps, and vague questions that could be answered by a basic search.
+    kind: all
+  - title: No selling, soliciting, or fundraising
+    text: |-
+      This community is for knowledge exchange, not a marketplace, posts or comments focused on selling services, soliciting clients, or asking for donations/funding are not allowed.
+
+      - __No Solicitation:__ Do not post or comment to sell services, "cold DM" members, or solicit clients.
+      - __No Fundraising:__ Asking for donations, crowdfunding, or pitching for VC/Angel investment is prohibited.
+      - __No Lead Gen:__ Posts designed purely to gather emails or "testers" without community value will be removed
+    kind: all
+  - title: AMA / Surveys / Polls require approval
+    text: |-
+      All research-related posts must be vetted by moderators before being posted.
+      - __What's Included:__ Academic surveys, market research, vendor polls, and "product validation" forms
+      - __How to apply:__ Message the mods via Modmail with a link to your survey and a brief explanation of why it’s valuable to the SaaS community
+      - __Excluded:__ "Validation" posts that are meant for lead generation or email harvesting will be rejected
+      - __Enforcement:__ Polls without "Mod Approved" flair will be removed.
+    kind: all
+  - title: No obfuscated, shortened or indirect URLs
+    text: |-
+      All links must point directly to the final resource because indirect URLs are prone to breaking or being hijacked later. Transparency and security are mandatory.
+      - __Disguised or obfuscated links:__ Lead to a direct ban for rule evasion
+      - __Direct Links Only:__ Use the original, full URL. Do not use URL shorteners or landing page aggregators
+      - __No Tracking/Affiliates:__ Clean links only
+      - __Enforcement:__ Posts or comments containing shortened or indirect links will be automatically removed
+    kind: all
+  - title: No Personal Information (Doxing)
+    text: |-
+      This follows a site-wide rule, strict adherence to Reddit’s Content Policy is required.
+      - __Zero Tolerance:__ Do not post real names, emails, phone numbers, or private social media profiles (yours or others).
+      - __Screenshots:__ Redact all identifying info from support tickets, emails, or chat logs before posting.
+      - __Business vs. Personal:__ Mentioning a company is fine; targeting a specific employee is not.
+      - __Penalty:__ Doxing results in an immediate permanent ban and report to Reddit admins.
+    kind: all
+  - title: Be excellent to eachother
+    text: |-
+      We value authenticity. Whether your tone is formal, professional, informal or sarcastic, it’s welcome as long as it’s respectful.
+      - __No Toxicity:__ Personal attacks, insults, harassment, or "flame wars" are strictly prohibited.
+      - __Constructive Criticism:__ Feedback on SaaS projects should be helpful, not destructive.
+      - __Hate Speech:__ Any form of discrimination results in an immediate permanent ban.
+      - __Enforcement:__ Toxic behavior will lead to removal and bans.
+    kind: all
+  - title: No "I'll review/audit/feedback/test/roast or create something for you" posts
+    text: |-
+      Posts or comments offering free reviews, audits, roasts, or feedback on others' products/websites/pitches are prohibited, regardless of price or stated intent.
+      - __No self-promotion:__ These posts function as personal or commercial branding and are considered ads.
+      - __How to Help:__ We value help in context. If you want to share with the community, do so in existing comment threads.
+    kind: all
+  - title: No Promotional or Advertising SaaS
+    text: |-
+      r/SaaS does not allow promotion, recommendation, launch announcements, feedback requests, recruiting, or user acquisition for SaaS products made for advertising, promotional outreach, lead/opportunity detection, or ad/content generation.
+      - __What's Included:__ Tools that generate, suggest, schedule, automate, or coordinate promotional posts, comments, DMs, replies, or campaigns on Reddit or other platforms.
+      - __Penalty:__ Violation may result in a permanent ban, tool name and URL blacklisting.
+    kind: all

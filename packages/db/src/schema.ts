@@ -90,7 +90,7 @@ export const subreddits = sqliteTable('subreddits', {
   refreshIntervalMin: integer('refresh_interval_min').notNull().default(60),
   /** Public description from the sub's feed. */
   description: text('description'),
-  /** Rules read by the LLM from the sub's pinned posts, when there is no curated file. */
+  /** Unused since rules moved to the repo's rules library (packages/rules). */
   autoRules: text('auto_rules_json', { mode: 'json' }).$type<AutoRules>(),
   autoRulesAt: integer('auto_rules_at', { mode: 'timestamp' }),
   /** Pooled, anonymous outcomes across all projects (see core/subreddits/insights). */
@@ -104,13 +104,9 @@ export interface AutoRules {
   links_allowed: 'none' | 'in_comments_only' | 'yes' | null
   min_karma: number | null
   min_account_age_days: number | null
-  /** Minimum days between promotional mentions, only if stated. */
-  cooldown_days?: number | null
   notes: string
   /** Titles of the posts the rules were read from. */
   evidence: string[]
-  /** The sub's official rules, verbatim (absent when they couldn't be read). */
-  official?: { title: string, text: string, kind: 'all' | 'link' | 'comment' }[]
 }
 
 export interface SubredditStats {
@@ -140,6 +136,9 @@ export const projectSubreddits = sqliteTable(
     subreddit: text('subreddit').notNull().references(() => subreddits.name),
     fitScore: integer('fit_score'),
     watching: integer('watching', { mode: 'boolean' }).notNull().default(false),
+    /** The project's own copy of the sub's rules (core CustomRules); null uses the rules library. */
+    rulesOverride: text('rules_override_json', { mode: 'json' }).$type<Record<string, unknown>>(),
+    rulesOverrideAt: integer('rules_override_at', { mode: 'timestamp' }),
   },
   t => [
     primaryKey({ columns: [t.projectId, t.subreddit] }),

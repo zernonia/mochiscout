@@ -13,7 +13,14 @@ describe('SubredditRules', () => {
     const { min_karma, links_allowed, cooldown_days, ...rest } = fixture
     expect(SubredditRules.parse(rest)).toMatchObject({ min_karma: null, links_allowed: null, cooldown_days: null })
   })
+  it('accepts official rules and fields kept by hand', () => {
+    const parsed = SubredditRules.parse({ ...fixture, official: [{ title: 'No spam', text: 'Really.', kind: 'comment' }], keep: ['notes'] })
+    expect(parsed).toMatchObject({ official: [{ title: 'No spam', kind: 'comment' }], keep: ['notes'] })
+    expect(SubredditRules.parse(fixture)).toMatchObject({ official: [], keep: [] })
+  })
   it.each([
+    ['unknown kept field', { keep: ['name'] }],
+    ['bad official rule', { official: [{ title: '', text: '', kind: 'all' }] }],
     ['missing last_verified', { last_verified: undefined }],
     ['bad promo policy', { promo_policy: 'sometimes' }],
     ['r/ prefix in name', { name: 'r/ExampleSub' }],

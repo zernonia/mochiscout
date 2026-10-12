@@ -1,6 +1,5 @@
 import type { Llm } from '@mochiscout/llm'
 import type { SubredditRules } from '@mochiscout/rules'
-import type { OfficialRule } from '@mochiscout/sources'
 import type { CheckLevel } from './checks'
 import { z } from '@mochiscout/llm'
 
@@ -36,7 +35,7 @@ export interface DraftProject {
 const OFFICIAL_RULE_CHARS = 280
 const OFFICIAL_BRIEF_MAX = 2800
 
-export function rulesBrief(subreddit: string, rules: (SubredditRules & { official?: OfficialRule[] }) | null) {
+export function rulesBrief(subreddit: string, rules: SubredditRules | null) {
   if (!rules) return `r/${subreddit}: rules unknown. Assume promotion is frowned upon and links in the body are risky.`
   const official = rules.official?.length
     ? `r/${subreddit}'s own rules (abridged; these win over everything above):\n${rules.official.map((r, i) => {
