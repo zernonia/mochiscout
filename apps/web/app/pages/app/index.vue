@@ -6,6 +6,11 @@ useHead({ title: 'Projects · Mochiscout' })
 
 const { data: projects } = useCachedFetch('/api/projects')
 
+// A brand-new account has nothing to see here yet: go straight to setting up the first project.
+watch(projects, (list) => {
+  if (list && !list.length) navigateTo('/app/new', { replace: true })
+}, { immediate: true })
+
 function host(url: string) {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '')
 }

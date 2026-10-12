@@ -14,6 +14,7 @@ const found = ref(0)
 const scored = ref(0)
 const pending = ref(0)
 const leads = ref(0)
+const watched = ref<string[]>([])
 const note = ref('')
 const MAX_SCORE_CALLS = 4
 
@@ -37,6 +38,12 @@ async function run() {
       leads.value = s.leads
       if (!s.scored) break
     }
+    // Keep the feed coming: watch the subreddits that fit best (best effort).
+    try {
+      const w = await $fetch<{ watched: string[] }>(url, { method: 'POST', body: { step: 'watch' } })
+      watched.value = w.watched
+    }
+    catch {}
     phase.value = leads.value ? 'done' : 'empty'
     emit('done', leads.value)
   }
@@ -71,11 +78,17 @@ const steps = computed(() => [
         <span v-if="s.detail" class="text-xs text-muted-foreground">· {{ s.detail }}</span>
       </li>
     </ol>
-    <p v-if="phase === 'done'" class="text-sm text-muted-foreground">They're below, best first. Draft a reply to any of them, edit it, and post it yourself.</p>
-    <p v-else-if="phase === 'empty'" class="text-sm text-muted-foreground">No strong matches in the last week yet. New posts are checked every 15 minutes; watching the right subreddits helps most.</p>
+    <p v-if="phase === 'done'" class="text-sm">
+      <span class="font-medium">Next:</span> open the top one, press <span class="font-medium">Draft reply</span>, edit it in your own words, then copy it into the thread. Mark it <span class="font-medium">Replied</span> so we can track how it does.
+    </p>
+    <p v-else-if="phase === 'empty'" class="text-sm text-muted-foreground">No strong matches in the last week yet. New posts are checked every 15 minutes, and we'll email you when a hot one appears.</p>
+    <p v-if="watched.length" class="text-sm text-muted-foreground">
+      Now watching {{ watched.map(w => `r/${w}`).join(', ') }} for new posts every 15 minutes.
+      <NuxtLink :to="`/app/${projectId}/subreddits`" class="underline">Change</NuxtLink>
+    </p>
     <p v-if="note" class="text-sm text-muted-foreground">{{ note }}</p>
 
-    <details class="rounded-lg border bg-background p-3" :open="phase === 'empty'">
+    <details v-if="phase === 'empty' || phase === 'error'" class="rounded-lg border bg-background p-3" :open="phase === 'empty'">
       <summary class="cursor-pointer text-sm font-medium">Watch subreddits you already know</summary>
       <div class="mt-3"><SubredditImport :project-id="projectId" /></div>
     </details>

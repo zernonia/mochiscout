@@ -33,6 +33,7 @@ export default defineEventHandler(async (event) => {
       seats: finite(limits.seats),
       manualResearchPerMonth: finite(limits.manualResearchPerMonth),
       digest: limits.digest,
+      sources: limits.sources,
       mcp: limits.mcp,
       autoReplies: limits.autoReplies,
       hotAlerts: limits.hotAlerts,

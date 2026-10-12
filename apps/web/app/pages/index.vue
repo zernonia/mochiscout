@@ -206,7 +206,7 @@ useJsonLd([
           <PlanCards v-if="catalogue" :plans="catalogue.plans" highlight="solo">
             <template #action="{ plan }">
               <Button as-child :variant="plan.id === 'solo' ? 'default' : 'outline'" class="rounded-full">
-                <NuxtLink to="/login">{{ plan.id === 'free' ? 'Start free' : `Choose ${plan.label}` }}</NuxtLink>
+                <NuxtLink to="/login?mode=signup">{{ plan.id === 'free' ? 'Start free' : `Try ${plan.label} free` }}</NuxtLink>
               </Button>
             </template>
           </PlanCards>

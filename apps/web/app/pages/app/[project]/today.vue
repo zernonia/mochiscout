@@ -43,6 +43,7 @@ function time(d: string | Date) {
 <template>
   <div class="flex flex-col gap-8">
     <AppPageHeader :title="greeting" :description="`Your plan for ${project?.name ?? 'today'}: answer the best threads, then post if you have a slot.`" />
+    <ClientOnly><GettingStarted :project-id="projectId" /></ClientOnly>
 
     <SkeletonStats v-if="!today" />
     <section v-else class="grid grid-cols-2 gap-3 lg:grid-cols-4">

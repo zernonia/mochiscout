@@ -203,6 +203,7 @@ async function setStatus(threadId: string, next: Status, dismissReason?: string)
 
     <ClientOnly>
       <KickstartPanel v-if="welcome && project" :project-id="projectId" :product-name="project.name" @done="onKickstartDone" />
+      <GettingStarted v-else :project-id="projectId" />
     </ClientOnly>
 
     <div v-if="inbox" class="-mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">

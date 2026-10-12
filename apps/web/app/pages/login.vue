@@ -13,7 +13,8 @@ const redirect = computed(() => {
 
 const { data: providers } = await useFetch('/api/auth-providers')
 
-const mode = ref<'signin' | 'signup'>('signin')
+const mode = ref<'signin' | 'signup'>(route.query.mode === 'signup' ? 'signup' : 'signin')
+const { edition } = useRuntimeConfig().public
 const form = reactive({ email: '', password: '' })
 const busy = ref(false)
 
@@ -42,8 +43,10 @@ async function submit() {
   <main class="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-4 py-10">
     <Card>
       <CardHeader>
-        <CardTitle class="text-xl">{{ mode === 'signin' ? 'Sign in' : 'Create your account' }}</CardTitle>
-        <CardDescription>Find the people who need your product.</CardDescription>
+        <CardTitle class="text-xl">{{ mode === 'signin' ? 'Sign in' : edition === 'cloud' ? 'Start your free Pro trial' : 'Create your account' }}</CardTitle>
+        <CardDescription>
+          {{ mode === 'signup' && edition === 'cloud' ? '14 days of Pro, no card. Paste your URL next and see people asking for your product in a few minutes.' : 'Find the people who need your product.' }}
+        </CardDescription>
       </CardHeader>
       <CardContent class="flex flex-col gap-4">
         <template v-if="providers?.github || providers?.google">
