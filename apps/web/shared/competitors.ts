@@ -12,7 +12,8 @@ export const FEATURES = [
   { key: 'platforms', label: 'Platforms' },
   { key: 'finding', label: 'How posts are found' },
   { key: 'drafts', label: 'AI reply drafts' },
-  { key: 'postsForYou', label: 'Posts, comments or DMs for you' },
+  // "Yes" is the risky answer here, so the marks are coloured the other way round.
+  { key: 'postsForYou', label: 'Posts, comments or DMs for you', inverted: true },
   { key: 'rules', label: 'Subreddit rule checks' },
   { key: 'removals', label: 'Removed-post tracking' },
   { key: 'closed', label: 'Flags archived or locked threads' },
@@ -44,6 +45,8 @@ export interface Competitor {
   url: string
   /** Date the facts below were checked on the competitor's site. */
   verified: string
+  /** Linked from the site footer: the brands people search for most. */
+  footer?: boolean
   /** Shown above the fold when the product has closed or is closing. */
   notice?: string
   /** <title> and meta description. */
@@ -67,6 +70,7 @@ export interface Competitor {
 export const COMPETITORS: Competitor[] = [
   {
     slug: 'gummysearch',
+    footer: true,
     name: 'GummySearch',
     url: 'https://gummysearch.com',
     verified: '2026-10-10',
@@ -120,48 +124,50 @@ export const COMPETITORS: Competitor[] = [
     ],
   },
   {
-    slug: 'ownfeed',
-    name: 'Ownfeed',
-    url: 'https://ownfeed.dev',
-    verified: '2026-10-10',
-    title: 'Mochiscout vs Ownfeed: an Ownfeed alternative with reply drafts',
-    description: 'Ownfeed and Mochiscout both find people who need your product on Reddit, X, Bluesky and Hacker News. Mochiscout adds intent scores, reply drafts, subreddit rule checks and a free plan, from $19/month.',
-    h1: 'Mochiscout vs Ownfeed',
-    intro: 'Ownfeed and Mochiscout start the same way: paste your product URL and get a feed of people who need what you built, on Reddit, X, Bluesky and Hacker News. Neither posts for you. The difference is what happens after you find a thread.',
-    theirPitch: 'A daily social feed of people who need your product, built from your URL.',
+    slug: 'bazzly',
+    name: 'Bazzly',
+    url: 'https://bazzly.ai',
+    verified: '2026-10-12',
+    title: 'Bazzly alternative without bought accounts or upvotes: Mochiscout',
+    description: 'Bazzly posts Reddit comments through its own aged accounts, adds upvotes and sends DMs, from $199/month. Mochiscout finds the same buyers, drafts replies you post yourself, and costs $19/month.',
+    h1: 'A Bazzly alternative that keeps your marketing yours',
+    intro: 'Bazzly puts Reddit marketing on autopilot: it finds relevant threads, writes a reply, posts it through one of its "warmed-up" aged accounts, adds "smart upvotes" to push the comment to the top, and can DM people who posted. Mochiscout is built on the opposite bet: that the replies which win customers are the ones you write and post yourself.',
+    theirPitch: 'Reddit marketing on autopilot: replies posted through its aged accounts, upvotes, and DMs.',
     cells: {
-      platforms: { mark: 'yes', note: 'Reddit, X, Bluesky, HN; more in beta on the 3-month plan' },
-      finding: { mark: 'yes', note: 'AI-generated search terms and filtering' },
-      drafts: { mark: 'no', note: '"You write the replies, not an AI"' },
-      postsForYou: { mark: 'no' },
-      rules: { mark: 'no' },
-      removals: { mark: 'no' },
+      platforms: { mark: 'partial', note: 'Reddit' },
+      finding: { mark: 'yes', note: 'Finds threads where your product fits' },
+      drafts: { mark: 'yes' },
+      postsForYou: { mark: 'yes', note: 'Posts via its aged accounts, upvotes, DMs' },
+      rules: { mark: 'partial', note: 'Warns before posting in strict subreddits' },
+      removals: { mark: 'partial', note: 'Refunds credits for comments removed within 48h' },
       closed: { mark: 'no' },
-      free: { mark: 'no', note: '$1 trial' },
-      price: { mark: 'yes', note: '$39/mo' },
+      free: { mark: 'no', note: '7-day trial, card required' },
+      price: { mark: 'yes', note: '$199/mo for 170 credits' },
       openSource: { mark: 'no' },
-      api: { mark: 'no' },
+      api: { mark: 'yes', note: 'API and MCP' },
     },
     differences: [
-      { title: 'A score on every post', body: 'Each post gets a buying-intent score and a short reason, and the inbox ranks fresh, uncrowded threads first, so you know which ten to open.' },
-      { title: 'Drafts you edit, not write from scratch', body: 'Mochiscout drafts a reply after reading the full post and the replies so far, then learns your voice from the replies you actually post. You still edit and post it yourself.' },
-      { title: 'Don\'t get banned', body: 'Subreddit promotion rules, per-sub cooldowns and a daily promo cap are checked before you post, and the tracker tells you if a post was removed.' },
-      { title: 'Cheaper, with a free plan', body: 'Solo is $19/month against Ownfeed\'s $39, and there is a free plan.' },
+      { title: 'Your account, your words', body: 'A recommendation from an account with no history in your niche, boosted with upvotes, is the kind of activity Reddit\'s content policy prohibits as content and vote manipulation. Mochiscout never posts, votes or DMs. You reply from your own account, which builds a reputation that keeps working for you.' },
+      { title: 'Readers trust it', body: 'Replies that say "I built this" and actually answer the question convert, and they don\'t disappear in the next spam sweep. Drafts lead with a useful answer and disclose that you made the product.' },
+      { title: 'A tenth of the price', body: 'Bazzly is $199 a month per product, with 170 credits (a comment through its accounts costs 10). Mochiscout Solo is $19 a month, and there is a free plan.' },
+      { title: 'Beyond Reddit', body: 'Hacker News, Bluesky and X in the same inbox, with subreddit rule checks and removal tracking on everything you post.' },
     ],
     chooseThemIf: [
-      'You want beta coverage of LinkedIn, Threads, TikTok, Instagram, YouTube or Product Hunt.',
-      'You prefer to write every reply yourself and want no AI involvement in replies at all.',
+      'You want replies posted for you without touching Reddit, and accept that they come from accounts that aren\'t yours.',
     ],
     faq: [
-      { q: 'Does either tool post for me?', a: 'No. Both leave posting to you, from your own account.' },
-      { q: 'How fresh is the feed?', a: 'Mochiscout checks watched subreddits every 15 minutes to a few hours depending on activity, and can email you hot leads within the hour. Ownfeed\'s plan describes a daily timeline.' },
+      { q: 'Is buying upvotes or using other accounts against Reddit\'s rules?', a: 'Reddit\'s content policy prohibits content manipulation, including vote manipulation and using multiple accounts to promote something. Accounts and domains caught doing it can be banned.' },
+      { q: 'Does Bazzly support posting from my own account?', a: 'Yes. Besides its warmed-up accounts, Bazzly has a Chrome extension for posting from your own account. Mochiscout only works that way, without an extension: you copy the reply and post it.' },
     ],
     sources: [
-      { label: 'Ownfeed', url: 'https://ownfeed.dev' },
+      { label: 'Bazzly', url: 'https://bazzly.ai' },
+      { label: 'Bazzly pricing', url: 'https://bazzly.ai/pricing' },
+      { label: 'Reddit content policy', url: 'https://redditinc.com/policies/content-policy' },
     ],
   },
   {
     slug: 'f5bot',
+    footer: true,
     name: 'F5Bot',
     url: 'https://f5bot.com',
     verified: '2026-10-10',
@@ -200,6 +206,7 @@ export const COMPETITORS: Competitor[] = [
   },
   {
     slug: 'syften',
+    footer: true,
     name: 'Syften',
     url: 'https://syften.com',
     verified: '2026-10-10',
@@ -237,6 +244,7 @@ export const COMPETITORS: Competitor[] = [
   },
   {
     slug: 'replyguy',
+    footer: true,
     name: 'ReplyGuy',
     url: 'https://replyguy.com',
     verified: '2026-10-10',
@@ -420,6 +428,7 @@ export const COMPETITORS: Competitor[] = [
   },
   {
     slug: 'octolens',
+    footer: true,
     name: 'Octolens',
     url: 'https://octolens.com',
     verified: '2026-10-10',
@@ -490,6 +499,7 @@ export const COMPETITORS: Competitor[] = [
   },
   {
     slug: 'brand24',
+    footer: true,
     name: 'Brand24',
     url: 'https://brand24.com',
     verified: '2026-10-10',

@@ -7,7 +7,7 @@ const links = [
     { label: 'Sign in', to: '/login' },
     { label: 'Compare', to: '/alternatives' },
     { label: 'Subreddit rules', to: '/subreddits' },
-    ...COMPETITORS.slice(0, 6).map(c => ({ label: c.slug === 'gummysearch' ? 'GummySearch alternative' : `vs ${c.name}`, to: `/alternatives/${c.slug}` })),
+    ...COMPETITORS.filter(c => c.footer).map(c => ({ label: c.slug === 'gummysearch' ? 'GummySearch alternative' : `vs ${c.name}`, to: `/alternatives/${c.slug}` })),
   ],
   [
     { label: 'Terms', to: '/terms' },

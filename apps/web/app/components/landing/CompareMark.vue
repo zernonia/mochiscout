@@ -2,14 +2,20 @@
 import type { Cell } from '#shared/competitors'
 import { CheckIcon, MinusIcon, XIcon } from '@lucide/vue'
 
-defineProps<{ cell: Cell }>()
+const props = defineProps<{ cell: Cell, inverted?: boolean }>()
+// For risky features (posting for you), "yes" is shown as a warning and "no" as good.
+const tone = computed(() => {
+  const good = props.inverted ? props.cell.mark === 'no' : props.cell.mark === 'yes'
+  const bad = props.inverted ? props.cell.mark === 'yes' : props.cell.mark === 'no'
+  return good ? 'good' : bad ? (props.inverted ? 'risk' : 'none') : 'partial'
+})
 </script>
 
 <template>
   <div class="flex items-start gap-2">
     <span
       class="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full"
-      :class="cell.mark === 'yes' ? 'bg-emerald-500/12 text-emerald-700' : cell.mark === 'partial' ? 'bg-amber-500/15 text-amber-700' : 'bg-neutral-500/10 text-neutral-500'"
+      :class="{ good: 'bg-emerald-500/12 text-emerald-700', partial: 'bg-amber-500/15 text-amber-700', risk: 'bg-red-500/12 text-red-700', none: 'bg-neutral-500/10 text-neutral-500' }[tone]"
     >
       <CheckIcon v-if="cell.mark === 'yes'" class="size-3.5" />
       <MinusIcon v-else-if="cell.mark === 'partial'" class="size-3.5" />

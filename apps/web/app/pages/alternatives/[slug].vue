@@ -76,8 +76,8 @@ useJsonLd([
           </div>
           <div v-for="f in FEATURES" :key="f.key" class="grid gap-2 border-b px-4 py-3 last:border-b-0 sm:grid-cols-[1fr_1.2fr_1.2fr] sm:gap-4">
             <div class="text-sm font-medium">{{ f.label }}</div>
-            <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">Mochiscout</span><LandingCompareMark :cell="MOCHISCOUT[f.key]" /></div>
-            <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">{{ c.name }}</span><LandingCompareMark :cell="c.cells[f.key]" /></div>
+            <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">Mochiscout</span><LandingCompareMark :cell="MOCHISCOUT[f.key]" :inverted="'inverted' in f" /></div>
+            <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">{{ c.name }}</span><LandingCompareMark :cell="c.cells[f.key]" :inverted="'inverted' in f" /></div>
           </div>
         </div>
         <p class="text-xs text-muted-foreground">{{ c.name }} details checked on its website on {{ verified }}. Spot something out of date? Email <a :href="`mailto:${site.supportEmail}`" class="underline">{{ site.supportEmail }}</a> and we'll fix it.</p>

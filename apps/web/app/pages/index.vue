@@ -172,7 +172,7 @@ useJsonLd([
             <p class="text-sm text-muted-foreground">{{ d.body }}</p>
           </div>
         </div>
-        <NuxtLink to="/alternatives" class="w-fit text-sm font-medium underline-offset-4 hover:underline">Compare with GummySearch, F5Bot, Syften, Ownfeed and others →</NuxtLink>
+        <NuxtLink to="/alternatives" class="w-fit text-sm font-medium underline-offset-4 hover:underline">Compare with GummySearch, Brand24, F5Bot, Syften and others →</NuxtLink>
       </section>
 
       <!-- How it works -->

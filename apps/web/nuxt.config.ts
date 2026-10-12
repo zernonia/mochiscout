@@ -30,6 +30,11 @@ export default defineNuxtConfig({
     componentDir: './app/components/ui',
   },
 
+  // Retired comparison pages.
+  routeRules: {
+    '/alternatives/ownfeed': { redirect: { to: '/alternatives', statusCode: 301 } },
+  },
+
   // Workspace packages ship TypeScript source; bundle them instead of loading from node_modules.
   build: {
     transpile: [/^@mochiscout\//],
