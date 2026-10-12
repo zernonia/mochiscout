@@ -16,6 +16,10 @@ export const orgs = sqliteTable('orgs', {
   /** Polar subscription status (active, past_due, canceled, …). */
   planStatus: text('plan_status'),
   currentPeriodEnd: integer('current_period_end', { mode: 'timestamp' }),
+  /** End of the free Pro trial new orgs start with (plan_status 'trialing', no Polar subscription). */
+  trialEndsAt: integer('trial_ends_at', { mode: 'timestamp' }),
+  /** Trial emails sent: 1 = ending soon, 2 = ended. */
+  trialEmails: integer('trial_emails').notNull().default(0),
   createdAt: createdAt(),
 }, t => [index('orgs_owner_id_idx').on(t.ownerId)])
 

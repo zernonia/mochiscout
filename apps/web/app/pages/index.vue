@@ -54,7 +54,7 @@ const faqs = [
   { q: 'Will this get my account banned?', a: 'It is built to prevent that. Every draft is checked against the subreddit\'s rules, promotional posts are rate-limited per community and per day, and nothing is ever posted for you.' },
   { q: 'Does Mochiscout post for me?', a: 'No. It never posts, comments, votes or sends messages. You copy the reply and post it yourself, so it stays in your voice.' },
   { q: 'Which sites are covered?', a: 'Reddit on every plan. Hacker News and Bluesky on Solo and Pro, and X on Pro.' },
-  { q: 'Is there a free plan?', a: 'Yes: one project, three watched subreddits and a weekly digest. Self-hosting is free with no limits.' },
+  { q: 'Is there a free plan?', a: 'Yes. Every new account gets 14 days of Pro free, no card. After that you keep a free plan with one project, three watched subreddits and a weekly digest, or pick Solo or Pro. Self-hosting is free with no limits.' },
   { q: 'I used GummySearch. Is this a replacement?', a: 'For finding customers, yes. GummySearch shuts down on December 1, 2026. Mochiscout finds the threads where people ask for what you sell, on Reddit and three other sites, without the Reddit Data API that GummySearch lost.' },
   { q: 'Can I cancel anytime?', a: 'Yes. Plans are monthly and you can cancel from the billing page; you keep access until the end of the paid period.' },
 ]
@@ -201,7 +201,7 @@ useJsonLd([
         <div class="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-24">
           <div class="flex flex-col items-center gap-3 text-center">
             <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">Simple pricing</h2>
-            <p class="text-muted-foreground">Start free. Upgrade when the feed starts paying for itself. Self-hosting is always free.</p>
+            <p class="text-muted-foreground">Every account starts with 14 days of Pro, free and without a card. Then keep the free plan or upgrade when the feed starts paying for itself. Self-hosting is always free.</p>
           </div>
           <PlanCards v-if="catalogue" :plans="catalogue.plans" highlight="solo">
             <template #action="{ plan }">

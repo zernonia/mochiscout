@@ -1,6 +1,7 @@
 import type { Db } from '@mochiscout/db'
 import type { Platform } from '@mochiscout/sources'
 import { and, count, eq, inArray, schema, sql } from '@mochiscout/db'
+import { isAppTrial, TRIAL_DRAFTS } from './trial'
 
 export type Plan = 'selfhost' | 'free' | 'solo' | 'pro'
 
@@ -77,7 +78,13 @@ export function limitsFor(plan: Plan) {
   return PLANS[plan]
 }
 
-interface Org { id: string, plan: Plan }
+interface Org { id: string, plan: Plan, planStatus?: string | null, polarSubscriptionId?: string | null }
+
+/** Drafts a month for this org: the plan's allowance, capped during the free trial. */
+export function draftLimit(org: Pick<Org, 'plan' | 'planStatus' | 'polarSubscriptionId'>) {
+  const limit = PLANS[org.plan].draftsPerMonth
+  return isAppTrial(org) ? Math.min(limit, TRIAL_DRAFTS) : limit
+}
 
 export async function assertCanCreateProject(db: Db, org: Org) {
   const limit = PLANS[org.plan].projects
@@ -166,7 +173,7 @@ export function assertHotAlerts(org: Org) {
 
 /** AI drafts used this month, and the plan's allowance. */
 export async function draftAllowance(db: Db, org: Org, now = new Date()) {
-  const limit = PLANS[org.plan].draftsPerMonth
+  const limit = draftLimit(org)
   const row = await db.select({ drafts: schema.usage.drafts }).from(schema.usage)
     .where(and(eq(schema.usage.orgId, org.id), eq(schema.usage.period, now.toISOString().slice(0, 7)))).get()
   const used = row?.drafts ?? 0
@@ -176,6 +183,7 @@ export async function draftAllowance(db: Db, org: Org, now = new Date()) {
 export async function assertCanDraft(db: Db, org: Org, now = new Date()) {
   const { used, limit } = await draftAllowance(db, org, now)
   if (used >= limit) {
+    if (isAppTrial(org)) throw new QuotaError('drafts', org.plan, limit, `The free trial includes ${limit} AI drafts. Choose a plan to keep drafting.`, 'solo')
     throw new QuotaError('drafts', org.plan, limit, `The ${PLANS[org.plan].label} plan includes ${limit} AI drafts a month. They reset on the 1st.`)
   }
 }

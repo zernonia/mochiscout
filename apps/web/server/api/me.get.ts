@@ -1,4 +1,4 @@
-import { limitsFor, watchedSubredditCount } from '@mochiscout/core'
+import { draftLimit, isAppTrial, limitsFor, trialDaysLeft, watchedSubredditCount } from '@mochiscout/core'
 import { and, count, eq, schema } from '@mochiscout/db'
 
 /** The signed-in user, their org, plan limits and this month's usage. */
@@ -17,9 +17,17 @@ export default defineEventHandler(async (event) => {
     user,
     role,
     edition: useRuntimeConfig(event).public.edition,
-    org: { id: org.id, plan: org.plan, planStatus: org.planStatus, currentPeriodEnd: org.currentPeriodEnd },
+    org: {
+      id: org.id,
+      plan: org.plan,
+      planStatus: org.planStatus,
+      currentPeriodEnd: org.currentPeriodEnd,
+      /** On the free Pro trial: when it ends and how many days are left. */
+      trial: isAppTrial(org) ? { endsAt: org.trialEndsAt, daysLeft: trialDaysLeft(org.trialEndsAt, new Date()) } : null,
+      trialEnded: org.planStatus === 'trial_ended',
+    },
     limits: {
-      label: limits.label,
+      label: isAppTrial(org) ? 'Pro trial' : limits.label,
       projects: finite(limits.projects),
       watchedSubreddits: finite(limits.watchedSubreddits),
       seats: finite(limits.seats),
@@ -28,7 +36,7 @@ export default defineEventHandler(async (event) => {
       mcp: limits.mcp,
       autoReplies: limits.autoReplies,
       hotAlerts: limits.hotAlerts,
-      draftsPerMonth: finite(limits.draftsPerMonth),
+      draftsPerMonth: finite(draftLimit(org)),
     },
     usage: {
       projects: projects?.n ?? 0,

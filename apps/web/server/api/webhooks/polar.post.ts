@@ -1,5 +1,5 @@
 import type { PolarSubscription } from '@mochiscout/core'
-import { planForSubscription, verifyWebhook, WebhookVerificationError } from '@mochiscout/core'
+import { isAppTrial, planForSubscription, verifyWebhook, WebhookVerificationError } from '@mochiscout/core'
 import { eq, schema } from '@mochiscout/db'
 
 const SUBSCRIPTION_EVENTS = new Set([
@@ -57,6 +57,7 @@ export default defineEventHandler(async (event) => {
         console.info(`[polar] ${payload.type} org=${orgId} plan=${plan} status=${sub.status}`)
         // Conversion events, attributed to the org owner (the person who checked out).
         if (plan !== org.plan) track(event, org.ownerId, 'plan_changed', { from_plan: org.plan, to_plan: plan, status: sub.status })
+        if (isAppTrial(org) && plan !== 'free') track(event, org.ownerId, 'trial_converted', { to_plan: plan })
       }
     }
   }

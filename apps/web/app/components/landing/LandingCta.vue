@@ -7,7 +7,7 @@ const { waitlist } = useRuntimeConfig().public
   <LandingWaitlistForm v-if="waitlist" :source="source" />
   <div v-else class="flex flex-wrap items-center justify-center gap-2">
     <Button as-child size="lg" class="rounded-full px-5">
-      <NuxtLink to="/login">Start free</NuxtLink>
+      <NuxtLink to="/login">Try Pro free for 14 days</NuxtLink>
     </Button>
     <Button v-if="secondary === 'pricing'" as-child size="lg" variant="secondary" class="rounded-full px-5">
       <NuxtLink to="/#pricing">See pricing →</NuxtLink>

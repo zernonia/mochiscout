@@ -151,7 +151,7 @@ const DRAFT_EFFORT = 'low' as const
  */
 export async function draftReplyForThread(db: Db, llm: Llm, project: typeof schema.projects.$inferSelect, threadId: string, opts: { tier?: Tier, http?: Http, now?: Date } = {}) {
   const now = opts.now ?? new Date()
-  const org = await db.select({ id: schema.orgs.id, plan: schema.orgs.plan }).from(schema.orgs).where(eq(schema.orgs.id, project.orgId)).get()
+  const org = await db.select({ id: schema.orgs.id, plan: schema.orgs.plan, planStatus: schema.orgs.planStatus, polarSubscriptionId: schema.orgs.polarSubscriptionId }).from(schema.orgs).where(eq(schema.orgs.id, project.orgId)).get()
   if (org) await assertCanDraft(db, org, now)
   const score = await db
     .select({ kind: schema.threadScores.kind, intent: schema.threadScores.intent, reason: schema.threadScores.reason, replyAngle: schema.threadScores.replyAngle })

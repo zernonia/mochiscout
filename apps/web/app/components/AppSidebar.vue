@@ -181,8 +181,9 @@ async function signOut() {
       </div>
       <div v-if="me && edition === 'cloud'" class="flex flex-col gap-2.5 rounded-lg border bg-background p-3">
         <div class="flex items-center justify-between">
-          <span class="text-sm font-medium">{{ me.limits.label }} plan</span>
+          <span class="text-sm font-medium">{{ me.org.trial ? 'Pro trial' : `${me.limits.label} plan` }}</span>
           <span v-if="me.org.planStatus === 'past_due'" class="text-[11px] font-medium text-red-600">Payment due</span>
+          <span v-else-if="me.org.trial" class="text-[11px] font-medium" :class="me.org.trial.daysLeft <= 3 ? 'text-amber-700 dark:text-amber-400' : 'text-violet-700 dark:text-violet-400'">{{ me.org.trial.daysLeft }} day{{ me.org.trial.daysLeft === 1 ? '' : 's' }} left</span>
         </div>
         <div v-for="m in meters" :key="m.label" class="flex flex-col gap-1">
           <div class="flex justify-between text-[11px] text-muted-foreground">
@@ -197,8 +198,8 @@ async function signOut() {
             />
           </div>
         </div>
-        <Button v-if="me.org.plan !== 'pro'" as-child size="sm" variant="outline" class="mt-0.5">
-          <NuxtLink to="/app/billing" @click="emit('navigate')">Upgrade</NuxtLink>
+        <Button v-if="me.org.plan !== 'pro' || me.org.trial" as-child size="sm" :variant="me.org.trial ? 'default' : 'outline'" class="mt-0.5">
+          <NuxtLink to="/app/billing" @click="emit('navigate')">{{ me.org.trial ? 'Choose a plan' : 'Upgrade' }}</NuxtLink>
         </Button>
       </div>
 

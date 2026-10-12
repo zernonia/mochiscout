@@ -1,5 +1,5 @@
 import type { PolarSubscription } from '@mochiscout/core'
-import { PLANS, planForSubscription } from '@mochiscout/core'
+import { isAppTrial, PLANS, planForSubscription } from '@mochiscout/core'
 import { eq, schema } from '@mochiscout/db'
 import { z } from 'zod'
 
@@ -20,7 +20,8 @@ export default defineEventHandler(async (event) => {
   const env = getEnv(event)
   const product = polarProducts(env)[plan]
   if (!product) throw createError({ statusCode: 503, statusMessage: 'Billing is not configured.' })
-  if (org.plan === plan && LIVE.has(org.planStatus ?? '')) {
+  // The free trial is Pro without a subscription: buying Pro (or Solo) goes through checkout.
+  if (org.plan === plan && LIVE.has(org.planStatus ?? '') && !isAppTrial(org)) {
     throw createError({ statusCode: 409, statusMessage: `You are already on ${PLANS[plan].label}. Use Manage billing to change it.` })
   }
 
@@ -48,6 +49,6 @@ export default defineEventHandler(async (event) => {
     success_url: `${base}/app/billing?checkout=success`,
     metadata: { org_id: org.id, plan },
   })
-  track(event, user.id, 'checkout_started', { plan, from_plan: org.plan })
+  track(event, user.id, 'checkout_started', { plan, from_plan: org.plan, trial: isAppTrial(org) })
   return { url: checkout.url }
 })

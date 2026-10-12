@@ -1,4 +1,5 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
+import { TRIAL_DAYS, TRIAL_PLAN, trialStart } from '@mochiscout/core'
 import { and, count, eq, schema } from '@mochiscout/db'
 
 type Db = ReturnType<typeof getDb>
@@ -36,8 +37,12 @@ async function assertCanSignUp(event: RequestEvent, db: Db, email: string, email
   throw new AuthError(403, edition === 'selfhost' ? 'Sign-ups are closed on this instance.' : 'We are in private beta. Join the waitlist on the home page.')
 }
 
-/** New users join the org that invited them (verified email only), the single self-host org, or get their own. */
-async function setUpMembership(event: RequestEvent, db: Db, user: { id: string, email: string, emailVerified: boolean }) {
+/**
+ * New users join the org that invited them (verified email only), the single
+ * self-host org, or get their own; a new hosted org starts on the Pro trial.
+ * Returns whether a trial started.
+ */
+async function setUpMembership(event: RequestEvent, db: Db, user: { id: string, email: string, emailVerified: boolean }): Promise<boolean> {
   const { edition } = editionOf(event)
   const invite = user.emailVerified
     ? await db.select().from(schema.orgInvites).where(eq(schema.orgInvites.email, user.email)).get()
@@ -50,13 +55,15 @@ async function setUpMembership(event: RequestEvent, db: Db, user: { id: string, 
       db.insert(schema.orgMembers).values({ orgId: joinOrgId, userId: user.id, role: 'member' }).onConflictDoNothing(),
       db.delete(schema.orgInvites).where(eq(schema.orgInvites.email, user.email)),
     ])
-    return
+    return false
   }
   const orgId = crypto.randomUUID()
+  const plan = edition === 'selfhost' ? { plan: 'selfhost' as const } : trialStart(new Date())
   await db.batch([
-    db.insert(schema.orgs).values({ id: orgId, ownerId: user.id, plan: edition === 'selfhost' ? 'selfhost' : 'free' }),
+    db.insert(schema.orgs).values({ id: orgId, ownerId: user.id, ...plan }),
     db.insert(schema.orgMembers).values({ orgId, userId: user.id, role: 'owner' }),
   ])
+  return edition !== 'selfhost'
 }
 
 async function createUser(event: RequestEvent, db: Db, input: { email: string, name: string, image?: string | null, emailVerified: boolean }) {
@@ -68,8 +75,9 @@ async function createUser(event: RequestEvent, db: Db, input: { email: string, n
     image: input.image ?? null,
     emailVerified: input.emailVerified,
   }).returning()
-  await setUpMembership(event, db, user!)
+  const trial = await setUpMembership(event, db, user!)
   track(event as Parameters<typeof track>[0], user!.id, 'signed_up', { method: input.emailVerified ? 'oauth' : 'password' })
+  if (trial) track(event as Parameters<typeof track>[0], user!.id, 'trial_started', { plan: TRIAL_PLAN, days: TRIAL_DAYS })
   return user!
 }
 

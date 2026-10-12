@@ -15,6 +15,7 @@ import { runDiscovery } from './discovery'
 import { runFeedDiscovery } from './feeds'
 import { planFetch, runFetchGroup } from './fetch'
 import { runRetention } from './retention'
+import { runTrials } from '../trial'
 
 export interface TickResult {
   ran: JobName[]
@@ -74,6 +75,7 @@ const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> 
   'digest': runDigest,
   'retention': runRetention,
   'insights': runSubredditInsights,
+  'trials': runTrials,
 }
 
 /** Cron dispatcher: run every job due at this tick. */

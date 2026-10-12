@@ -5,8 +5,9 @@ import { dueJobs } from '../src/schedule'
 const at = (iso: string) => new Date(`2026-10-08T${iso}:00Z`)
 
 describe('dueJobs', () => {
-  it('runs plan-fetch every tick', () => {
-    expect(dueJobs(at('10:15'))).toEqual(['plan-fetch', 'score', 'lead-checks', 'auto-replies', 'hot-alerts'])
+  it('runs plan-fetch every tick, and trials hourly at :15', () => {
+    expect(dueJobs(at('10:15'))).toEqual(['plan-fetch', 'score', 'lead-checks', 'auto-replies', 'hot-alerts', 'trials'])
+    expect(dueJobs(at('10:45'))).toEqual(['plan-fetch', 'score', 'lead-checks', 'auto-replies', 'hot-alerts'])
   })
   it('runs digest hourly and discovery every 6h on the hour', () => {
     expect(dueJobs(at('10:00'))).toEqual(['plan-fetch', 'feeds', 'score', 'lead-checks', 'auto-replies', 'hot-alerts', 'digest'])

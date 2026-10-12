@@ -8,12 +8,16 @@ import type { H3Event } from 'h3'
 const CAPTURE_URL = 'https://us.i.posthog.com/i/v0/e/'
 
 export function track(event: H3Event, userId: string, name: string, properties: Record<string, unknown> = {}) {
-  const key = useRuntimeConfig(event).public.posthogKey
+  const task = captureServerEvent(useRuntimeConfig(event).public.posthogKey, userId, name, properties)
+  if (task && typeof event.waitUntil === 'function') event.waitUntil(task)
+}
+
+/** Send one event; for jobs, where there is no request to attach it to. */
+export function captureServerEvent(key: string | undefined, userId: string, name: string, properties: Record<string, unknown> = {}) {
   if (!key) return
-  const task = fetch(CAPTURE_URL, {
+  return fetch(CAPTURE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ api_key: key, event: name, distinct_id: userId, timestamp: new Date().toISOString(), properties: { ...properties, $lib: 'mochiscout-server' } }),
-  }).catch(error => console.error('[track] could not reach PostHog', String(error)))
-  if (typeof event.waitUntil === 'function') event.waitUntil(task)
+  }).then(() => {}).catch(error => console.error('[track] could not reach PostHog', String(error)))
 }

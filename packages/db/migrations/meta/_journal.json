@@ -85,6 +85,13 @@
       "when": 1791811940277,
       "tag": "0011_rules_override",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1791821863454,
+      "tag": "0012_pro_trial",
+      "breakpoints": true
     }
   ]
 }

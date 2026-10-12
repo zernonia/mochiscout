@@ -37,6 +37,7 @@ export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): Jo
     // Without a provider, emails are only logged, which is useful in dev only.
     sendEmail: emailProvider(env) || import.meta.dev ? email => sendEmail(env, email) : undefined,
     appUrl: env.APP_URL ?? (import.meta.dev ? 'http://localhost:3000' : undefined),
+    track: (userId, name, properties = {}) => captureServerEvent(env.NUXT_PUBLIC_POSTHOG_KEY ?? useRuntimeConfig().public.posthogKey, userId, name, properties),
     now: () => new Date(),
     log: (message, data) => {
       console.info(`[jobs] ${message}`, data ? JSON.stringify(data) : '')

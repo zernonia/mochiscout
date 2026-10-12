@@ -26,6 +26,8 @@ export interface JobContext {
   llm?: Llm
   /** Sends email (Resend). Undefined: digests are skipped. */
   sendEmail?: (email: { to: string, subject: string, html: string, text: string }) => Promise<void>
+  /** Product analytics event for a user (PostHog). Undefined: not tracked. */
+  track?: (userId: string, name: string, properties?: Record<string, unknown>) => Promise<void> | void
   /** Public app URL for links in emails. */
   appUrl?: string
   now: () => Date

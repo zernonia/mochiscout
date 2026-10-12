@@ -17,10 +17,11 @@ onMounted(() => {
 })
 
 /** Already paying: the plan button switches the subscription in place. */
-const subscribed = computed(() => me.value?.org.plan === 'solo' || me.value?.org.plan === 'pro')
+const subscribed = computed(() => !me.value?.org.trial && (me.value?.org.plan === 'solo' || me.value?.org.plan === 'pro'))
 const priceOf = (id: string) => catalogue.value?.plans.find(p => p.id === id)?.price ?? 0
 
 function planAction(id: string, label: string) {
+  if (me.value?.org.trial) return id === 'pro' ? 'Keep Pro' : `Choose ${label}`
   if (!subscribed.value) return `Upgrade to ${label}`
   return priceOf(id) > priceOf(me.value!.org.plan) ? `Upgrade to ${label}` : `Switch to ${label}`
 }
@@ -76,8 +77,15 @@ const meters = computed(() => me.value
     <template v-else-if="me">
       <Card>
         <CardHeader>
-          <CardTitle>{{ me.limits.label }} plan</CardTitle>
-          <CardDescription v-if="me.org.plan !== 'free'">
+          <CardTitle>{{ me.org.trial ? 'Pro trial' : `${me.limits.label} plan` }}</CardTitle>
+          <CardDescription v-if="me.org.trial">
+            Everything in Pro, free until {{ new Date(me.org.trial.endsAt!).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) }} ({{ me.org.trial.daysLeft }} day{{ me.org.trial.daysLeft === 1 ? '' : 's' }} left), with up to {{ me.limits.draftsPerMonth }} AI drafts.
+            After that you move to Free unless you choose a plan below. No card needed until then.
+          </CardDescription>
+          <CardDescription v-else-if="me.org.trialEnded && me.org.plan === 'free'">
+            Your Pro trial has ended. We kept your top 3 subreddits running; choose a plan to bring back the rest.
+          </CardDescription>
+          <CardDescription v-else-if="me.org.plan !== 'free'">
             <template v-if="me.org.planStatus === 'past_due'">Payment failed: update your card in Manage billing. </template>
             <template v-else-if="me.org.planStatus === 'canceled'">Cancelled; active until the end of the period. </template>
             <template v-if="me.org.currentPeriodEnd">Current period ends {{ new Date(me.org.currentPeriodEnd).toLocaleDateString() }}.</template>
@@ -94,7 +102,7 @@ const meters = computed(() => me.value
             </div>
           </div>
           <Button
-            v-if="me.org.plan !== 'free' && me.role === 'owner'"
+            v-if="me.org.plan !== 'free' && !me.org.trial && me.role === 'owner'"
             variant="outline"
             class="self-start"
             :disabled="!!busy"
@@ -108,7 +116,7 @@ const meters = computed(() => me.value
       <PlanCards v-if="catalogue" :plans="catalogue.plans" :current="me.org.plan" :highlight="String(route.query.plan ?? '')">
         <template #action="{ plan }">
           <Button
-            v-if="plan.id !== 'free' && plan.id !== me.org.plan && me.role === 'owner'"
+            v-if="plan.id !== 'free' && (plan.id !== me.org.plan || me.org.trial) && me.role === 'owner'"
             :disabled="!!busy || !catalogue.billingConfigured"
             @click="choosePlan(plan.id, plan.label)"
           >
