@@ -8,13 +8,6 @@ type Status = 'new' | 'saved' | 'replied' | 'dismissed'
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-// Right after onboarding: build the first feed while the user watches.
-const welcome = ref(route.query.welcome === '1')
-async function onKickstartDone() {
-  await Promise.all([refresh(), refreshNuxtData('project-nav')])
-  // Drop the flag so a reload doesn't search again.
-  await navigateTo({ query: { ...route.query, welcome: undefined } }, { replace: true })
-}
 const status = ref<Status>('new')
 const sort = ref<'opportunity' | 'intent' | 'newest'>('opportunity')
 const sorts = [
@@ -202,8 +195,7 @@ async function setStatus(threadId: string, next: Status, dismissReason?: string)
     </div>
 
     <ClientOnly>
-      <KickstartPanel v-if="welcome && project" :project-id="projectId" :product-name="project.name" @done="onKickstartDone" />
-      <GettingStarted v-else :project-id="projectId" />
+      <GettingStarted :project-id="projectId" />
     </ClientOnly>
 
     <div v-if="inbox" class="-mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">

@@ -15,6 +15,7 @@ interface DialogPopupProps {
   closeProps?: Record<string, unknown>;
   portalProps?: { to?: string | HTMLElement; disabled?: boolean };
   class?: HTMLAttributes["class"];
+  backdropClass?: HTMLAttributes["class"];
 }
 
 const props = withDefaults(defineProps<DialogPopupProps>(), {
@@ -25,7 +26,7 @@ const props = withDefaults(defineProps<DialogPopupProps>(), {
 
 <template>
   <DialogPortal v-bind="portalProps">
-    <DialogBackdrop />
+    <DialogBackdrop :class="props.backdropClass" />
     <DialogViewport
       :class="
         cn(
