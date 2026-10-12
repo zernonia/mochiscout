@@ -16,14 +16,6 @@ async function onImported() {
 }
 const discovering = ref(false)
 
-const promo: Record<string, { label: string, class: string }> = {
-  none: { label: 'No promotion', class: 'border-red-500/30 bg-red-500/8 text-red-700 dark:text-red-400' },
-  weekly_thread_only: { label: 'Promo thread only', class: 'border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-400' },
-  flair_only: { label: 'Promo flair only', class: 'border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-400' },
-  allowed_with_value: { label: 'Promo if valuable', class: 'border-sky-500/30 bg-sky-500/8 text-sky-700 dark:text-sky-400' },
-  allowed: { label: 'Promo allowed', class: 'border-emerald-500/30 bg-emerald-500/8 text-emerald-700 dark:text-emerald-400' },
-}
-
 const watchedCount = computed(() => map.value?.subreddits.filter(s => s.watching).length ?? 0)
 
 function errorMessage(error: unknown) {
@@ -134,19 +126,15 @@ async function discover() {
           <span class="w-8 text-end text-xs font-medium tabular-nums">{{ s.fit }}</span>
         </div>
 
-        <div v-if="s.rules" class="flex flex-col gap-1.5 text-sm">
-          <div class="flex flex-wrap gap-1.5">
-            <span class="rounded-full border px-2 py-0.5 text-xs font-medium" :class="promo[s.rules.promo_policy]?.class">{{ promo[s.rules.promo_policy]?.label }}</span>
-            <Badge v-if="s.rules.min_karma != null" variant="outline">{{ s.rules.min_karma }}+ karma</Badge>
-            <Badge v-if="s.rules.min_account_age_days != null" variant="outline">{{ s.rules.min_account_age_days }}+ day account</Badge>
-            <Badge v-if="s.rules.self_promo_thread" variant="outline">{{ s.rules.self_promo_thread }}</Badge>
-          </div>
-          <p v-if="s.rules.notes" class="text-xs text-muted-foreground">{{ s.rules.notes }}</p>
-          <p v-if="s.rulesSource === 'auto'" class="text-[11px] text-muted-foreground">Read from the sub's pinned posts. Check the sidebar too.</p>
-        </div>
-        <p v-else class="text-xs text-muted-foreground">
-          Promo rules not in our database yet. Read the sub's rules before posting.
-        </p>
+        <SubredditRulesCard
+          :project-id="projectId"
+          :name="s.name"
+          :rules="s.rules"
+          :source="s.rulesSource"
+          :checked-at="s.rulesCheckedAt"
+          :watching="s.watching"
+          @updated="refresh()"
+        />
         <!-- Pooled outcomes across all Mochiscout users -->
         <div v-if="s.verdict.removalRate !== null || s.verdict.linkedReplyRemovalRate !== null" class="flex flex-col gap-0.5 rounded-lg bg-muted/50 p-2.5 text-xs">
           <span class="font-medium" :class="s.verdict.grade === 'strict' ? 'text-red-700 dark:text-red-400' : s.verdict.grade === 'careful' ? 'text-amber-800 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'">
@@ -154,7 +142,6 @@ async function discover() {
           </span>
           <span v-for="r in s.verdict.reasons.filter(r => /removed/.test(r))" :key="r" class="text-muted-foreground">{{ r }}</span>
         </div>
-        <SuggestRules :subreddit="s.name" :current="s.rules" />
       </div>
     </div>
   </div>

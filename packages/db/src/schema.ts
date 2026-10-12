@@ -104,9 +104,13 @@ export interface AutoRules {
   links_allowed: 'none' | 'in_comments_only' | 'yes' | null
   min_karma: number | null
   min_account_age_days: number | null
+  /** Minimum days between promotional mentions, only if stated. */
+  cooldown_days?: number | null
   notes: string
   /** Titles of the posts the rules were read from. */
   evidence: string[]
+  /** The sub's official rules, verbatim (absent when they couldn't be read). */
+  official?: { title: string, text: string, kind: 'all' | 'link' | 'comment' }[]
 }
 
 export interface SubredditStats {

@@ -40,5 +40,7 @@ export default defineEventHandler(async (event) => {
     added.push(name)
   }
   if (added.length) track(event, user.id, 'subreddits_imported', { project_id: project.id, count: added.length })
+  // A few now (a Worker's background time is short); the daily job reads the rest, watched subs first.
+  readRulesInBackground(event, added, 3)
   return { added, skipped: names.slice(added.length), invalid, limit }
 })

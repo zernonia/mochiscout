@@ -1,5 +1,6 @@
 import type { Llm } from '@mochiscout/llm'
 import type { SubredditRules } from '@mochiscout/rules'
+import type { OfficialRule } from '@mochiscout/sources'
 import type { CheckLevel } from './checks'
 import { z } from '@mochiscout/llm'
 
@@ -31,14 +32,26 @@ export interface DraftProject {
   problems: string[]
 }
 
-export function rulesBrief(subreddit: string, rules: SubredditRules | null) {
+/** Per-rule and total budget for the official rules in a prompt (they repeat on every draft). */
+const OFFICIAL_RULE_CHARS = 280
+const OFFICIAL_BRIEF_MAX = 2800
+
+export function rulesBrief(subreddit: string, rules: (SubredditRules & { official?: OfficialRule[] }) | null) {
   if (!rules) return `r/${subreddit}: rules unknown. Assume promotion is frowned upon and links in the body are risky.`
+  const official = rules.official?.length
+    ? `r/${subreddit}'s own rules (abridged; these win over everything above):\n${rules.official.map((r, i) => {
+        const text = r.text.replace(/\s+/g, ' ').trim()
+        return `${i + 1}. ${r.title}${r.kind !== 'all' ? ` [${r.kind === 'link' ? 'posts' : 'comments'}]` : ''}${text ? `: ${text.length > OFFICIAL_RULE_CHARS ? `${text.slice(0, OFFICIAL_RULE_CHARS)}…` : text}` : ''}`
+      }).join('\n').slice(0, OFFICIAL_BRIEF_MAX)}`
+    : ''
   return [
     `r/${subreddit} rules:`,
     `- promotion: ${rules.promo_policy.replaceAll('_', ' ')}`,
     `- links: ${rules.links_allowed?.replaceAll('_', ' ') ?? 'unknown'}`,
+    rules.cooldown_days ? `- at most one promotional mention every ${rules.cooldown_days} days` : '',
     rules.post_formats.length ? `- formats: ${rules.post_formats.join(', ')}` : '',
     rules.notes ? `- mods' notes: ${rules.notes}` : '',
+    official,
   ].filter(Boolean).join('\n')
 }
 

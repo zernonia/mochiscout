@@ -1,6 +1,8 @@
 import type { Db, SubredditStats } from '@mochiscout/db'
 import type { SubredditRules } from '@mochiscout/rules'
+import type { OfficialRule } from '@mochiscout/sources'
 import type { JobContext } from '../jobs/context'
+import type { RulesSource } from './rules'
 import { and, eq, gte, inArray, isNull, lt, or, schema, sql } from '@mochiscout/db'
 import { getRules } from '@mochiscout/rules'
 import { HttpDeferredError } from '@mochiscout/sources'
@@ -18,8 +20,13 @@ const WINDOW_DAYS = 30
 export const STATS_MIN_POSTS = 20
 /** Samples before a removal rate is shown or used. */
 export const RATE_MIN_SAMPLES = 10
-const AUTO_RULES_TTL_MS = 30 * DAY_MS
-const AUTO_RULES_PER_RUN = 6
+/** Mods change rules now and then; re-read every two weeks. */
+const AUTO_RULES_TTL_MS = 14 * DAY_MS
+/** Subs whose rules couldn't be read (fetch failed) wait this long before a retry. */
+const AUTO_RULES_RETRY_MS = DAY_MS
+/** A manual re-check reads again only if the last read is older than this. */
+const AUTO_RULES_FORCE_MIN_MS = 10 * 60_000
+const AUTO_RULES_PER_RUN = 12
 
 const emptyStats = (): SubredditStats => ({
   posts30d: 0, hours: Array.from({ length: 24 }, () => 0), buyingPosts30d: 0,
@@ -108,29 +115,71 @@ export async function runSubredditInsights(ctx: JobContext) {
   const result = { subs: stats.size, rulesRead: 0, deferred: false }
   if (!ctx.llm || (ctx.readMode && ctx.readMode !== 'server')) return result
 
-  // Busiest subs without curated rules whose auto rules are missing or stale.
-  const stale = await ctx.db.select({ name: schema.subreddits.name, stats: schema.subreddits.stats }).from(schema.subreddits)
-    .where(or(isNull(schema.subreddits.autoRulesAt), lt(schema.subreddits.autoRulesAt, new Date(now.getTime() - AUTO_RULES_TTL_MS))))
+  // Watched subs first, then the busiest, whose rules are missing or stale.
+  const [stale, watched] = await Promise.all([
+    ctx.db.select({ name: schema.subreddits.name, stats: schema.subreddits.stats }).from(schema.subreddits)
+      .where(or(isNull(schema.subreddits.autoRulesAt), lt(schema.subreddits.autoRulesAt, new Date(now.getTime() - AUTO_RULES_TTL_MS)))),
+    ctx.db.selectDistinct({ name: schema.projectSubreddits.subreddit }).from(schema.projectSubreddits).where(eq(schema.projectSubreddits.watching, true)),
+  ])
+  const watchedNames = new Set(watched.map(w => w.name))
   const due = stale
-    .filter(r => r.stats && !getRules(r.name))
-    .sort((a, b) => (b.stats!.posts30d) - (a.stats!.posts30d))
+    .filter(r => watchedNames.has(r.name) || (r.stats && (ctx.pages || !getRules(r.name))))
+    .sort((a, b) => Number(watchedNames.has(b.name)) - Number(watchedNames.has(a.name)) || (b.stats?.posts30d ?? 0) - (a.stats?.posts30d ?? 0))
     .slice(0, AUTO_RULES_PER_RUN)
+    .map(r => r.name)
 
-  for (const { name } of due) {
+  const read = await readRules(ctx, due)
+  result.rulesRead = read.read
+  result.deferred = read.deferred
+  ctx.log('insights', result)
+  return result
+}
+
+/** Read and store rules for these subs, one at a time. Stops early when Reddit asks to wait. */
+async function readRules(ctx: JobContext, names: string[]) {
+  const out = { read: 0, failed: 0, deferred: false }
+  if (!ctx.llm) return out
+  for (const name of names) {
+    const now = ctx.now()
     try {
-      const found = await extractAutoRules(ctx.http, ctx.llm, name)
+      const found = await extractAutoRules(ctx.http, ctx.llm, name, ctx.pages)
       await saveAutoRules(ctx.db, name, found, now)
       // Shared-network spend isn't any one org's usage, so it is only logged.
       if (found.usage.inputTokens) ctx.log('subreddit rules usage', { subreddit: name, ...found.usage })
-      result.rulesRead++
+      out.read++
     }
     catch (error) {
-      if (error instanceof HttpDeferredError) { result.deferred = true; break }
+      if (error instanceof HttpDeferredError) { out.deferred = true; break }
+      out.failed++
       ctx.log('subreddit rules failed', { subreddit: name, error: String(error) })
+      // Retry tomorrow instead of on every run (rows with rules keep them).
+      const retryAt = new Date(now.getTime() - AUTO_RULES_TTL_MS + AUTO_RULES_RETRY_MS)
+      await ctx.db.insert(schema.subreddits).values({ name, autoRulesAt: retryAt })
+        .onConflictDoUpdate({ target: schema.subreddits.name, set: { autoRulesAt: retryAt } })
     }
   }
-  ctx.log('insights', result)
-  return result
+  return out
+}
+
+/**
+ * Read rules right away for subs a user just started watching (missing or
+ * stale only), or re-check one on request (`force`, rate-limited).
+ */
+export async function refreshSubredditRules(ctx: JobContext, names: string[], opts: { force?: boolean, max?: number } = {}) {
+  if (!names.length || !ctx.llm || (ctx.readMode && ctx.readMode !== 'server')) return { read: 0, failed: 0, deferred: false }
+  const now = ctx.now().getTime()
+  const rows = await ctx.db.select({ name: schema.subreddits.name, at: schema.subreddits.autoRulesAt, auto: schema.subreddits.autoRules })
+    .from(schema.subreddits).where(inArray(schema.subreddits.name, names))
+  const byName = new Map(rows.map(r => [r.name, r]))
+  const due = names.filter((name) => {
+    const at = byName.get(name)?.at?.getTime()
+    if (at === undefined) return true
+    if (opts.force) return now - at > AUTO_RULES_FORCE_MIN_MS
+    // Rules read before official ones were available get upgraded once a fetcher is configured.
+    const upgrade = !!ctx.pages && !byName.get(name)?.auto?.official && now - at > AUTO_RULES_RETRY_MS
+    return now - at > AUTO_RULES_TTL_MS || upgrade
+  })
+  return readRules(ctx, due.slice(0, opts.max ?? 5))
 }
 
 export type PromoGrade = 'friendly' | 'careful' | 'strict' | 'unknown'
@@ -193,9 +242,12 @@ export interface PublicSubreddit {
   stats: SubredditStats
   statsAt: Date | null
   rules: SubredditRules | null
-  rulesSource: 'curated' | 'auto' | null
+  rulesSource: RulesSource | null
   /** Pinned-post titles the auto rules were read from. */
   rulesEvidence: string[]
+  /** The sub's official rules, verbatim, when they were read. */
+  officialRules: OfficialRule[]
+  rulesCheckedAt: Date | null
   verdict: SubredditVerdict
   peakHours: { hour: number, share: number }[]
   /** Enough real data to be worth a search result (rules known or enough removal samples). */
@@ -220,6 +272,8 @@ export async function publicSubreddits(db: Db, opts: { name?: string } = {}): Pr
       rules,
       rulesSource: rr?.source ?? null,
       rulesEvidence: rr?.source === 'auto' ? r.autoRules?.evidence ?? [] : [],
+      officialRules: r.autoRules?.official ?? [],
+      rulesCheckedAt: rr?.checkedAt ?? null,
       verdict,
       peakHours: peakHours(r.stats!),
       indexable: !!rules || verdict.removalRate !== null,

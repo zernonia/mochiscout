@@ -106,14 +106,25 @@ useJsonLd([
           <div v-if="s.rules.links_allowed" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Links to your site</div><div class="text-sm">{{ linksLabel[s.rules.links_allowed] }}</div></div>
           <div v-if="s.rules.min_karma" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Minimum karma</div><div class="text-sm">{{ s.rules.min_karma }}</div></div>
           <div v-if="s.rules.min_account_age_days" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Minimum account age</div><div class="text-sm">{{ s.rules.min_account_age_days }} days</div></div>
+          <div v-if="s.rules.cooldown_days" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">How often</div><div class="text-sm">At most one promotional mention every {{ s.rules.cooldown_days }} days</div></div>
           <div v-if="s.rules.notes" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Also</div><div class="text-sm">{{ s.rules.notes }}</div></div>
         </div>
         <p v-else class="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">We haven't found r/{{ s.name }}'s promotion rules yet. Check the sidebar on Reddit before posting.</p>
         <p class="text-xs text-muted-foreground">
-          <template v-if="s.rulesSource === 'auto'">Read automatically from the subreddit's pinned posts<template v-if="s.rulesEvidence.length"> ({{ s.rulesEvidence.slice(0, 2).map(t => `“${t}”`).join(', ') }})</template>. Moderators change rules; always check the sidebar.</template>
+          <template v-if="s.rulesSource === 'official'">Summarised from r/{{ s.name }}'s official rules<template v-if="s.rulesCheckedAt">, read on {{ new Date(s.rulesCheckedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}</template>.</template>
+          <template v-else-if="s.rulesSource === 'auto'">Read automatically from the subreddit's pinned posts<template v-if="s.rulesEvidence.length"> ({{ s.rulesEvidence.slice(0, 2).map(t => `“${t}”`).join(', ') }})</template>. Moderators change rules; always check the sidebar.</template>
           <template v-else-if="s.rulesSource === 'curated'">Checked by a person on {{ s.rules?.last_verified }}.</template>
           <a :href="`https://www.reddit.com/r/${s.name}/about/rules`" target="_blank" rel="noopener nofollow" class="ms-1 underline">Official rules</a>
         </p>
+        <div v-if="s.officialRules.length" class="flex flex-col gap-3 pt-2">
+          <h3 class="font-semibold">All {{ s.officialRules.length }} rules of r/{{ s.name }}</h3>
+          <ol class="flex list-decimal flex-col gap-3 pl-5 text-sm">
+            <li v-for="r in s.officialRules" :key="r.title">
+              <span class="font-medium">{{ r.title }}</span><span v-if="r.kind !== 'all'" class="text-muted-foreground"> (applies to {{ r.kind === 'link' ? 'posts' : 'comments' }})</span>
+              <p v-if="r.text" class="mt-1 whitespace-pre-line text-muted-foreground">{{ r.text }}</p>
+            </li>
+          </ol>
+        </div>
       </section>
 
       <!-- When people post -->

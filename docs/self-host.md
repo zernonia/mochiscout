@@ -56,7 +56,7 @@ pnpm exec wrangler secret put APP_URL
 | Secret | Used for | Without it |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | Onboarding from URL, intent scoring, research, drafts, tone checks | Manual onboarding and empty drafts only; matching threads wait in the queue unscored |
-| `TINYFISH_API_KEY` | Thread and subreddit discovery, research searches (free key) | Only watched subreddits are read |
+| `TINYFISH_API_KEY` | Thread and subreddit discovery, research searches, and reading each subreddit's official rules (free key) | Only watched subreddits are read; rules come from pinned posts and the curated files |
 | `BRAVE_API_KEY` | Search fallback when TinyFish fails or rate-limits | No fallback |
 | `EMAIL_FROM` + email provider | Daily digest, team invites | Emails are skipped |
 

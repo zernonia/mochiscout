@@ -2,7 +2,7 @@ import type { Db } from '@mochiscout/db'
 import type { SubredditStats } from '@mochiscout/db'
 import type { SubredditRules } from '@mochiscout/rules'
 import type { SubredditVerdict } from './insights'
-import type { RulesSource } from './rules'
+import type { ResolvedSubredditRules, RulesSource } from './rules'
 import { and, count, eq, inArray, schema, sql } from '@mochiscout/db'
 import { getRules, rulesForTags } from '@mochiscout/rules'
 import { subredditVerdict } from './insights'
@@ -35,9 +35,12 @@ export interface SubredditCandidate {
   watching: boolean
   fit: number
   evidence: SubredditEvidence
-  rules: SubredditRules | null
-  /** Curated file, or read from the sub's pinned posts. */
+  /** Includes the sub's official rules verbatim (`official`) when they were read. */
+  rules: ResolvedSubredditRules | null
+  /** The sub's official rules, a curated file, or read from its pinned posts. */
   rulesSource: RulesSource | null
+  /** When the rules were last read from Reddit. */
+  rulesCheckedAt: Date | null
   /** Pooled outcomes across all users, once the sub has enough activity. */
   stats: SubredditStats | null
   verdict: SubredditVerdict
@@ -101,6 +104,7 @@ export async function subredditMap(
         evidence: { scored: 0, hits: 0, avgIntent: 0, pending: 0 },
         rules: getRules(name) ?? null,
         rulesSource: null,
+        rulesCheckedAt: null,
         stats: null,
         verdict: { grade: 'unknown', removalRate: null, linkedReplyRemovalRate: null, reasons: [] },
         sources: [],
@@ -143,6 +147,7 @@ export async function subredditMap(
     const r = resolved.get(c.name)
     c.rules = r?.rules ?? null
     c.rulesSource = r?.source ?? null
+    c.rulesCheckedAt = r?.checkedAt ?? null
     c.stats = statsByName.get(c.name) ?? null
     c.verdict = subredditVerdict(c.rules, c.stats)
     c.fit = fitScore(c.evidence, c.rules)

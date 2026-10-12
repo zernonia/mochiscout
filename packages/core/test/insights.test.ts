@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { refLink, sameSite } from '../src/leads/attribution'
 import { dueJobs } from '../src/schedule'
 import { peakHours, subredditVerdict } from '../src/subreddits/insights'
+import { rulesBrief } from '../src/drafter/generate'
 import { autoToRules } from '../src/subreddits/rules'
 
 const stats = (over: Partial<SubredditStats> = {}): SubredditStats => ({
@@ -15,6 +16,26 @@ describe('autoToRules', () => {
     const auto = { promo_policy: 'weekly_thread_only' as const, self_promo_thread: 'Share Your Startup', links_allowed: 'none' as const, min_karma: 50, min_account_age_days: null, notes: '', evidence: ['Rules'] }
     expect(autoToRules('saas', auto, new Date('2026-10-01'))).toMatchObject({ name: 'saas', promo_policy: 'weekly_thread_only', self_promo_thread: 'Share Your Startup', last_verified: '2026-10-01', tags: ['auto'] })
     expect(autoToRules('saas', { ...auto, promo_policy: 'unknown' }, null)).toBeNull()
+  })
+
+  it('keeps official rules, and reads silence about promotion in them as "if valuable"', () => {
+    const official = [{ title: 'Be civil', text: 'No personal attacks.', kind: 'all' as const }]
+    const auto = { promo_policy: 'unknown' as const, self_promo_thread: null, links_allowed: null, min_karma: null, min_account_age_days: null, cooldown_days: null, notes: '', evidence: [], official }
+    expect(autoToRules('civil', auto, null)).toMatchObject({ promo_policy: 'allowed_with_value', tags: ['official'], official, notes: 'The rules don\'t mention self-promotion.' })
+    expect(autoToRules('civil', { ...auto, promo_policy: 'allowed_with_value', cooldown_days: 60, notes: 'Disclose affiliation.' }, null))
+      .toMatchObject({ cooldown_days: 60, notes: 'Disclose affiliation.' })
+  })
+})
+
+describe('rulesBrief', () => {
+  it('adds the official rules, abridged, to the prompt', () => {
+    const long = 'x'.repeat(500)
+    const rules = autoToRules('saas', { promo_policy: 'allowed_with_value', self_promo_thread: null, links_allowed: null, min_karma: null, min_account_age_days: null, cooldown_days: 60, notes: '', evidence: [], official: [{ title: 'No vendor spam', text: `Max 1 mention every 60 days. ${long}`, kind: 'all' }, { title: 'Text only', text: '', kind: 'link' }] }, null)
+    const brief = rulesBrief('saas', rules)
+    expect(brief).toContain('at most one promotional mention every 60 days')
+    expect(brief).toContain('1. No vendor spam: Max 1 mention every 60 days.')
+    expect(brief).toContain('2. Text only [posts]')
+    expect(brief).not.toContain(long)
   })
 })
 
