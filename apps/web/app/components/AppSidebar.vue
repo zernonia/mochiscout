@@ -22,6 +22,8 @@ const route = useRoute()
 const { user, clear } = useUserSession()
 const edition = useRuntimeConfig().public.edition
 
+interface NavCounts { newThreads: number | undefined, pendingScoring: number, drafts: number, watching: number, trackerAlerts: number }
+
 const projectId = computed(() => (route.params.project ? String(route.params.project) : null))
 // Lazy: the page renders straight away and these fill in (skeletons meanwhile).
 const { data: projects } = useCachedFetch('/api/projects', { key: 'sidebar-projects' })
@@ -31,7 +33,7 @@ const { data: orgs } = useCachedFetch('/api/orgs', { key: 'sidebar-orgs' })
 // background revalidation refreshes every key, so the request itself must skip).
 const { data: counts } = useLazyAsyncData(
   'project-nav',
-  () => (projectId.value ? $fetch(`/api/projects/${projectId.value}/nav`) : Promise.resolve(null)),
+  () => (projectId.value ? $fetch<NavCounts>(`/api/projects/${projectId.value}/nav` as string) : Promise.resolve(null)),
   { watch: [projectId], getCachedData: swrCachedData },
 )
 // Counts are refreshed after each navigation by plugins/revalidate.client.ts.
