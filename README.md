@@ -137,7 +137,7 @@ docs/           Architecture and self-hosting guides
 
 ## Contributing
 
-Contributions are welcome, and the easiest place to start is the [subreddit rules library](packages/rules). Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup and conventions, and please follow the [code of conduct](CODE_OF_CONDUCT.md).
+Contributions are welcome, and the easiest place to start is the [subreddit rules library](packages/rules). Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup and conventions, and please follow the [code of conduct](CODE_OF_CONDUCT.md). Working with an AI coding agent? Point it at [AGENTS.md](AGENTS.md) (Claude Code reads it through [CLAUDE.md](CLAUDE.md)).
 
 Found a security issue? Please report it privately, see [SECURITY.md](SECURITY.md).
 

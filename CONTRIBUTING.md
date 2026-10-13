@@ -39,6 +39,10 @@ CI runs the same commands on every pull request.
 - **Principles**: Mochiscout never posts, comments, votes or messages for anyone, and never uses the Reddit API. Changes that automate posting won't be accepted.
 - **Commits**: one logical change per commit, with a message that says what changed and why.
 
+## Using an AI coding agent
+
+AI-assisted contributions are welcome. [AGENTS.md](AGENTS.md) gives agents (Claude Code, Codex, Cursor and others) the layout, commands, conventions and known pitfalls; Claude Code loads it automatically through `CLAUDE.md`. You're still responsible for the change: read the diff, run the tests, and say in the pull request what you checked.
+
 ## Code of conduct
 
 This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). Be kind.

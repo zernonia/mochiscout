@@ -1,8 +1,15 @@
 # Mochiscout
 
-Nuxt 4 app on Cloudflare Workers (D1, KV, one 15-minute cron) in `apps/web`, with shared packages in `packages/*` (core, db, sources, llm, rules). Commit straight to `main` until launch; pushes deploy through Workers Builds.
+@AGENTS.md
 
-## Production errors
+## Maintainers: the hosted service (mochiscout.com)
+
+This section is for the maintainers who run mochiscout.com. Contributors can skip it: open pull requests as usual, and nothing here applies to forks or self-hosted instances.
+
+- **Deploys**: `main` deploys to production through Cloudflare Workers Builds on every push. Maintainers commit to `main` directly until launch.
+- **Database**: production D1 `mochiscout` (`ea663c06-44e3-4650-97a3-051b68085757`). After `pnpm db:generate`, apply new migrations to production **before** pushing code that uses them.
+
+### Production errors
 
 Server errors go to **PostHog error tracking**, project **Mochiscout (id 655070)**, as `$exception` events:
 
@@ -19,8 +26,4 @@ FROM events WHERE event = '$exception' AND properties.environment = 'production'
 ORDER BY timestamp DESC LIMIT 20
 ```
 
-Cloudflare Workers Logs (`observability` in `wrangler.jsonc`) has full console output in the dashboard, but the Cloudflare MCP here can't read it.
-
-## Database
-
-D1 `mochiscout` (ea663c06-44e3-4650-97a3-051b68085757). After `pnpm db:generate`, apply new migrations to production **before** pushing code that uses them.
+Cloudflare Workers Logs (`observability` in `wrangler.jsonc`) has full console output in the dashboard, but the Cloudflare MCP can't read it.
