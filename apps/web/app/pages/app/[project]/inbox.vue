@@ -8,7 +8,14 @@ type Status = 'new' | 'saved' | 'replied' | 'dismissed'
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
-const status = ref<Status>('new')
+const STATUSES: Status[] = ['new', 'saved', 'replied', 'dismissed']
+// The tab is in the URL (?status=replied) so other pages can link to it.
+const status = ref<Status>(STATUSES.includes(route.query.status as Status) ? route.query.status as Status : 'new')
+watch(status, (s) => { navigateTo({ query: { ...route.query, status: s === 'new' ? undefined : s } }, { replace: true }) })
+watch(() => route.query.status, (q) => {
+  const next = STATUSES.includes(q as Status) ? q as Status : 'new'
+  if (next !== status.value) status.value = next
+})
 const sort = ref<'opportunity' | 'intent' | 'newest'>('opportunity')
 const sorts = [
   { value: 'opportunity', label: 'Best opportunity' },

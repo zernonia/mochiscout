@@ -6,10 +6,11 @@ export const toast = {
   error: (title: string, description?: string) => toastManager.add({ type: 'error', title, description }),
   info: (title: string, description?: string) => toastManager.add({ type: 'info', title, description }),
   /** A success toast with an Undo button that closes it. */
-  undoable: (title: string, onUndo: () => void) => {
+  undoable: (title: string, onUndo: () => void, description?: string) => {
     const id = toastManager.add({
       type: 'success',
       title,
+      description,
       timeout: 6000,
       actionProps: { children: 'Undo', onClick: () => { toastManager.close(id); onUndo() } },
     })

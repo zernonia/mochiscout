@@ -32,7 +32,7 @@ const steps = computed(() => data.value
       { done: data.value.leads, title: 'Find people asking for your product', body: 'Your inbox fills as we find threads with buying intent.', to: inbox.value, cta: 'Open inbox' },
       { done: data.value.drafted, title: 'Draft a reply', body: 'Open a thread and press Draft reply. Edit it until it sounds like you.', to: inbox.value, cta: 'Pick a thread' },
       { done: data.value.replied, title: 'Post it and mark it Replied', body: 'Copy the reply into the thread yourself, then mark it Replied. That teaches the scoring what a good lead is.', to: inbox.value, cta: 'Go to inbox' },
-      { done: data.value.linked, title: 'Add the link to your reply', body: 'Paste your comment\'s URL so we can check it stays up and count the visits it brings.', to: `/app/${props.projectId}/results`, cta: 'See results' },
+      { done: data.value.linked, title: 'Add the link to your reply', body: 'In Inbox → Replied, paste your comment\'s URL under the thread so we can check it stays up and count the visits it brings.', to: `${inbox.value}?status=replied`, cta: 'Open replied threads' },
     ]
   : [])
 const doneCount = computed(() => steps.value.filter(s => s.done).length)
@@ -74,7 +74,7 @@ watch(doneCount, (n) => {
           {{ s.title }}
         </div>
         <p v-if="s === next" class="text-xs text-muted-foreground">{{ s.body }}</p>
-        <NuxtLink v-if="s === next && $route.path !== s.to" :to="s.to" class="text-xs font-medium underline">{{ s.cta }} →</NuxtLink>
+        <NuxtLink v-if="s === next && $route.fullPath !== s.to" :to="s.to" class="text-xs font-medium underline">{{ s.cta }} →</NuxtLink>
       </li>
     </ol>
   </div>

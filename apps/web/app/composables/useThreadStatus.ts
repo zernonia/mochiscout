@@ -60,7 +60,7 @@ export function useThreadStatus(projectId: MaybeRefOrGetter<string>) {
       save(thread.id, from, from === 'dismissed' ? previousReason : undefined)
         .then(() => refreshNuxtData('project-nav'))
         .catch(() => toast.error('Could not undo. Refresh and try again.'))
-    })
+    }, to === 'replied' ? 'Paste your comment\'s link under it in Inbox → Replied so we can check it stays up and count the visits it brings.' : undefined)
 
     save(thread.id, to, reason)
       .then(() => refreshNuxtData('project-nav'))
