@@ -1,21 +1,15 @@
 <script setup lang="ts">
-// Neutral source marks (letters, not brand logos).
+// A platform's official mark on a white disc (overlaps nicely when stacked).
 const props = defineProps<{ source: 'reddit' | 'hn' | 'bluesky' | 'x', size?: 'sm' | 'md' }>()
-const marks = {
-  reddit: { label: 'Reddit', letter: 'r/', class: 'bg-orange-500 text-white' },
-  hn: { label: 'Hacker News', letter: 'Y', class: 'bg-orange-400 text-white' },
-  bluesky: { label: 'Bluesky', letter: 'b', class: 'bg-sky-500 text-white' },
-  x: { label: 'X', letter: '𝕏', class: 'bg-neutral-900 text-white' },
-}
-const mark = computed(() => marks[props.source])
+const label = computed(() => ({ reddit: 'Reddit', hn: 'Hacker News', bluesky: 'Bluesky', x: 'X' })[props.source])
 </script>
 
 <template>
   <span
-    :title="mark.label"
-    class="inline-flex shrink-0 items-center justify-center rounded-full font-semibold leading-none ring-2 ring-background"
-    :class="[mark.class, size === 'sm' ? 'size-5 text-[10px]' : 'size-8 text-xs']"
+    :title="label"
+    class="inline-flex shrink-0 items-center justify-center rounded-full bg-white shadow-xs/5 ring-1 ring-black/8"
+    :class="size === 'sm' ? 'size-5' : 'size-8'"
   >
-    {{ mark.letter }}<span class="sr-only"> {{ mark.label }}</span>
+    <BrandIcon :platform="source" :class="[size === 'sm' ? 'size-3' : 'size-4.5', source === 'hn' && 'rounded-[3px]']" />
   </span>
 </template>

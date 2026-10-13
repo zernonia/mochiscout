@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GlobeIcon } from '@lucide/vue'
 /**
  * A soft, colored avatar for where a thread lives: the subreddit's initial
  * on a pastel picked from its name, or the platform's mark.
@@ -17,12 +18,17 @@ const PASTELS = [
   'bg-indigo-100 text-indigo-700',
   'bg-violet-100 text-violet-700',
 ]
-const PLATFORM: Record<string, { label: string, class: string }> = {
-  hn: { label: 'Y', class: 'bg-orange-500 text-white' },
-  bluesky: { label: '🦋', class: 'bg-sky-100 text-sky-700' },
-  x: { label: '𝕏', class: 'bg-neutral-900 text-white' },
-  web: { label: '◎', class: 'bg-muted text-muted-foreground' },
+// Platform marks sit on a soft tint of their brand color.
+const PLATFORM_TINT: Record<string, string> = {
+  hn: 'bg-[#FF6600]/10',
+  bluesky: 'bg-[#1185FE]/10',
+  x: 'bg-neutral-100',
+  reddit: 'bg-[#FF4500]/10',
 }
+const brand = computed(() => {
+  const p = props.platform
+  return !props.channel && (p === 'hn' || p === 'bluesky' || p === 'x' || p === 'reddit') ? p : null
+})
 
 const look = computed(() => {
   if (props.channel) {
@@ -30,11 +36,16 @@ const look = computed(() => {
     for (const ch of props.channel.toLowerCase()) h = (h * 31 + ch.charCodeAt(0)) >>> 0
     return { label: props.channel.replace(/^r\//i, '').charAt(0).toUpperCase(), class: PASTELS[h % PASTELS.length]! }
   }
-  return PLATFORM[props.platform ?? 'web'] ?? PLATFORM.web!
+  return { label: '', class: brand.value ? PLATFORM_TINT[brand.value]! : 'bg-muted text-muted-foreground' }
 })
+const iconSize = { sm: 'size-3.5', md: 'size-[18px]', lg: 'size-5.5' }
 const sizeClass = { sm: 'size-6 text-[11px] rounded-lg', md: 'size-9 text-sm rounded-xl', lg: 'size-11 text-base rounded-2xl' }
 </script>
 
 <template>
-  <span class="flex shrink-0 items-center justify-center font-semibold select-none" :class="[look.class, sizeClass[size]]" aria-hidden="true">{{ look.label }}</span>
+  <span class="flex shrink-0 items-center justify-center font-semibold select-none" :class="[look.class, sizeClass[size]]" aria-hidden="true">
+    <BrandIcon v-if="brand" :platform="brand" :class="[iconSize[size], brand === 'hn' && 'rounded-[2px]']" />
+    <GlobeIcon v-else-if="!channel" :class="iconSize[size]" />
+    <template v-else>{{ look.label }}</template>
+  </span>
 </template>
