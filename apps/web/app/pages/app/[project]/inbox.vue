@@ -27,7 +27,17 @@ const platforms = [
 const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}`)
 const { data: inbox, refresh, status: loadState } = useCachedFetch(() => `/api/projects/${projectId.value}/inbox`, {
   query: { status, platform, sort },
+  // Reply, save and dismiss edit the list in place.
+  deep: true,
 })
+// Dim the list only while a different tab, source or sort loads, not during background refreshes.
+const switching = ref(false)
+watch([status, platform, sort], () => {
+  switching.value = true
+  // A cached answer may never go pending.
+  nextTick(() => { if (loadState.value !== 'pending') switching.value = false })
+})
+watch(loadState, (s) => { if (s !== 'pending') switching.value = false })
 useHead({ title: () => `Inbox · ${project.value?.name ?? 'Project'}` })
 
 // Activation: the first time leads are on screen for this project in this browser.
@@ -113,17 +123,10 @@ const tabs = [
   { value: 'dismissed' as const, label: 'Dismissed', icon: XIcon },
 ]
 
-async function setStatus(threadId: string, next: Status, dismissReason?: string) {
-  try {
-    await $fetch(`/api/projects/${projectId.value}/threads/${encodeURIComponent(threadId)}`, {
-      method: 'PATCH',
-      body: { status: next, dismissReason },
-    })
-    await Promise.all([refresh(), refreshNuxtData('project-nav')])
-  }
-  catch {
-    toast.error('Could not update the thread')
-  }
+const changeStatus = useThreadStatus(projectId)
+function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], next: Status, dismissReason?: string) {
+  if (!inbox.value) return
+  changeStatus({ list: inbox.value.threads, thread, from: status.value, to: next, reason: dismissReason, counts: inbox.value.counts })
 }
 </script>
 
@@ -248,8 +251,17 @@ async function setStatus(threadId: string, next: Status, dismissReason?: string)
     </Empty>
 
     <!-- Switching tabs keeps the current list on screen, dimmed, until the new one arrives. -->
-    <div class="flex flex-col gap-3 transition-opacity" :class="loadState === 'pending' && 'pointer-events-none opacity-50'">
-      <ThreadCard v-for="t in inbox?.threads" :key="t.id" :project-id="projectId" :thread="t" :status="status" @status="(next, reason) => setStatus(t.id, next, reason)" />
-    </div>
+    <TransitionGroup
+      tag="div"
+      class="relative flex flex-col gap-3 transition-opacity"
+      :class="switching && loadState === 'pending' && 'pointer-events-none opacity-50'"
+      move-class="transition-transform duration-300 ease-out"
+      leave-active-class="absolute inset-x-0 transition duration-200 ease-in"
+      leave-to-class="translate-x-8 opacity-0"
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="-translate-y-2 opacity-0"
+    >
+      <ThreadCard v-for="t in inbox?.threads" :key="t.id" :project-id="projectId" :thread="t" :status="status" @status="(next, reason) => setStatus(t, next, reason)" />
+    </TransitionGroup>
   </div>
 </template>

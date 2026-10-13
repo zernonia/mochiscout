@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import { ClockIcon, InboxIcon, MegaphoneIcon, SparklesIcon, TimerIcon } from '@lucide/vue'
-import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
 const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}`)
-const { data: today, refresh } = useCachedFetch(() => `/api/projects/${projectId.value}/today`)
+const { data: today } = useCachedFetch(() => `/api/projects/${projectId.value}/today`, { deep: true })
 useHead({ title: () => `Today · ${project.value?.name ?? 'Project'}` })
 
-async function setStatus(threadId: string, status: string) {
-  try {
-    await $fetch(`/api/projects/${projectId.value}/threads/${encodeURIComponent(threadId)}`, { method: 'PATCH', body: { status } })
-    await Promise.all([refresh(), refreshNuxtData('project-nav')])
-  }
-  catch {
-    toast.error('Could not update the thread')
-  }
+// Threads here are all new: reply, save or dismiss takes them off the list.
+const changeStatus = useThreadStatus(projectId)
+function setStatus(thread: NonNullable<typeof today.value>['threads'][number], next: ThreadStatus, dismissReason?: string) {
+  if (today.value) changeStatus({ list: today.value.threads, thread, from: 'new', to: next, reason: dismissReason })
 }
 
 const draftLink = computed(() => {
@@ -103,7 +98,17 @@ function time(d: string | Date) {
           <Button as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
         </EmptyContent>
       </Empty>
-      <ThreadCard v-for="t in today?.threads" :key="t.id" :project-id="projectId" :thread="t" @status="next => setStatus(t.id, next)" />
+      <TransitionGroup
+        tag="div"
+        class="relative flex flex-col gap-3"
+        move-class="transition-transform duration-300 ease-out"
+        leave-active-class="absolute inset-x-0 transition duration-200 ease-in"
+        leave-to-class="translate-x-8 opacity-0"
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="-translate-y-2 opacity-0"
+      >
+        <ThreadCard v-for="t in today?.threads" :key="t.id" :project-id="projectId" :thread="t" @status="(next, reason) => setStatus(t, next, reason)" />
+      </TransitionGroup>
     </section>
 
     <section class="flex flex-col gap-3">
