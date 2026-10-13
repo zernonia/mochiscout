@@ -16,8 +16,8 @@ interface McpContext {
   orgId: string
 }
 
-const projectArg = z.string().optional().describe('Project id or name. Defaults to the first project.')
-const threadIdArg = z.string().describe('Thread id from get_today or list_threads, e.g. reddit:t3_abc123')
+const projectArg = z.string().max(200).optional().describe('Project id or name. Defaults to the first project.')
+const threadIdArg = z.string().max(200).describe('Thread id from get_today or list_threads, e.g. reddit:t3_abc123')
 const STATUSES = ['new', 'saved', 'replied', 'dismissed'] as const
 const DISMISS_REASONS = ['off_topic', 'not_buyer', 'self_promo', 'already_answered', 'closed', 'other'] as const
 
@@ -172,7 +172,7 @@ export function createMcpServer(ctx: McpContext) {
   server.registerTool('watch_subreddit', {
     title: 'Watch a subreddit',
     description: 'Start (or stop) watching a subreddit for a project: new threads there are checked every 15 minutes to 6 hours and scored. Its rules are read automatically. Counts toward the plan\'s subreddit limit.',
-    inputSchema: { project: projectArg, subreddit: z.string(), watching: z.boolean().optional().describe('Default true; false stops watching') },
+    inputSchema: { project: projectArg, subreddit: z.string().max(100), watching: z.boolean().optional().describe('Default true; false stops watching') },
     annotations: { idempotentHint: true },
   }, run(async (a: { project?: string, subreddit: string, watching?: boolean }) => {
     const name = normalizeSubredditName(a.subreddit)
@@ -203,9 +203,9 @@ export function createMcpServer(ctx: McpContext) {
     title: 'Check a post against subreddit rules',
     description: 'Deterministic checks for a post the user wrote: promotion policy, links, format, karma and account age, cooldowns and the daily promo cap.',
     inputSchema: {
-      subreddit: z.string(),
-      title: z.string(),
-      body: z.string(),
+      subreddit: z.string().max(100),
+      title: z.string().max(300),
+      body: z.string().max(40_000),
       mentions_product: z.boolean().describe('Whether the post mentions the user\'s product (a promo post)'),
     },
     annotations: { readOnlyHint: true },
@@ -222,10 +222,10 @@ export function createMcpServer(ctx: McpContext) {
     description: 'Write a rule-checked Reddit post draft for the user to review, edit and post themselves. Saved to Drafts in the app. Never use this for replies to threads.',
     inputSchema: {
       project: projectArg,
-      subreddit: z.string(),
+      subreddit: z.string().max(100),
       angle: z.enum(ANGLES).describe('story, lesson, question, or showcase ("I built this", always promo)'),
       mentions_product: z.boolean(),
-      topic: z.string().optional().describe('e.g. a pain point title'),
+      topic: z.string().max(300).optional().describe('e.g. a pain point title'),
     },
   }, run(async (a: { project?: string, subreddit: string, angle: typeof ANGLES[number], mentions_product: boolean, topic?: string }) => {
     const p = await project(a.project)

@@ -23,6 +23,8 @@ const AUTO_WATCH_MIN_FIT = 40
 export default defineEventHandler(async (event) => {
   const { user, org, project } = await requireProject(event)
   const { step } = await readValidatedBody(event, Body.parse)
+  // Each step spends searches or LLM calls; onboarding needs a handful.
+  if (step !== 'watch') await rateLimit(event, `kickstart:${step}:${project.id}`, { max: step === 'discover' ? 4 : 30, windowSeconds: 3600 })
   const ctx = createJobContext(getEnv(event), { budgetMs: 25_000 })
   const db = getDb(event)
 

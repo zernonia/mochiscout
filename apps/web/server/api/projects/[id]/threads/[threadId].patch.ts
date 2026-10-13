@@ -19,11 +19,13 @@ export default defineEventHandler(async (event) => {
   const { status, replyDraft, dismissReason, replyUrl } = await readValidatedBody(event, Body.parse)
   const db = getDb(event)
   if (replyUrl !== undefined) {
-    if (replyUrl && !parseReplyUrl(replyUrl)) {
+    const ref = replyUrl ? parseReplyUrl(replyUrl) : null
+    if (replyUrl && !ref) {
       throw createError({ statusCode: 400, statusMessage: 'Paste the link to your reply itself (a Reddit comment, Hacker News comment, Bluesky post or X post).' })
     }
+    // Store the link rebuilt from its parts, never the raw input (it is rendered as an href).
     await db.update(schema.threadScores)
-      .set({ replyUrl: replyUrl || null, replyStatus: null, replyCheckedAt: null })
+      .set({ replyUrl: ref?.url ?? null, replyStatus: null, replyCheckedAt: null })
       .where(and(eq(schema.threadScores.projectId, project.id), eq(schema.threadScores.threadId, threadId)))
     if (replyUrl) track(event, user.id, 'reply_link_added', { project_id: project.id })
   }
@@ -32,7 +34,7 @@ export default defineEventHandler(async (event) => {
       .set({ replyDraft })
       .where(and(eq(schema.threadScores.projectId, project.id), eq(schema.threadScores.threadId, threadId)))
   }
-  if (status === undefined) return { ok: true, replyUrl: replyUrl ?? undefined }
+  if (status === undefined) return { ok: true, replyUrl: replyUrl === undefined ? undefined : (replyUrl ? parseReplyUrl(replyUrl)?.url ?? null : null) }
   const row = await setThreadStatus(db, project.id, threadId, status, dismissReason)
   if (!row) throw createError({ statusCode: 404, statusMessage: 'Thread not found' })
   track(event, user.id, 'thread_marked', { project_id: project.id, status, dismiss_reason: dismissReason ?? null })

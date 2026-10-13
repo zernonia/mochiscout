@@ -38,13 +38,14 @@ async function assertCanSignUp(event: RequestEvent, db: Db, email: string, email
 }
 
 /**
- * New users join the org that invited them (verified email only), the single
- * self-host org, or get their own; a new hosted org starts on the Pro trial.
- * Returns whether a trial started.
+ * Self-host: new users join the single instance org. Hosted: every new user
+ * gets their own org on the Pro trial, and joins a team only by accepting
+ * its invite (so nobody can pull a new user's work into their org by
+ * inviting the address first). Returns whether a trial started.
  */
 async function setUpMembership(event: RequestEvent, db: Db, user: { id: string, email: string, emailVerified: boolean }): Promise<boolean> {
   const { edition } = editionOf(event)
-  const invite = user.emailVerified
+  const invite = edition === 'selfhost' && user.emailVerified
     ? await db.select().from(schema.orgInvites).where(eq(schema.orgInvites.email, user.email)).get()
     : undefined
   const existingOrg = edition === 'selfhost' ? await db.select({ id: schema.orgs.id }).from(schema.orgs).get() : undefined
@@ -116,8 +117,12 @@ export async function signInWithPassword(event: RequestEvent, input: { email: st
     .innerJoin(schema.accounts, and(eq(schema.accounts.userId, schema.users.id), eq(schema.accounts.providerId, 'credential')))
     .where(eq(schema.users.email, email))
     .get()
-  // Same message for unknown email and wrong password.
-  if (!row?.password || !(await verifyPassword(row.password, input.password))) {
+  // Same message and roughly the same time for an unknown email and a wrong password.
+  if (!row?.password) {
+    await hashPassword(input.password)
+    throw new AuthError(401, 'Wrong email or password.')
+  }
+  if (!(await verifyPassword(row.password, input.password))) {
     throw new AuthError(401, 'Wrong email or password.')
   }
   return row.user
@@ -150,11 +155,20 @@ export async function signInWithOAuth(event: RequestEvent, profile: {
 
   let user = await db.select().from(schema.users).where(eq(schema.users.email, email)).get()
   if (user) {
+    // An unverified account is being claimed by the email's real owner: whoever
+    // registered it first loses the password, every signed-in session and every API key.
+    const claim = !user.emailVerified
     const statements = [
       db.update(schema.users).set({ emailVerified: true, image: user.image ?? profile.image ?? null, updatedAt: new Date() }).where(eq(schema.users.id, user.id)),
-      ...(user.emailVerified ? [] : [db.delete(schema.accounts).where(and(eq(schema.accounts.userId, user.id), eq(schema.accounts.providerId, 'credential')))]),
+      ...(claim
+        ? [
+            db.delete(schema.accounts).where(and(eq(schema.accounts.userId, user.id), eq(schema.accounts.providerId, 'credential'))),
+            db.delete(schema.apiKeys).where(eq(schema.apiKeys.userId, user.id)),
+          ]
+        : []),
     ]
     await db.batch(statements as [typeof statements[number], ...typeof statements])
+    if (claim) await revokeSessions(event, user.id)
     user = { ...user, emailVerified: true }
   }
   else {
@@ -169,14 +183,42 @@ export async function signInWithOAuth(event: RequestEvent, profile: {
   return user
 }
 
-/** Login attempts per IP + email, to slow down password guessing. */
+/**
+ * Login and sign-up attempts, to slow down password guessing: per IP + email,
+ * and per email from anywhere (a distributed guess at one account).
+ */
 export async function rateLimitAuth(event: RequestEvent, email: string) {
   const env = getEnv(event)
-  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event, { xForwardedFor: true }) ?? 'unknown'
-  const key = `auth:attempts:${ip}:${normalizeEmail(email)}`
+  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event) ?? 'unknown'
+  const address = normalizeEmail(email)
+  const limits = [
+    { key: `auth:attempts:${ip}:${address}`, max: 10 },
+    { key: `auth:attempts:any:${address}`, max: 50 },
+  ]
+  const counts = await Promise.all(limits.map(l => env.CACHE.get(l.key).then(v => Number(v ?? 0))))
+  if (limits.some((l, i) => counts[i]! >= l.max)) throw new AuthError(429, 'Too many attempts. Try again in 15 minutes.')
+  await Promise.all(limits.map((l, i) => env.CACHE.put(l.key, String(counts[i]! + 1), { expirationTtl: 900 })))
+}
+
+/** New accounts per IP per day (each hosted account starts a Pro trial). */
+export async function rateLimitSignup(event: RequestEvent) {
+  const env = getEnv(event)
+  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event) ?? 'unknown'
+  const key = `auth:signups:${ip}:${new Date().toISOString().slice(0, 10)}`
   const n = Number(await env.CACHE.get(key) ?? 0)
-  if (n >= 10) throw new AuthError(429, 'Too many attempts. Try again in 15 minutes.')
-  await env.CACHE.put(key, String(n + 1), { expirationTtl: 900 })
+  if (n >= 10) throw new AuthError(429, 'Too many new accounts from this network today. Try again tomorrow.')
+  await env.CACHE.put(key, String(n + 1), { expirationTtl: 90_000 })
+}
+
+/** Signs out every session of a user started before now (checked in requireUser). */
+export async function revokeSessions(event: RequestEvent, userId: string) {
+  await getEnv(event).CACHE.put(`auth:revoked:${userId}`, String(Date.now()), { expirationTtl: 31 * 86_400 })
+}
+
+/** Whether a session started at `loggedInAt` (ms) was revoked since. */
+export async function sessionRevoked(event: RequestEvent, userId: string, loggedInAt: number | undefined) {
+  const revokedAt = Number(await getEnv(event).CACHE.get(`auth:revoked:${userId}`) ?? 0)
+  return revokedAt > 0 && (loggedInAt ?? 0) <= revokedAt
 }
 
 declare module '#auth-utils' {

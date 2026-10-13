@@ -7,8 +7,9 @@ const Body = z.object({ url: z.string().trim().min(1).max(2048) })
 
 /** Onboarding step 1: read the product's landing page and draft an editable profile. */
 export default defineEventHandler(async (event) => {
-  const { org } = await requireUser(event)
+  const { user, org } = await requireUser(event)
   const { url } = await readValidatedBody(event, Body.parse)
+  await rateLimit(event, `extract:${user.id}`, { max: 20, windowSeconds: 3600, message: 'You analysed a lot of pages in the last hour. Try again later, or fill in the profile by hand.' })
   const env = getEnv(event)
 
   const llm = getLlm(env)

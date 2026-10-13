@@ -16,7 +16,9 @@ const Body = z.object({
 
 /**
  * Posts read by the browser extension from the user's own reddit.com session
- * (arch §5 fallback). New posts go through the same prefilter as RSS.
+ * (arch §5 fallback). New posts go through the same prefilter as RSS, for
+ * this org's projects only: an upload can't put threads in anyone else's
+ * inbox, and Reddit's own copy replaces it when the feed brings the post.
  */
 export default defineEventHandler(async (event) => {
   const { org } = await authenticateApiKey(event)
@@ -29,9 +31,12 @@ export default defineEventHandler(async (event) => {
   if (used >= 2000) throw createError({ statusCode: 429, statusMessage: 'Hourly ingest limit reached' })
   await env.CACHE.put(key, String(used + posts.length), { expirationTtl: 7200 })
 
+  const now = Date.now()
   const normalized = posts.map(normalizeExtensionPost).filter(p => p !== null)
+    // A post can't be from the future (that would make it look fresh and hot).
+    .map(p => (p.createdAt && p.createdAt.getTime() > now ? { ...p, createdAt: new Date(now) } : p))
   const ctx = createJobContext(env)
   const fresh = await upsertPosts(ctx, normalized, 'extension')
-  const queued = await queueRssThreads(ctx, fresh)
+  const queued = await queueRssThreads(ctx, fresh, { orgId: org.id })
   return { received: posts.length, accepted: normalized.length, new: fresh.length, queued }
 })

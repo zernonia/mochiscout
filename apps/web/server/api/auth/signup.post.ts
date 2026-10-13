@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, Body.parse)
   try {
     await rateLimitAuth(event, body.email)
+    await rateLimitSignup(event)
     const user = await signUpWithPassword(event, body)
     await startSession(event, user)
     return { ok: true }

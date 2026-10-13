@@ -19,8 +19,12 @@ async function enqueue(ctx: JobContext, rows: { projectId: string, threadId: str
   return rows.length
 }
 
-/** Prefilter new RSS threads against every project watching their subreddit. */
-export async function queueRssThreads(ctx: JobContext, threadIds: string[]) {
+/**
+ * Prefilter new RSS threads against every project watching their subreddit.
+ * With `orgId` (posts uploaded by one org's browser extension, which nobody
+ * else can vouch for), only that org's projects.
+ */
+export async function queueRssThreads(ctx: JobContext, threadIds: string[], opts: { orgId?: string } = {}) {
   if (threadIds.length === 0) return 0
   const threads = (await Promise.all(chunks(threadIds).map(ids =>
     ctx.db
@@ -42,7 +46,11 @@ export async function queueRssThreads(ctx: JobContext, threadIds: string[]) {
       })
       .from(schema.projectSubreddits)
       .innerJoin(schema.projects, eq(schema.projects.id, schema.projectSubreddits.projectId))
-      .where(and(eq(schema.projectSubreddits.watching, true), inArray(schema.projectSubreddits.subreddit, names))),
+      .where(and(
+        eq(schema.projectSubreddits.watching, true),
+        inArray(schema.projectSubreddits.subreddit, names),
+        opts.orgId ? eq(schema.projects.orgId, opts.orgId) : undefined,
+      )),
   ))).flat()
 
   const matchers = new Map(watchers.map(w => [w.id, createMatcher(w)]))

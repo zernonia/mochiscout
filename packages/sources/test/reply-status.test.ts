@@ -41,3 +41,14 @@ describe('parseFeedSubtitle', () => {
     expect(parseFeedSubtitle('<feed xmlns="http://www.w3.org/2005/Atom"></feed>')).toBeNull()
   })
 })
+
+describe('parseReplyUrl hardening', () => {
+  it('rejects non-http schemes and stores a rebuilt link', () => {
+    expect(parseReplyUrl('javascript://news.ycombinator.com/%0Aalert(1)//?id=1')).toBeNull()
+    expect(parseReplyUrl('https://news.ycombinator.com/user?id=1')).toBeNull()
+    expect(parseReplyUrl('https://x.com/me/status/123?s=20')).toMatchObject({ url: 'https://x.com/me/status/123' })
+    expect(parseReplyUrl('https://x.com/me/status/123/photo/1')).toBeNull()
+    expect(parseReplyUrl('https://old.reddit.com/r/SaaS/comments/1abc/some_title/def9/?utm=x')).toMatchObject({ url: 'https://www.reddit.com/r/SaaS/comments/1abc/_/def9/' })
+    expect(parseReplyUrl('https://news.ycombinator.com/item?id=4242&x=<b>')).toMatchObject({ url: 'https://news.ycombinator.com/item?id=4242' })
+  })
+})

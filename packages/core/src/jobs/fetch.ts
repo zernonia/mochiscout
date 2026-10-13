@@ -68,7 +68,13 @@ export async function runFetchGroup(ctx: JobContext, job: FetchGroupJob): Promis
         snippet: p.snippet,
         source: 'rss',
       })
-      .onConflictDoNothing()
+      // A post first stored from someone's browser extension is replaced by
+      // Reddit's own copy (the upload could say anything), then queued like a new one.
+      .onConflictDoUpdate({
+        target: schema.threads.id,
+        set: { title: p.title, url: p.url, author: p.author, createdUtc: p.createdAt, snippet: p.snippet, source: 'rss' },
+        setWhere: eq(schema.threads.source, 'extension'),
+      })
       .returning({ id: schema.threads.id }),
   )
   const inserted = nonEmpty(inserts) ? await ctx.db.batch(inserts) : []

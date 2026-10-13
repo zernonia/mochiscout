@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
   const llm = getLlm(getEnv(event))
   let tone = null
   if (llm && draft.title.trim() && draft.body.trim()) {
+    await rateLimit(event, `tone:${user.id}`, { max: 60, windowSeconds: 3600, message: 'You checked a lot of drafts in the last hour. Try again later.' })
     try {
       const res = await checkTone(llm, {
         subreddit: draft.subreddit,

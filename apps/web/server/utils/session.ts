@@ -15,8 +15,11 @@ export async function requireUser(event: RequestEvent) {
   event.context.mochiscoutUserId = userId
 
   const db = getDb(event)
-  const user = await db.select().from(schema.users).where(eq(schema.users.id, userId)).get()
-  if (!user) {
+  const [user, revoked] = await Promise.all([
+    db.select().from(schema.users).where(eq(schema.users.id, userId)).get(),
+    sessionRevoked(event, userId, (session as { loggedInAt?: number }).loggedInAt),
+  ])
+  if (!user || revoked) {
     await clearUserSession(event)
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
