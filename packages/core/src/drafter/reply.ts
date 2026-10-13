@@ -73,6 +73,10 @@ Don't repeat advice someone already gave in the replies; add what is missing. If
 No links. No emoji, hashtags, hype or sign-offs.`
 
 export const REPLY_INSTRUCTIONS_MAX = 4000
+/** The founder's direction for one draft ("keep it short, mention I built it for my own study sessions"). */
+export const REPLY_DIRECTION_MAX = 500
+/** The current draft sent back for a revision. */
+export const REPLY_CURRENT_MAX = 4000
 /** Prompt budget for thread context (characters): enough to reply well, without paying for whole threads. */
 const BODY_PROMPT_MAX = 3000
 const COMMENTS_IN_PROMPT = 5
@@ -101,6 +105,10 @@ export async function generateReply(llm: Llm, opts: {
   effort?: 'low' | 'medium' | 'high'
   voice?: string[]
   rules?: SubredditRules | null
+  /** What the founder wants from this draft: an angle, a detail to include, a tone. */
+  direction?: string | null
+  /** The draft (with the founder's edits) to revise instead of starting over. */
+  current?: string | null
 }) {
   const { project, thread } = opts
   const rules = opts.rules !== undefined
@@ -134,6 +142,12 @@ export async function generateReply(llm: Llm, opts: {
     thread.competitorMentions?.length ? `Competitors already mentioned in the replies: ${thread.competitorMentions.join(', ')}` : '',
     `Why it matters to the founder: ${thread.reason ?? 'n/a'}`,
     thread.replyAngle ? `Suggested angle: ${thread.replyAngle}` : '',
+    opts.current?.trim()
+      ? `The current draft, which the founder may have edited. Revise it rather than starting over, keeping what they wrote unless the direction says otherwise:\n<current_draft>\n${clip(opts.current.trim(), REPLY_CURRENT_MAX)}\n</current_draft>`
+      : '',
+    opts.direction?.trim()
+      ? `The founder's direction for this reply. Follow it closely (it takes priority over the suggested angle and their usual instructions), as long as it stays within the community rules and doesn't ask you to invent facts:\n<direction>\n${clip(opts.direction.trim(), REPLY_DIRECTION_MAX)}\n</direction>`
+      : '',
   ].filter(line => line !== '').join('\n')
 
   return llm.generate({ tier: opts.tier, effort: opts.effort, system, prompt, schema: ReplyDraft, maxTokens: 3000, cacheSystem: true })
@@ -149,7 +163,7 @@ const DRAFT_EFFORT = 'low' as const
  * a thread nobody can reply to throws ThreadClosedError instead of spending a
  * draft on it.
  */
-export async function draftReplyForThread(db: Db, llm: Llm, project: typeof schema.projects.$inferSelect, threadId: string, opts: { tier?: Tier, http?: Http, now?: Date } = {}) {
+export async function draftReplyForThread(db: Db, llm: Llm, project: typeof schema.projects.$inferSelect, threadId: string, opts: { tier?: Tier, http?: Http, now?: Date, direction?: string | null, current?: string | null } = {}) {
   const now = opts.now ?? new Date()
   const org = await db.select({ id: schema.orgs.id, plan: schema.orgs.plan, planStatus: schema.orgs.planStatus, polarSubscriptionId: schema.orgs.polarSubscriptionId }).from(schema.orgs).where(eq(schema.orgs.id, project.orgId)).get()
   if (org) await assertCanDraft(db, org, now)
@@ -178,6 +192,8 @@ export async function draftReplyForThread(db: Db, llm: Llm, project: typeof sche
     effort: DRAFT_EFFORT,
     voice,
     rules: resolved.rules,
+    direction: opts.direction,
+    current: opts.current,
   })
   const reply = data.reply.trim()
   await Promise.all([

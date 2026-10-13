@@ -96,11 +96,39 @@ watch(() => props.thread.replyDraft, (next) => { if (next != null && !drafting.v
 
 const threadPath = computed(() => `/api/projects/${props.projectId}/threads/${encodeURIComponent(props.thread.id)}`)
 
+// Direction for a (re)draft: an angle, a detail to include, a tone. Kept after drafting so it can be tweaked.
+const directing = ref(false)
+const direction = ref('')
+const directionInput = useTemplateRef<{ $el?: HTMLElement }>('directionInput')
+const directionChips = ['Shorter', 'More casual', 'Share a personal experience', 'Leave the product out', 'Mention the product', 'End with a question']
+const hasChip = (chip: string) => direction.value.toLowerCase().includes(chip.toLowerCase())
+function toggleChip(chip: string) {
+  if (hasChip(chip)) {
+    const at = direction.value.toLowerCase().indexOf(chip.toLowerCase())
+    direction.value = `${direction.value.slice(0, at)}${direction.value.slice(at + chip.length).replace(/^\./, '')}`.replace(/\s{2,}/g, ' ').trim()
+  }
+  else {
+    const text = direction.value.trim()
+    direction.value = text ? `${text}${/[.!?]$/.test(text) ? '' : '.'} ${chip}.` : `${chip}.`
+  }
+}
+function openDirection() {
+  directing.value = true
+  nextTick(() => {
+    const el = directionInput.value?.$el
+    const box = el instanceof HTMLTextAreaElement ? el : el?.querySelector?.('textarea')
+    box?.focus()
+  })
+}
+
 async function draftReply() {
+  const guided = directing.value && direction.value.trim()
   drafting.value = true
   try {
-    const res = await $fetch<{ replyDraft: string }>(`${threadPath.value}/reply`, { method: 'POST' })
+    const body = guided ? { direction: direction.value.trim(), current: reply.value.trim() || undefined } : undefined
+    const res = await $fetch<{ replyDraft: string }>(`${threadPath.value}/reply`, { method: 'POST', body })
     reply.value = res.replyDraft
+    directing.value = false
   }
   catch (error) {
     const closedState = (error as { data?: { data?: { state?: ThreadState } } })?.data?.data?.state
@@ -230,11 +258,43 @@ async function copyAndOpen() {
           <span class="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-400"><SparklesIcon class="size-3.5" /> Your reply · AI draft, edit before posting</span>
           <div class="flex items-center gap-1">
             <Button as-child size="xs" variant="ghost"><NuxtLink :to="`/app/${projectId}/profile#reply-instructions`">Instructions</NuxtLink></Button>
-            <Button size="xs" variant="ghost" :disabled="drafting" @click="draftReply"><RefreshCwIcon /> Redraft</Button>
+            <Button size="xs" variant="ghost" :disabled="drafting" :aria-expanded="directing" @click="directing ? (directing = false) : openDirection()"><RefreshCwIcon /> Redraft</Button>
           </div>
         </div>
         <Textarea :model-value="reply" rows="5" class="bg-background text-sm" aria-label="Reply draft" @update:model-value="(v: string | number) => onEdit(String(v))" />
       </div>
+
+      <!-- Steer the (re)draft -->
+      <form v-if="directing && !drafting && !closed" class="flex flex-col gap-2 rounded-lg border border-violet-500/25 bg-violet-500/[0.03] p-3" @submit.prevent="draftReply" @keydown.esc="directing = false">
+        <Label :for="`direction-${thread.id}`" class="text-xs font-medium">{{ reply ? 'How should the redraft change?' : 'Anything the reply should do?' }} <span class="font-normal text-muted-foreground">Optional</span></Label>
+        <Textarea
+          :id="`direction-${thread.id}`"
+          ref="directionInput"
+          v-model="direction"
+          rows="2"
+          maxlength="500"
+          class="bg-background text-sm"
+          placeholder="e.g. Say I built it for my own study sessions and that it's free. Keep it under 60 words."
+          @keydown.meta.enter.prevent="draftReply"
+          @keydown.ctrl.enter.prevent="draftReply"
+        />
+        <div class="flex flex-wrap gap-1.5">
+          <button
+            v-for="chip in directionChips"
+            :key="chip"
+            type="button"
+            class="rounded-full border px-2.5 py-0.5 text-xs transition-colors"
+            :class="hasChip(chip) ? 'border-violet-500/50 bg-violet-500/12 text-violet-800 dark:text-violet-300' : 'text-muted-foreground hover:bg-muted hover:text-foreground'"
+            :aria-pressed="hasChip(chip)"
+            @click="toggleChip(chip)"
+          >{{ chip }}</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <Button type="submit" size="sm"><SparklesIcon /> {{ reply ? 'Redraft' : 'Draft reply' }}</Button>
+          <Button type="button" size="sm" variant="ghost" @click="directing = false">Cancel</Button>
+          <span v-if="reply" class="text-xs text-muted-foreground">Revises the draft above, keeping your edits unless you say otherwise.</span>
+        </div>
+      </form>
 
       <!-- Replied: track the posted reply -->
       <form v-if="status === 'replied'" class="flex flex-col gap-2 rounded-lg border border-dashed p-3" @submit.prevent="saveReplyUrl">
@@ -263,6 +323,7 @@ async function copyAndOpen() {
         </template>
         <template v-else>
           <Button v-if="status !== 'replied'" size="sm" :loading="drafting" @click="draftReply"><SparklesIcon /> Draft reply</Button>
+          <Button v-if="status !== 'replied' && !drafting && !directing" size="sm" variant="ghost" @click="openDirection">With direction…</Button>
           <Button as-child size="sm" variant="outline">
             <a :href="thread.url" target="_blank" rel="noopener"><ExternalLinkIcon /> Open thread</a>
           </Button>

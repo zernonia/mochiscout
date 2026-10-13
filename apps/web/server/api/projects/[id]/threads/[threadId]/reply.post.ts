@@ -1,20 +1,31 @@
-import { draftReplyForThread, QuotaError, ThreadClosedError } from '@mochiscout/core'
+import { draftReplyForThread, QuotaError, REPLY_CURRENT_MAX, REPLY_DIRECTION_MAX, ThreadClosedError } from '@mochiscout/core'
 import { LlmParseError, LlmRefusalError } from '@mochiscout/llm'
+import { z } from 'zod'
+
+const Body = z.object({
+  /** What the founder wants from this draft: an angle, a detail, a tone. */
+  direction: z.string().max(REPLY_DIRECTION_MAX).optional(),
+  /** The current draft with their edits, to revise instead of starting over. */
+  current: z.string().max(REPLY_CURRENT_MAX).optional(),
+}).optional()
 
 /**
  * Draft (or redraft) a reply to one inbox thread. The thread's full text and
  * replies are fetched first; a thread that can't be answered any more returns
- * 409 with its state. The user edits and posts the reply themselves.
+ * 409 with its state. With a direction, the current draft is revised along
+ * it. The user edits and posts the reply themselves.
  */
 export default defineEventHandler(async (event) => {
   const { user, project } = await requireProject(event)
   const threadId = decodeURIComponent(getRouterParam(event, 'threadId')!)
+  const body = await readValidatedBody(event, b => Body.parse(b ?? undefined))
+  const direction = body?.direction?.trim() || null
   const llm = getLlm(getEnv(event))
   if (!llm) throw createError({ statusCode: 503, statusMessage: 'No LLM key configured. Set ANTHROPIC_API_KEY to draft replies.' })
   try {
-    const draft = await draftReplyForThread(getDb(event), llm, project, threadId, { http: requestHttp(event) })
+    const draft = await draftReplyForThread(getDb(event), llm, project, threadId, { http: requestHttp(event), direction, current: direction ? body?.current : null })
     if (!draft) throw createError({ statusCode: 404, statusMessage: 'Thread not found' })
-    track(event, user.id, 'reply_drafted', { project_id: project.id, auto: false })
+    track(event, user.id, 'reply_drafted', { project_id: project.id, auto: false, directed: !!direction })
     return draft
   }
   catch (error) {

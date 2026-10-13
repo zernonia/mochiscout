@@ -71,6 +71,28 @@ describe('generateReply with context', () => {
     expect(call.prompt).toContain('- x: Try Acme')
     expect(call.prompt).toContain('Competitors already mentioned in the replies: Acme')
     expect(call.system).toContain('<example>\nhonestly we just use a google doc lol\n</example>')
+    expect(call.prompt).not.toContain('<direction>')
+  })
+
+  it('revises the current draft along the founder\'s direction, outside the cached system prompt', async () => {
+    let call: any
+    const llm: Llm = {
+      models: { fast: 'f', balanced: 'b', quality: 'q' },
+      generate: async (opts: any) => {
+        call = opts
+        return { data: { reply: 'ok', mentions_product: false } as any, model: 'b', usage: { inputTokens: 1, outputTokens: 1 } }
+      },
+    }
+    await generateReply(llm, {
+      project: { name: 'Shipnote', url: 'https://s.test', category: null, icp: null, problems: [] },
+      thread: { platform: 'reddit', channel: 'SaaS', title: 'Changelog tool?', snippet: null, kind: 'seeking_tool', reason: null, replyAngle: 'Compare tools' },
+      tier: 'balanced',
+      direction: '  Keep it short and mention I built it for my own team  ',
+      current: 'My edited draft',
+    })
+    expect(call.prompt).toContain('<direction>\nKeep it short and mention I built it for my own team\n</direction>')
+    expect(call.prompt).toContain('<current_draft>\nMy edited draft\n</current_draft>')
+    expect(call.system).not.toContain('Keep it short')
   })
 })
 

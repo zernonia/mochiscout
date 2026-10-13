@@ -2,7 +2,7 @@ import type { H3Event } from 'h3'
 import type { Db } from '@mochiscout/db'
 import type { Env } from './env'
 import { ANGLES, attributionInstalled, buildToday, draftReplyForThread, ensureRefCode, latestPainPoints, listThreads, normalizeSubredditName, projectResults, refLink, scoringQuality, setThreadStatus, subredditMap, ThreadClosedError } from '@mochiscout/core'
-import { asc, eq, schema } from '@mochiscout/db'
+import { and, asc, eq, schema } from '@mochiscout/db'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/cfworker'
 import { z } from 'zod'
@@ -107,15 +107,25 @@ export function createMcpServer(ctx: McpContext) {
 
   server.registerTool('draft_reply', {
     title: 'Draft a reply to a thread',
-    description: 'Read the thread and its replies, then draft a helpful reply in the user\'s voice, following the subreddit\'s rules. Saved on the thread in the app. A starting point: the user edits it and posts it themselves. Uses one AI draft from the plan.',
-    inputSchema: { project: projectArg, thread_id: threadIdArg },
-  }, run(async (a: { project?: string, thread_id: string }) => {
+    description: 'Read the thread and its replies, then draft a helpful reply in the user\'s voice, following the subreddit\'s rules. Saved on the thread in the app. A starting point: the user edits it and posts it themselves. Uses one AI draft from the plan. Pass direction to steer it (an angle, a detail to include, a tone); with a direction, the thread\'s current draft is revised rather than replaced.',
+    inputSchema: {
+      project: projectArg,
+      thread_id: threadIdArg,
+      direction: z.string().max(500).optional().describe('e.g. "mention I built it for my own study sessions, keep it under 60 words"'),
+    },
+  }, run(async (a: { project?: string, thread_id: string, direction?: string }) => {
     const llm = getLlm(ctx.env)
     if (!llm) throw new Error('No LLM key configured on this instance.')
     try {
-      const draft = await quota(draftReplyForThread(ctx.db, llm, await project(a.project), a.thread_id, { http: requestHttp(ctx.event) }))
+      const p = await project(a.project)
+      const direction = a.direction?.trim() || null
+      const current = direction
+        ? (await ctx.db.select({ draft: schema.threadScores.replyDraft }).from(schema.threadScores)
+            .where(and(eq(schema.threadScores.projectId, p.id), eq(schema.threadScores.threadId, a.thread_id))).get())?.draft
+        : null
+      const draft = await quota(draftReplyForThread(ctx.db, llm, p, a.thread_id, { http: requestHttp(ctx.event), direction, current }))
       if (!draft) throw new Error('Thread not found for this project')
-      track(ctx.event, ctx.userId, 'reply_drafted', { auto: false, via: 'mcp' })
+      track(ctx.event, ctx.userId, 'reply_drafted', { auto: false, via: 'mcp', directed: !!direction })
       return draft
     }
     catch (error) {

@@ -21,7 +21,7 @@ claude mcp add --transport http mochiscout https://<their-instance>/mcp --header
 
 1. `get_today` — start here. It returns the top threads to answer, one post idea and pacing (promo posts left today, subreddit cooldowns).
 2. For each thread: open its URL, then help the user decide whether and how to reply using the `reason` and `reply_angle`. Lead with help; mention the product only if it truly answers the question, with honest disclosure.
-   - `draft_reply` writes a first draft from the full thread (one AI draft from their plan). Review it with the user and edit it in their voice.
+   - `draft_reply` writes a first draft from the full thread (one AI draft from their plan). Ask the user what angle they have in mind and pass it as `direction` ("mention I built it for my own study sessions, keep it short"); calling it again with a new direction revises the current draft. Review the result with them and edit it in their voice.
    - Where the subreddit allows links and the product fits, `get_tracking_link` gives a link to the user's site that counts the visits and sign-ups the reply brings.
 3. After the user replies, `update_thread` with `status: "replied"`. Use `saved` for later and `dismissed` with a `dismiss_reason` for threads not worth it (`off_topic`, `not_buyer` and `self_promo` teach scoring what to skip).
 4. If there is time for a post, take the post idea from `get_today` and call `draft_post`. Show the draft and its check report; walk through any `fail` or `warn` items before the user posts.
