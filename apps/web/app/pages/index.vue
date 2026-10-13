@@ -50,12 +50,19 @@ const principles = [
   { title: 'Open source', body: 'AGPL-licensed. Run it free on your own Cloudflare account, or let us host it for you.' },
 ]
 
+const openSource = [
+  { title: 'Read every line', body: 'See exactly how threads are found and scored, and what is sent to the AI. No black box.' },
+  { title: 'Self-host for free', body: 'One Cloudflare Worker with D1 and KV. Bring your own Anthropic and TinyFish keys; no plan limits.' },
+  { title: 'Help shape it', body: 'Fix a bug, add a source, or correct a subreddit\'s rules. Pull requests are welcome.' },
+]
+
 const faqs = [
   { q: 'Will this get my account banned?', a: 'It is built to prevent that. Every draft is checked against the subreddit\'s rules, promotional posts are rate-limited per community and per day, and nothing is ever posted for you.' },
   { q: 'Does Mochiscout post for me?', a: 'No. It never posts, comments, votes or sends messages. You copy the reply and post it yourself, so it stays in your voice.' },
   { q: 'Which sites are covered?', a: 'Reddit on every plan. Hacker News and Bluesky on Solo and Pro, and X on Pro.' },
   { q: 'Is there a free plan?', a: 'Yes. Every new account gets 14 days of Pro free, no card. After that you keep a free plan with one project, three watched subreddits and a weekly digest, or pick Solo or Pro. Self-hosting is free with no limits.' },
   { q: 'I used GummySearch. Is this a replacement?', a: 'For finding customers, yes. GummySearch shuts down on December 1, 2026. Mochiscout finds the threads where people ask for what you sell, on Reddit and three other sites, without the Reddit Data API that GummySearch lost.' },
+  { q: 'Is Mochiscout open source?', a: 'Yes. The whole app is on GitHub under the AGPL-3.0 license, and the subreddit rules library under CC BY-SA 4.0. You can read the code, run it free on your own Cloudflare account with your own API keys, or let us host it.' },
   { q: 'Can I cancel anytime?', a: 'Yes. Plans are monthly and you can cancel from the billing page; you keep access until the end of the paid period.' },
 ]
 
@@ -99,11 +106,17 @@ useJsonLd([
           Mochiscout watches Reddit, Hacker News, Bluesky and X for posts from people who need what you built. You reply yourself, by each community's rules.
         </p>
         <LandingCta source="hero" />
-        <div class="flex items-center gap-3 text-sm text-muted-foreground">
-          Posts from
-          <span class="flex -space-x-1.5">
-            <LandingSourceBadge v-for="s in sources" :key="s" :source="s" />
+        <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          <span class="flex items-center gap-3">
+            Posts from
+            <span class="flex -space-x-1.5">
+              <LandingSourceBadge v-for="s in sources" :key="s" :source="s" />
+            </span>
           </span>
+          <span class="hidden h-4 w-px bg-border sm:block" />
+          <a :href="site.repo" target="_blank" rel="noopener" class="inline-flex items-center gap-2 transition-colors hover:text-foreground">
+            <GitHubMark class="size-4 text-foreground" /> Open source, AGPL-3.0
+          </a>
         </div>
       </section>
 
@@ -192,6 +205,34 @@ useJsonLd([
           <div v-for="p in principles" :key="p.title" class="flex flex-col gap-2">
             <h3 class="font-semibold">{{ p.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ p.body }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Open source -->
+      <section class="mx-auto max-w-5xl px-4 pb-24">
+        <div class="relative overflow-hidden rounded-3xl bg-neutral-950 px-6 py-12 text-neutral-300 sm:px-12 sm:py-16">
+          <LandingMochiMascot :blink="false" class="absolute -right-4 -bottom-6 h-24 w-32 opacity-90 sm:right-10 sm:bottom-auto sm:top-10" />
+          <div class="relative flex max-w-2xl flex-col gap-4">
+            <span class="inline-flex w-fit items-center gap-2 rounded-full border border-neutral-800 px-3 py-1 text-xs font-medium text-neutral-300">
+              <GitHubMark class="size-3.5 text-white" /> Open source
+            </span>
+            <h2 class="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">Built in the open.</h2>
+            <p class="text-pretty text-neutral-400">Mochiscout's code is public on GitHub. Use the hosted service, or run your own copy on your own Cloudflare account.</p>
+          </div>
+          <div class="relative mt-10 grid gap-6 sm:grid-cols-3">
+            <div v-for="o in openSource" :key="o.title" class="flex flex-col gap-1.5 border-t border-neutral-800 pt-4">
+              <h3 class="font-semibold text-white">{{ o.title }}</h3>
+              <p class="text-sm text-neutral-400">{{ o.body }}</p>
+            </div>
+          </div>
+          <div class="relative mt-10 flex flex-wrap gap-2">
+            <Button as-child size="lg" class="rounded-full bg-white px-5 text-neutral-950 hover:bg-neutral-200">
+              <a :href="site.repo" target="_blank" rel="noopener"><GitHubMark /> Star on GitHub</a>
+            </Button>
+            <Button as-child size="lg" variant="ghost" class="rounded-full px-5 text-neutral-300 hover:bg-neutral-800 hover:text-white">
+              <a :href="`${site.repo}/blob/main/docs/self-host.md`" target="_blank" rel="noopener">Self-hosting guide →</a>
+            </Button>
           </div>
         </div>
       </section>

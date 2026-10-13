@@ -13,7 +13,7 @@ const { waitlist } = useRuntimeConfig().public
       <NuxtLink to="/#pricing">See pricing →</NuxtLink>
     </Button>
     <Button v-else as-child size="lg" variant="outline" class="rounded-full px-5">
-      <a :href="site.repo" target="_blank" rel="noopener">Self-host it</a>
+      <a :href="site.repo" target="_blank" rel="noopener"><GitHubMark /> Self-host it</a>
     </Button>
   </div>
 </template>
