@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   ActivityIcon,
+  BookmarkIcon,
   CalendarCheckIcon,
   ChevronsUpDownIcon,
   CreditCardIcon,
@@ -22,7 +23,7 @@ const route = useRoute()
 const { user, clear } = useUserSession()
 const edition = useRuntimeConfig().public.edition
 
-interface NavCounts { newThreads: number | undefined, pendingScoring: number, drafts: number, watching: number, trackerAlerts: number }
+interface NavCounts { newThreads: number | undefined, savedThreads: number | undefined, pendingScoring: number, drafts: number, watching: number, trackerAlerts: number }
 
 const projectId = computed(() => (route.params.project ? String(route.params.project) : null))
 // Lazy: the page renders straight away and these fill in (skeletons meanwhile).
@@ -50,6 +51,8 @@ const groups = computed(() => {
       items: [
         { to: `/app/${id}/today`, label: 'Today', icon: CalendarCheckIcon },
         { to: `/app/${id}/inbox`, label: 'Inbox', icon: InboxIcon, count: c?.newThreads, tone: 'primary' as const },
+        // Saved threads to come back to and reply: a shortcut to the inbox's Saved tab.
+        { to: `/app/${id}/inbox?status=saved`, label: 'Saved', icon: BookmarkIcon, count: c?.savedThreads },
         { to: `/app/${id}/drafts`, label: 'Drafts', icon: FileTextIcon, count: c?.drafts },
       ],
     },
@@ -72,7 +75,12 @@ const groups = computed(() => {
 })
 
 function isActive(to: string) {
-  return route.path === to || route.path.startsWith(`${to}/`)
+  const [path, query] = to.split('?')
+  const status = new URLSearchParams(query).get('status')
+  const onPath = route.path === path || route.path.startsWith(`${path}/`)
+  // The inbox and its Saved shortcut share a path: tell them apart by ?status=.
+  if (path!.endsWith('/inbox')) return onPath && (status ? route.query.status === status : route.query.status !== 'saved')
+  return onPath
 }
 
 const meters = computed(() => me.value

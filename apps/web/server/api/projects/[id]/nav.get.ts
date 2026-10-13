@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
   ])
   return {
     newThreads: counts.new,
+    savedThreads: counts.saved,
     pendingScoring,
     drafts: drafts?.n ?? 0,
     watching: watching?.n ?? 0,

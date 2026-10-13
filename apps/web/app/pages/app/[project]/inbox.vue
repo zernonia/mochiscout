@@ -223,7 +223,7 @@ function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], n
     <AppEmpty
       v-else-if="!inbox.threads.length"
       :title="status === 'new' ? 'No new threads yet' : `Nothing ${status}`"
-      :description="status === 'new' ? `Threads scoring ${inbox?.threshold ?? 60}+ show up here as they are found. Watching more subreddits widens the net.` : `Threads you mark as ${status} appear here.`"
+      :description="status === 'new' ? `Threads scoring ${inbox?.threshold ?? 60}+ show up here as they are found. Watching more subreddits widens the net.` : status === 'saved' ? 'Save a thread you want to answer later and it waits here, draft and all.' : `Threads you mark as ${status} appear here.`"
     >
       <Button v-if="status === 'new'" as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
     </AppEmpty>
