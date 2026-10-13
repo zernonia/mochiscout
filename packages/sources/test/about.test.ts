@@ -57,7 +57,7 @@ describe('tinyfishFetcher', () => {
     expect(sent!.url).toBe('https://api.fetch.tinyfish.ai')
     expect((sent!.init.headers as Record<string, string>)['X-API-Key']).toBe('key')
     expect(JSON.parse(String(sent!.init.body)).urls).toEqual(['https://a.test', 'https://b.test'])
-    expect(out.get('https://a.test')).toEqual({ text: 'A' })
+    expect(out.get('https://a.test')).toEqual({ text: 'A', title: null, description: null })
     expect(out.get('https://b.test')).toEqual({ error: 'bot_blocked' })
   })
 })
