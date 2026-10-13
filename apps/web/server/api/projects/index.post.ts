@@ -4,6 +4,9 @@ import { schema } from '@mochiscout/db'
 export default defineEventHandler(async (event) => {
   const { user, org } = await requireUser(event)
   const input = await readValidatedBody(event, ProjectInput.parse)
+  // A source this server can't read (X without an API key) is dropped, not saved as on.
+  const available = availableSources(getEnv(event))
+  input.sources = input.sources.filter(s => available.includes(s))
   await quota(assertCanCreateProject(getDb(event), org))
   await quota(() => assertSources(org, input.sources))
   const [project] = await getDb(event)

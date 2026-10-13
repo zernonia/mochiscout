@@ -17,6 +17,11 @@ export function getTaskEnv(context?: { cloudflare?: { env?: unknown } }): Env {
   return env
 }
 
+/** Extra feed sources this server can read: Hacker News and Bluesky need no key, X needs X_BEARER_TOKEN. */
+export function availableSources(env: Env): ('hn' | 'bluesky' | 'x')[] {
+  return ['hn', 'bluesky', ...(env.X_BEARER_TOKEN ? ['x' as const] : [])]
+}
+
 export function sourcesUserAgent(env: Env) {
   // Identify this instance to reddit.com: its own contact URL, else its public URL, else the project repo.
   return userAgent(env.CONTACT_URL ?? env.APP_URL ?? 'https://github.com/zernonia/mochiscout')

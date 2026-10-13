@@ -34,6 +34,8 @@ export default defineEventHandler(async (event) => {
       manualResearchPerMonth: finite(limits.manualResearchPerMonth),
       digest: limits.digest,
       sources: limits.sources,
+      /** Sources this server can read at all (X needs an API key), whatever the plan. */
+      sourcesAvailable: availableSources(getEnv(event)),
       mcp: limits.mcp,
       autoReplies: limits.autoReplies,
       hotAlerts: limits.hotAlerts,

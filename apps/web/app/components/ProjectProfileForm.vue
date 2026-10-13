@@ -21,8 +21,16 @@ withDefaults(defineProps<{ layout?: 'stack' | 'sections' }>(), { layout: 'stack'
 const sourceOptions = [
   { id: 'hn', label: 'Hacker News', hint: 'Stories and comments' },
   { id: 'bluesky', label: 'Bluesky', hint: 'Public posts' },
-  { id: 'x', label: 'X', hint: 'Pro plan; the server needs an X API key' },
+  { id: 'x', label: 'X', hint: 'Posts, through the official X API (Pro plan)' },
 ] as const
+
+// Sources the server can't read (X without an API key) can't be turned on.
+const { data: me } = useCachedFetch('/api/me')
+const { edition } = useRuntimeConfig().public
+function unavailable(id: 'hn' | 'bluesky' | 'x') {
+  return !!me.value && !me.value.limits.sourcesAvailable.includes(id)
+}
+const unavailableHint = edition === 'cloud' ? 'Coming soon' : 'Set X_BEARER_TOKEN on the server to turn this on'
 
 function toggleSource(id: 'hn' | 'bluesky' | 'x', on: boolean) {
   profile.value.sources = on ? [...new Set([...profile.value.sources, id])] : profile.value.sources.filter(s => s !== id)
@@ -96,14 +104,22 @@ const lists = [
           <label
             v-for="s in sourceOptions"
             :key="s.id"
-            class="flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors has-data-[state=checked]:border-brand/30 has-data-[state=checked]:bg-brand-soft/40"
+            class="flex items-center gap-3 rounded-xl border p-3 text-sm transition-colors has-data-[state=checked]:border-brand/30 has-data-[state=checked]:bg-brand-soft/40"
+            :class="unavailable(s.id) ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'"
           >
             <SourceAvatar :platform="s.id" size="md" />
             <span class="flex min-w-0 flex-1 flex-col">
-              <span class="font-medium">{{ s.label }}</span>
-              <span class="text-xs text-muted-foreground">{{ s.hint }}</span>
+              <span class="flex items-center gap-1.5 font-medium">
+                {{ s.label }}
+                <span v-if="unavailable(s.id)" class="rounded-full bg-muted px-1.5 text-[10px] leading-4 font-medium text-muted-foreground">{{ edition === 'cloud' ? 'Soon' : 'Needs a key' }}</span>
+              </span>
+              <span class="text-xs text-muted-foreground">{{ unavailable(s.id) ? unavailableHint : s.hint }}</span>
             </span>
-            <Switch :model-value="profile.sources.includes(s.id)" @update:model-value="(v: boolean) => toggleSource(s.id, v)" />
+            <Switch
+              :model-value="profile.sources.includes(s.id) && !unavailable(s.id)"
+              :disabled="unavailable(s.id)"
+              @update:model-value="(v: boolean) => toggleSource(s.id, v)"
+            />
           </label>
         </div>
       </div>

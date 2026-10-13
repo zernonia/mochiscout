@@ -8,7 +8,12 @@ export default defineEventHandler(async (event) => {
   const parsed = ProjectInput.partial().parse(body ?? {})
   // .partial() still fills .default([]) for fields left out: only update what was sent.
   const input = Object.fromEntries(Object.entries(parsed).filter(([k]) => body && k in body)) as typeof parsed
-  if (input.sources) await quota(() => assertSources(org, input.sources!))
+  if (input.sources) {
+    // A source this server can't read (X without an API key) is dropped, not saved as on.
+    const available = availableSources(getEnv(event))
+    input.sources = input.sources.filter(s => available.includes(s))
+    await quota(() => assertSources(org, input.sources!))
+  }
   if (!Object.keys(input).length) return project
   const [row] = await getDb(event)
     .update(schema.projects)
