@@ -1,13 +1,13 @@
 ---
 name: mochiscout
-description: Work through the daily Mochiscout routine for finding buyers on Reddit — today's plan, threads worth answering, subreddit research, pain points, rule-checked post drafts. Use when the user asks what to do on Reddit today, wants threads to reply to, wants help with a Reddit post, or asks which subreddits or pain points matter for their product. Requires the Mochiscout MCP server.
+description: Work through the daily Mochiscout routine for finding buyers on Reddit — today's plan, threads worth answering, reply drafts, tracking links and results, subreddit research, pain points, rule-checked post drafts. Use when the user asks what to do on Reddit today, wants threads to reply to, wants help with a Reddit post, or asks which subreddits or pain points matter for their product. Requires the Mochiscout MCP server.
 ---
 
 # Mochiscout
 
-Mochiscout finds Reddit threads where the user's product can genuinely help, maps the subreddits their buyers use (with each sub's promotion rules), clusters pain points, and checks posts against subreddit rules. Its MCP server exposes that data as tools.
+Mochiscout finds Reddit (and Hacker News, Bluesky, X) threads where the user's product can genuinely help, drafts replies for the user to edit, maps the subreddits their buyers use (with each sub's promotion rules), clusters pain points, and checks posts against subreddit rules. Its MCP server exposes that data as tools.
 
-**The user always posts and replies themselves.** Never post, comment, vote or message on their behalf, never suggest automating that, and never write a complete reply to a thread for them to paste. Help them think: what the poster needs, what to share from experience, whether mentioning the product is appropriate.
+**The user always posts and replies themselves.** Never post, comment, vote or message on their behalf, and never suggest automating that. A reply draft is a starting point: help the user make it theirs (what the poster needs, what to share from experience, whether mentioning the product is appropriate) before they post it.
 
 ## Setup
 
@@ -21,13 +21,17 @@ claude mcp add --transport http mochiscout https://<their-instance>/mcp --header
 
 1. `get_today` — start here. It returns the top threads to answer, one post idea and pacing (promo posts left today, subreddit cooldowns).
 2. For each thread: open its URL, then help the user decide whether and how to reply using the `reason` and `reply_angle`. Lead with help; mention the product only if it truly answers the question, with honest disclosure.
-3. After the user replies, `update_thread` with `status: "replied"`. Use `dismissed` for threads not worth it and `saved` for later.
+   - `draft_reply` writes a first draft from the full thread (one AI draft from their plan). Review it with the user and edit it in their voice.
+   - Where the subreddit allows links and the product fits, `get_tracking_link` gives a link to the user's site that counts the visits and sign-ups the reply brings.
+3. After the user replies, `update_thread` with `status: "replied"`. Use `saved` for later and `dismissed` with a `dismiss_reason` for threads not worth it (`off_topic`, `not_buyer` and `self_promo` teach scoring what to skip).
 4. If there is time for a post, take the post idea from `get_today` and call `draft_post`. Show the draft and its check report; walk through any `fail` or `warn` items before the user posts.
 
 ## Other tools
 
 - `list_threads` — more scored threads (`status`, `min_intent`, `limit`).
-- `find_subreddits` — where buyers gather, fit scores, promo rules. Suggest watching high-fit subs in the app.
+- `find_subreddits` — where buyers gather, fit scores, promo rules.
+- `search_subreddits` — find a subreddit by part of its name ("prod" finds r/productivity), then `watch_subreddit` to start watching it (counts toward the plan's limit; ask before adding).
+- `get_results` — what replying brought: replies still up, visits and sign-ups from tracking links, scoring precision. Good for a weekly check-in.
 - `get_pain_points` — clustered pain points with the threads behind them. Good topics for posts.
 - `check_rules` — check a post the user wrote themselves before they submit it.
 - `list_projects` — when the user has more than one product; pass `project` (id or name) to other tools.

@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const { user, org } = await authenticateApiKey(event)
   await quota(() => assertMcp(org))
 
-  const server = createMcpServer({ db: getDb(event), env: getEnv(event), userId: user.id, orgId: org.id })
+  const server = createMcpServer({ event, db: getDb(event), env: getEnv(event), userId: user.id, orgId: org.id })
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true })
   await server.connect(transport)
   try {

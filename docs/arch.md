@@ -257,7 +257,7 @@ source: https://www.reddit.com/r/SaaS/about/rules
 
 ### 7.8 MCP server
 `server/routes/mcp.ts`, streamable HTTP, auth via API key (Bearer) per user.
-Tools: `find_subreddits`, `get_today`, `list_threads`, `draft_post`, `check_rules`, `get_pain_points`.
+Tools: `list_projects`, `get_today`, `list_threads`, `update_thread`, `draft_reply`, `get_tracking_link`, `get_results`, `find_subreddits`, `search_subreddits`, `watch_subreddit`, `get_pain_points`, `check_rules`, `draft_post`.
 Also ship a Claude Code skill in `/skills` that teaches the workflow.
 
 ---

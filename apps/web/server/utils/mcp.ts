@@ -1,12 +1,15 @@
+import type { H3Event } from 'h3'
 import type { Db } from '@mochiscout/db'
 import type { Env } from './env'
-import { ANGLES, buildToday, latestPainPoints, listThreads, normalizeSubredditName, setThreadStatus, subredditMap } from '@mochiscout/core'
+import { ANGLES, attributionInstalled, buildToday, draftReplyForThread, ensureRefCode, latestPainPoints, listThreads, normalizeSubredditName, projectResults, refLink, scoringQuality, setThreadStatus, subredditMap, ThreadClosedError } from '@mochiscout/core'
 import { asc, eq, schema } from '@mochiscout/db'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/cfworker'
 import { z } from 'zod'
 
 interface McpContext {
+  /** The MCP request, for helpers that fetch, track or run work after the response. */
+  event: H3Event
   db: Db
   env: Env
   userId: string
@@ -14,6 +17,9 @@ interface McpContext {
 }
 
 const projectArg = z.string().optional().describe('Project id or name. Defaults to the first project.')
+const threadIdArg = z.string().describe('Thread id from get_today or list_threads, e.g. reddit:t3_abc123')
+const STATUSES = ['new', 'saved', 'replied', 'dismissed'] as const
+const DISMISS_REASONS = ['off_topic', 'not_buyer', 'self_promo', 'already_answered', 'closed', 'other'] as const
 
 function json(data: unknown) {
   return { content: [{ type: 'text' as const, text: JSON.stringify(data, null, 2) }] }
@@ -27,10 +33,10 @@ function toolError(error: unknown) {
 /** Mochiscout as MCP tools (arch §7.8). Read-mostly; nothing here posts to Reddit. */
 export function createMcpServer(ctx: McpContext) {
   const server = new McpServer(
-    { name: 'mochiscout', version: '0.1.0' },
+    { name: 'mochiscout', version: '0.2.0' },
     {
       jsonSchemaValidator: new CfWorkerJsonSchemaValidator(),
-      instructions: 'Mochiscout finds Reddit threads where the user\'s product can help and checks posts against subreddit rules. The user always posts and replies themselves: never suggest automating posting, commenting or voting. Start with get_today.',
+      instructions: 'Mochiscout finds Reddit, Hacker News, Bluesky and X threads where the user\'s product can help, drafts replies and posts for them to edit, and checks posts against subreddit rules. The user always posts and replies themselves: never suggest automating posting, commenting or voting. Start with get_today.',
     },
   )
 
@@ -85,17 +91,88 @@ export function createMcpServer(ctx: McpContext) {
 
   server.registerTool('update_thread', {
     title: 'Update a thread',
-    description: 'Mark a thread as replied (after the user replied themselves), saved, dismissed, or back to new.',
+    description: 'Mark a thread as replied (after the user replied themselves), saved, dismissed, or back to new. Give a dismiss_reason when dismissing: off_topic, not_buyer and self_promo teach scoring what doesn\'t fit.',
     inputSchema: {
       project: projectArg,
-      thread_id: z.string().describe('Thread id from list_threads, e.g. reddit:t3_abc123'),
-      status: z.enum(['new', 'saved', 'replied', 'dismissed']),
+      thread_id: threadIdArg,
+      status: z.enum(STATUSES),
+      dismiss_reason: z.enum(DISMISS_REASONS).optional().describe('off_topic (not relevant), not_buyer (not their audience), self_promo (the poster promotes their own product), already_answered, closed (can\'t reply), other'),
     },
     annotations: { idempotentHint: true },
-  }, run(async (a: { project?: string, thread_id: string, status: 'new' | 'saved' | 'replied' | 'dismissed' }) => {
-    const row = await setThreadStatus(ctx.db, (await project(a.project)).id, a.thread_id, a.status)
+  }, run(async (a: { project?: string, thread_id: string, status: typeof STATUSES[number], dismiss_reason?: typeof DISMISS_REASONS[number] }) => {
+    const row = await setThreadStatus(ctx.db, (await project(a.project)).id, a.thread_id, a.status, a.status === 'dismissed' ? a.dismiss_reason : undefined)
     if (!row) throw new Error('Thread not found for this project')
     return row
+  }))
+
+  server.registerTool('draft_reply', {
+    title: 'Draft a reply to a thread',
+    description: 'Read the thread and its replies, then draft a helpful reply in the user\'s voice, following the subreddit\'s rules. Saved on the thread in the app. A starting point: the user edits it and posts it themselves. Uses one AI draft from the plan.',
+    inputSchema: { project: projectArg, thread_id: threadIdArg },
+  }, run(async (a: { project?: string, thread_id: string }) => {
+    const llm = getLlm(ctx.env)
+    if (!llm) throw new Error('No LLM key configured on this instance.')
+    try {
+      const draft = await quota(draftReplyForThread(ctx.db, llm, await project(a.project), a.thread_id, { http: requestHttp(ctx.event) }))
+      if (!draft) throw new Error('Thread not found for this project')
+      track(ctx.event, ctx.userId, 'reply_drafted', { auto: false, via: 'mcp' })
+      return draft
+    }
+    catch (error) {
+      if (error instanceof ThreadClosedError) throw new Error(`${error.message} (${error.state})`)
+      throw error
+    }
+  }))
+
+  server.registerTool('get_tracking_link', {
+    title: 'Tracking link for a reply',
+    description: 'The project\'s own URL with ?ref=ms_<code> for one thread, to use in a reply where the community allows links. Visits and sign-ups it brings show in get_results once the tracking script is on the site.',
+    inputSchema: { project: projectArg, thread_id: threadIdArg },
+    annotations: { idempotentHint: true },
+  }, run(async (a: { project?: string, thread_id: string }) => {
+    const p = await project(a.project)
+    const code = await ensureRefCode(ctx.db, p.id, a.thread_id)
+    if (!code) throw new Error('Thread not found for this project')
+    track(ctx.event, ctx.userId, 'tracking_link_copied', { project_id: p.id, via: 'mcp' })
+    return { link: refLink(p.url, code), code }
+  }))
+
+  server.registerTool('get_results', {
+    title: 'Results from replying',
+    description: 'What replying brought over the last N days: replies posted and still up, visits and sign-ups from tracking links per thread, and how precise the inbox scoring has been.',
+    inputSchema: { project: projectArg, days: z.number().int().min(7).max(90).optional().describe('Default 30') },
+    annotations: { readOnlyHint: true },
+  }, run(async (a: { project?: string, days?: number }) => {
+    const p = await project(a.project)
+    const [results, installed, quality] = await Promise.all([
+      projectResults(ctx.db, p.id, { days: a.days ?? 30 }),
+      attributionInstalled(ctx.db, p.id),
+      scoringQuality(ctx.db, p),
+    ])
+    return { ...results, tracking_script_installed: installed, quality }
+  }))
+
+  server.registerTool('search_subreddits', {
+    title: 'Search subreddits',
+    description: 'Find subreddits by part of their name or topic ("prod" finds r/productivity), with members, description and whether their rules are known.',
+    inputSchema: { query: z.string().min(1).max(50), limit: z.number().int().min(1).max(20).optional() },
+    annotations: { readOnlyHint: true },
+  }, run(async (a: { query: string, limit?: number }) => (await findSubreddits(ctx.event, ctx.userId, a.query, { remote: true, limit: a.limit ?? 10 })).results))
+
+  server.registerTool('watch_subreddit', {
+    title: 'Watch a subreddit',
+    description: 'Start (or stop) watching a subreddit for a project: new threads there are checked every 15 minutes to 6 hours and scored. Its rules are read automatically. Counts toward the plan\'s subreddit limit.',
+    inputSchema: { project: projectArg, subreddit: z.string(), watching: z.boolean().optional().describe('Default true; false stops watching') },
+    annotations: { idempotentHint: true },
+  }, run(async (a: { project?: string, subreddit: string, watching?: boolean }) => {
+    const name = normalizeSubredditName(a.subreddit)
+    if (!name) throw new Error('Not a valid subreddit name')
+    const p = await project(a.project)
+    const org = await ctx.db.select().from(schema.orgs).where(eq(schema.orgs.id, ctx.orgId)).get()
+    if (!org) throw new Error('Organization not found')
+    const watching = a.watching ?? true
+    await setSubredditWatching(ctx.event, org, p.id, name, watching)
+    return { project: p.name, subreddit: name, watching }
   }))
 
   server.registerTool('find_subreddits', {
