@@ -97,7 +97,7 @@ async function discover() {
     <SkeletonCards v-if="!map" :count="4" :lines="3" :cols="2" />
     <AppEmpty v-else-if="!map.subreddits.length" title="No subreddits yet" description="Watch one above, or run a search to find where your buyers talk." />
 
-    <div class="grid gap-3 md:grid-cols-2">
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
       <div
         v-for="s in map?.subreddits"
         :key="s.name"

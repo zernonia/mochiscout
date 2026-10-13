@@ -172,13 +172,13 @@ function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], n
       </template>
     </AppPageHeader>
 
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div class="inline-flex w-full gap-1 overflow-x-auto rounded-xl bg-muted p-1 sm:w-auto">
+    <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+      <div class="grid w-full grid-cols-2 gap-1 rounded-xl bg-muted p-1 sm:inline-flex sm:w-fit sm:overflow-x-auto">
         <button
           v-for="tab in tabs"
           :key="tab.value"
           type="button"
-          class="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-colors"
+          class="flex shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-colors sm:justify-start"
           :class="status === tab.value ? 'bg-background font-medium text-foreground shadow-xs/5 [&>svg]:text-brand' : 'text-muted-foreground hover:text-foreground'"
           @click="status = tab.value"
         >

@@ -27,7 +27,7 @@ const icons = { 'reddit-lead-finder': RadarIcon, 'subreddit-rules': ShieldCheckI
         <h1 class="text-balance text-3xl font-semibold tracking-tight sm:text-5xl">Free tools for finding customers on Reddit</h1>
         <p class="max-w-2xl text-lg text-muted-foreground">No sign-up. The same data Mochiscout uses to find people asking for your product and to keep your replies inside each community's rules.</p>
       </div>
-      <div class="grid gap-4 sm:grid-cols-2">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NuxtLink v-for="t in FREE_TOOLS" :key="t.slug" :to="`/tools/${t.slug}`" class="group flex flex-col gap-3 rounded-2xl border p-6 transition-colors hover:bg-muted/40">
           <component :is="icons[t.slug]" class="size-6 text-brand" />
           <h2 class="text-lg font-semibold">{{ t.name }}</h2>

@@ -74,7 +74,7 @@ useJsonLd([
             <div>Mochiscout</div>
             <div>{{ c.name }}</div>
           </div>
-          <div v-for="f in FEATURES" :key="f.key" class="grid gap-2 border-b px-4 py-3 last:border-b-0 sm:grid-cols-[1fr_1.2fr_1.2fr] sm:gap-4">
+          <div v-for="f in FEATURES" :key="f.key" class="grid grid-cols-1 gap-2 border-b px-4 py-3 last:border-b-0 sm:grid-cols-[1fr_1.2fr_1.2fr] sm:gap-4">
             <div class="text-sm font-medium">{{ f.label }}</div>
             <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">Mochiscout</span><LandingCompareMark :cell="MOCHISCOUT[f.key]" :inverted="'inverted' in f" /></div>
             <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">{{ c.name }}</span><LandingCompareMark :cell="c.cells[f.key]" :inverted="'inverted' in f" /></div>
@@ -87,7 +87,7 @@ useJsonLd([
       <section v-if="c.mapping" class="flex flex-col gap-4">
         <h2 class="text-2xl font-semibold tracking-tight">What you used {{ c.name }} for, and where it lives in Mochiscout</h2>
         <div class="divide-y rounded-xl border">
-          <div v-for="m in c.mapping" :key="m.need" class="grid gap-1 p-4 sm:grid-cols-[240px_1fr] sm:gap-4">
+          <div v-for="m in c.mapping" :key="m.need" class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[240px_1fr] sm:gap-4">
             <div class="font-medium">{{ m.need }}</div>
             <div class="text-sm text-muted-foreground">{{ m.how }}</div>
           </div>
@@ -97,7 +97,7 @@ useJsonLd([
       <!-- Differences -->
       <section class="flex flex-col gap-6">
         <h2 class="text-2xl font-semibold tracking-tight">Why people choose Mochiscout over {{ c.name }}</h2>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div v-for="d in c.differences" :key="d.title" class="flex flex-col gap-2 rounded-2xl border p-5">
             <h3 class="font-semibold">{{ d.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ d.body }}</p>
@@ -131,7 +131,7 @@ useJsonLd([
       </section>
 
       <!-- Sources and more comparisons -->
-      <section class="grid gap-8 border-t pt-10 sm:grid-cols-2">
+      <section class="grid grid-cols-1 gap-8 border-t pt-10 sm:grid-cols-2">
         <div class="flex flex-col gap-2">
           <h2 class="text-sm font-semibold">Sources</h2>
           <ul class="flex flex-col gap-1.5 text-sm text-muted-foreground">

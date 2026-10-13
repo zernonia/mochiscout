@@ -52,7 +52,7 @@ async function save() {
     <template v-else>
       <form class="flex flex-col gap-8" @submit.prevent="save">
         <ProjectProfileForm v-model="form" layout="sections" />
-        <div class="grid md:grid-cols-[14rem_1fr] md:gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-[14rem_1fr] md:gap-8">
           <div class="max-md:hidden" />
           <div>
             <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save profile' }}</Button>

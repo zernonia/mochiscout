@@ -71,7 +71,7 @@ const meters = computed(() => me.value
 
     <template v-if="!me">
       <Skeleton class="h-36 w-full rounded-2xl" />
-      <div class="grid gap-4 md:grid-cols-3"><Skeleton v-for="i in 3" :key="i" class="h-72 rounded-2xl" /></div>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3"><Skeleton v-for="i in 3" :key="i" class="h-72 rounded-2xl" /></div>
     </template>
     <AppEmpty v-else-if="me.edition !== 'cloud'" title="Self-hosted" description="Self-hosted instances have no plans or limits." />
 
@@ -110,7 +110,7 @@ const meters = computed(() => me.value
             {{ busy === '/api/billing/portal' ? 'Opening…' : 'Manage billing' }}
           </Button>
         </div>
-        <div class="grid gap-3 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div v-for="m in meters" :key="m.label" class="flex flex-col gap-2 rounded-xl bg-background/70 p-3 ring-1 ring-border/60">
             <div class="flex items-center gap-2 text-sm">
               <component :is="m.icon" class="size-4 shrink-0 text-brand" aria-hidden="true" />

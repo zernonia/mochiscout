@@ -77,7 +77,7 @@ async function check() {
           <datalist id="known-subs">
             <option v-for="s in subs" :key="s.name" :value="s.displayName" />
           </datalist>
-          <Button type="submit" size="lg" class="h-11" :loading="checking"><SearchIcon /> {{ checking ? 'Reading its rules…' : 'Check rules' }}</Button>
+          <Button type="submit" size="lg" class="h-11 bg-brand text-white hover:bg-brand/90" :loading="checking"><SearchIcon /> {{ checking ? 'Reading its rules…' : 'Check rules' }}</Button>
         </form>
         <p v-if="error" class="text-sm text-red-700 dark:text-red-400" role="alert">{{ error }}</p>
         <p v-else-if="checking" class="text-sm text-muted-foreground">Not in our list yet, so we're reading its official rules now. This takes a few seconds.</p>

@@ -39,7 +39,7 @@ function features(p: { projects: number | null, watchedSubreddits: number | null
 </script>
 
 <template>
-  <div class="grid gap-4 md:grid-cols-3">
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
     <div
       v-for="p in plans"
       :key="p.id"

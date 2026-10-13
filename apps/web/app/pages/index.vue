@@ -151,7 +151,7 @@ useJsonLd([
           <p class="text-sm font-medium text-brand-foreground">The problem</p>
           <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">You built it. You launched it. It went quiet.</h2>
         </div>
-        <div class="grid gap-4 md:grid-cols-3">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div v-for="(p, i) in pains" :key="p.title" class="flex flex-col gap-3 rounded-2xl border p-5">
             <div v-if="i === 0" class="rounded-xl bg-muted/60 p-3 text-xs">
               <div class="flex items-center gap-1.5 text-muted-foreground">
@@ -181,7 +181,7 @@ useJsonLd([
             <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Your customers are already posting.</h2>
             <p class="text-muted-foreground">People describe their problem in public every day, often naming the tool they're unhappy with. These are the kinds of posts Mochiscout surfaces.</p>
           </div>
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <figure v-for="a in asks" :key="a.text" class="flex flex-col gap-3 rounded-2xl border bg-background p-5">
               <figcaption class="flex items-center gap-2 text-xs text-muted-foreground">
                 <LandingSourceBadge :source="a.source" size="sm" /> {{ a.where }}
@@ -199,7 +199,7 @@ useJsonLd([
           <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">More than keyword alerts.</h2>
           <p class="text-muted-foreground">Alert tools tell you a word appeared. Mochiscout tells you who is ready to buy, whether you can still reply, and what to say.</p>
         </div>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div v-for="d in differentiators" :key="d.title" class="flex flex-col gap-2 rounded-2xl border p-5">
             <span class="mb-1 flex size-9 items-center justify-center rounded-xl bg-brand-soft text-brand-foreground"><component :is="d.icon" class="size-4.5" /></span>
             <h3 class="font-semibold">{{ d.title }}</h3>
@@ -216,14 +216,14 @@ useJsonLd([
           <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Three steps. Ten minutes a day.</h2>
           <p class="text-muted-foreground">Set up once, then check your feed with your morning coffee. A daily email brings the best threads to you.</p>
         </div>
-        <ol class="grid gap-4 md:grid-cols-3">
+        <ol class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <li v-for="(s, i) in steps" :key="s.title" class="flex flex-col gap-3 rounded-2xl border p-5">
             <span class="flex size-8 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-brand-foreground tabular-nums">{{ i + 1 }}</span>
             <h3 class="font-semibold">{{ s.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ s.body }}</p>
           </li>
         </ol>
-        <div class="grid gap-6 border-t pt-10 md:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 border-t pt-10 md:grid-cols-3">
           <div v-for="p in principles" :key="p.title" class="flex flex-col gap-2">
             <h3 class="flex items-center gap-2 font-semibold"><component :is="p.icon" class="size-4 text-brand" /> {{ p.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ p.body }}</p>
@@ -242,7 +242,7 @@ useJsonLd([
             <h2 class="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">Built in the open.</h2>
             <p class="text-pretty text-neutral-400">Mochiscout's code is public on GitHub. Use the hosted service, or run your own copy on your own Cloudflare account.</p>
           </div>
-          <div class="relative mt-10 grid gap-6 sm:grid-cols-3">
+          <div class="relative mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div v-for="o in openSource" :key="o.title" class="flex flex-col gap-1.5 border-t border-neutral-800 pt-4">
               <h3 class="font-semibold text-white">{{ o.title }}</h3>
               <p class="text-sm text-neutral-400">{{ o.body }}</p>

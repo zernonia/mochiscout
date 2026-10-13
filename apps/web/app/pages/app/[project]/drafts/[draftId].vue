@@ -101,7 +101,7 @@ async function copy(text: string, what: string) {
       </template>
     </AppPageHeader>
 
-    <div class="grid gap-5 lg:grid-cols-[1fr_320px]">
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_320px]">
       <form class="flex flex-col gap-4 rounded-2xl border bg-card p-4 shadow-xs/5 sm:p-5" @submit.prevent="save">
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">

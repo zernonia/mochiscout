@@ -139,7 +139,7 @@ function when(d: string | Date | null) {
           <span class="text-2xl font-semibold tabular-nums">{{ Math.round(results.quality.precision * 100) }}%</span>
           <span class="text-muted-foreground"> of inbox threads (score {{ results.threshold }}+) you acted on were real leads.</span>
         </p>
-        <div class="grid gap-2 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div v-for="b in results.quality.bands" :key="b.label" class="flex flex-col gap-1.5 rounded-xl bg-muted/60 p-3">
             <div class="flex justify-between gap-2 text-xs"><span class="font-medium">Score {{ b.label }}</span><span class="text-muted-foreground tabular-nums">{{ b.good }} real · {{ b.bad }} misses</span></div>
             <div class="h-1.5 overflow-hidden rounded-full bg-background">
@@ -161,7 +161,7 @@ function when(d: string | Date | null) {
       <div class="hidden grid-cols-[1fr_110px_70px_70px] gap-4 border-b bg-muted/40 px-4 py-2.5 text-xs font-medium text-muted-foreground sm:grid">
         <div class="ps-12">Thread</div><div>Your reply</div><div class="text-right">Visits</div><div class="text-right">Sign-ups</div>
       </div>
-      <div v-for="r in results.rows" :key="r.threadId" class="grid gap-2 border-b px-4 py-3 last:border-b-0 sm:grid-cols-[1fr_110px_70px_70px] sm:items-center sm:gap-4">
+      <div v-for="r in results.rows" :key="r.threadId" class="grid grid-cols-1 gap-2 border-b px-4 py-3 last:border-b-0 sm:grid-cols-[1fr_110px_70px_70px] sm:items-center sm:gap-4">
         <div class="flex min-w-0 items-center gap-3">
           <SourceAvatar :channel="r.channel" :platform="r.platform" />
           <div class="min-w-0">

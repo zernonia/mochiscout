@@ -59,7 +59,7 @@ watch(doneCount, (n) => {
     <div class="h-1 overflow-hidden rounded-full bg-muted">
       <div class="h-full rounded-full bg-brand transition-all" :style="{ width: `${(doneCount / steps.length) * 100}%` }" />
     </div>
-    <ol class="grid gap-2 sm:grid-cols-4">
+    <ol class="grid grid-cols-1 gap-2 sm:grid-cols-4">
       <li
         v-for="(s, i) in steps"
         :key="s.title"

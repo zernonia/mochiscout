@@ -4,7 +4,7 @@ withDefaults(defineProps<{ count?: number, lines?: number, cols?: 1 | 2 }>(), { 
 </script>
 
 <template>
-  <div class="grid gap-3" :class="cols === 2 && 'md:grid-cols-2'" aria-hidden="true">
+  <div class="grid grid-cols-1 gap-3" :class="cols === 2 && 'md:grid-cols-2'" aria-hidden="true">
     <div v-for="i in count" :key="i" class="flex items-start gap-3 rounded-xl border bg-card p-4">
       <Skeleton class="size-9 shrink-0 rounded-lg" />
       <div class="flex flex-1 flex-col gap-2">

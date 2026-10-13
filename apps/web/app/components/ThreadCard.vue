@@ -243,7 +243,7 @@ async function copyAndOpen() {
         Already suggested in the replies: <span class="font-medium text-foreground">{{ thread.competitorMentions.join(', ') }}</span>. Your draft will say how you differ.
       </p>
 
-      <div v-if="(thread.reason || thread.replyAngle) && !closed" class="grid gap-2 text-sm sm:grid-cols-2">
+      <div v-if="(thread.reason || thread.replyAngle) && !closed" class="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
         <div v-if="thread.reason" class="flex gap-2.5 rounded-xl bg-muted/70 p-3">
           <TargetIcon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           <div>

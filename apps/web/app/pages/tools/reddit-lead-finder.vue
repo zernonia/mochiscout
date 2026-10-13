@@ -73,7 +73,7 @@ const ago = (iso: string | null) => {
         <p class="max-w-2xl text-lg text-muted-foreground">Type what you sell. See recent Reddit and Hacker News threads where people ask for a recommendation, compare tools or want an alternative.</p>
         <form class="flex max-w-xl flex-col gap-2 sm:flex-row" @submit.prevent="find()">
           <Input v-model="what" class="h-11 flex-1" maxlength="120" placeholder="e.g. changelog tool for SaaS" aria-label="What you sell" />
-          <Button type="submit" size="lg" class="h-11" :loading="loading"><RadarIcon /> {{ loading ? 'Searching…' : 'Find leads' }}</Button>
+          <Button type="submit" size="lg" class="h-11 bg-brand text-white hover:bg-brand/90" :loading="loading"><RadarIcon /> {{ loading ? 'Searching…' : 'Find leads' }}</Button>
         </form>
         <div class="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
           Try:

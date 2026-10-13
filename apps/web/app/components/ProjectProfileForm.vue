@@ -51,7 +51,7 @@ const lists = [
       v-bind="layout === 'sections' ? { title: 'About the product', description: 'What it is and who buys it.', icon: PackageIcon } : {}"
     >
       <div class="flex flex-col gap-5">
-        <div class="grid gap-5 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div class="flex min-w-0 flex-col gap-2">
             <Label for="name">Product name</Label>
             <Input id="name" v-model="profile.name" required />

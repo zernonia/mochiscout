@@ -29,7 +29,7 @@ function host(url: string) {
       <Button as-child><NuxtLink to="/app/new"><PlusIcon /> New project</NuxtLink></Button>
     </AppEmpty>
 
-    <div v-else class="grid gap-3 sm:grid-cols-2">
+    <div v-else class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <NuxtLink
         v-for="p in projects"
         :key="p.id"

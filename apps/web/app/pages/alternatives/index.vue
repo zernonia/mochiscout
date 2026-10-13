@@ -27,7 +27,7 @@ useJsonLd({
           Honest comparisons with the tools founders use to find customers on Reddit and beyond: what each does well, where Mochiscout is different, and when the other tool is the better pick.
         </p>
       </div>
-      <div class="grid gap-4 sm:grid-cols-2">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NuxtLink
           v-for="c in COMPETITORS"
           :key="c.slug"

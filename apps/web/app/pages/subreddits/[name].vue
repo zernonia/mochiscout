@@ -104,13 +104,13 @@ useJsonLd([
       <section class="flex flex-col gap-3">
         <h2 class="text-xl font-semibold">Self-promotion rules</h2>
         <div v-if="s.rules" class="divide-y rounded-xl border">
-          <div class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Self-promotion</div><div class="text-sm">{{ promoLabel[s.rules.promo_policy] }}</div></div>
-          <div v-if="s.rules.self_promo_thread" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Promotion thread</div><div class="text-sm">{{ s.rules.self_promo_thread }}</div></div>
-          <div v-if="s.rules.links_allowed" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Links to your site</div><div class="text-sm">{{ linksLabel[s.rules.links_allowed] }}</div></div>
-          <div v-if="s.rules.min_karma" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Minimum karma</div><div class="text-sm">{{ s.rules.min_karma }}</div></div>
-          <div v-if="s.rules.min_account_age_days" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Minimum account age</div><div class="text-sm">{{ s.rules.min_account_age_days }} days</div></div>
-          <div v-if="s.rules.cooldown_days" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">How often</div><div class="text-sm">At most one promotional mention every {{ s.rules.cooldown_days }} days</div></div>
-          <div v-if="s.rules.notes" class="grid gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Also</div><div class="text-sm">{{ s.rules.notes }}</div></div>
+          <div class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Self-promotion</div><div class="text-sm">{{ promoLabel[s.rules.promo_policy] }}</div></div>
+          <div v-if="s.rules.self_promo_thread" class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Promotion thread</div><div class="text-sm">{{ s.rules.self_promo_thread }}</div></div>
+          <div v-if="s.rules.links_allowed" class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Links to your site</div><div class="text-sm">{{ linksLabel[s.rules.links_allowed] }}</div></div>
+          <div v-if="s.rules.min_karma" class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Minimum karma</div><div class="text-sm">{{ s.rules.min_karma }}</div></div>
+          <div v-if="s.rules.min_account_age_days" class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Minimum account age</div><div class="text-sm">{{ s.rules.min_account_age_days }} days</div></div>
+          <div v-if="s.rules.cooldown_days" class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">How often</div><div class="text-sm">At most one promotional mention every {{ s.rules.cooldown_days }} days</div></div>
+          <div v-if="s.rules.notes" class="grid grid-cols-1 gap-1 p-4 sm:grid-cols-[200px_1fr]"><div class="text-sm font-medium">Also</div><div class="text-sm">{{ s.rules.notes }}</div></div>
         </div>
         <p v-else class="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">We haven't found r/{{ dn }}'s promotion rules yet. Check the sidebar on Reddit before posting.</p>
         <p class="text-xs text-muted-foreground">

@@ -78,7 +78,7 @@ async function submit() {
             />
             <p v-if="mode === 'signup'" class="text-xs text-muted-foreground">At least 8 characters.</p>
           </div>
-          <Button type="submit" :disabled="busy">
+          <Button type="submit" class="bg-brand text-white hover:bg-brand/90" :disabled="busy">
             {{ busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Create account' }}
           </Button>
         </form>

@@ -146,7 +146,7 @@ const keyRows = computed(() => settings.value
     <SkeletonCards v-if="!settings" :count="2" :lines="2" />
     <form v-else class="flex flex-col gap-8" @submit.prevent="save">
       <FormSection title="Daily digest" :description="`Sent to ${settings?.email} at this hour, your time.`" :icon="BellRingIcon">
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div class="flex min-w-0 flex-col gap-2">
             <Label for="tz">Time zone</Label>
             <Select v-model="form.timezone">
@@ -173,7 +173,7 @@ const keyRows = computed(() => settings.value
       <FormSection title="Your Reddit account" description="Never your password." :icon="AtSignIcon">
         <div class="flex flex-col gap-4">
           <p class="text-sm text-pretty text-muted-foreground">The username is checked publicly for suspensions and shadowbans; karma and age are checked against each subreddit's minimums.</p>
-          <div class="grid gap-4 sm:grid-cols-3">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div class="flex min-w-0 flex-col gap-2">
               <Label for="username">Username</Label>
               <Input id="username" v-model="form.redditUsername" placeholder="u/yourname" />
@@ -194,7 +194,7 @@ const keyRows = computed(() => settings.value
         </div>
       </FormSection>
 
-      <div class="grid md:grid-cols-[14rem_1fr] md:gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-[14rem_1fr] md:gap-8">
         <div class="max-md:hidden" />
         <div>
           <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save settings' }}</Button>

@@ -9,7 +9,7 @@ defineProps<{ title: string, description?: string, icon: Component, bare?: boole
 </script>
 
 <template>
-  <section class="grid gap-3 md:grid-cols-[14rem_1fr] md:gap-8">
+  <section class="grid grid-cols-1 gap-3 md:grid-cols-[14rem_1fr] md:gap-8">
     <div class="flex items-start gap-3 md:flex-col md:pt-1">
       <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-foreground" aria-hidden="true">
         <component :is="icon" class="size-4.5" />

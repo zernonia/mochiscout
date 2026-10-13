@@ -22,13 +22,13 @@ const solid = computed(() => open.value || y.value > 8)
     class="sticky top-0 z-40 border-b transition-colors duration-200"
     :class="open ? 'border-border bg-background' : solid ? 'border-border bg-background/85 backdrop-blur-md' : 'border-transparent'"
   >
-    <div class="mx-auto flex h-16 max-w-6xl items-center gap-8 px-4 sm:px-6">
+    <div class="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6 lg:gap-8">
       <NuxtLink to="/" class="flex shrink-0 items-center gap-2 text-[15px] font-semibold tracking-tight">
         <LandingMochiMascot :blink="false" outline class="h-5 w-7" />
         Mochiscout
       </NuxtLink>
 
-      <nav class="hidden items-center gap-1 text-sm text-muted-foreground md:flex" aria-label="Main">
+      <nav class="hidden items-center gap-1 text-sm whitespace-nowrap text-muted-foreground lg:flex" aria-label="Main">
         <NuxtLink
           v-for="l in links"
           :key="l.to"
@@ -44,11 +44,11 @@ const solid = computed(() => open.value || y.value > 8)
           :href="site.repo"
           target="_blank"
           rel="noopener"
-          class="hidden h-8 items-center gap-1.5 rounded-full border bg-background px-3 text-sm font-medium shadow-xs/5 transition-colors hover:bg-muted sm:inline-flex"
+          class="hidden h-8 items-center gap-1.5 rounded-full border whitespace-nowrap bg-background px-3 text-sm font-medium shadow-xs/5 transition-colors hover:bg-muted sm:inline-flex"
         >
           <GitHubMark class="size-4" /> GitHub
         </a>
-        <NuxtLink to="/login" class="hidden rounded-full px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted sm:inline-flex">
+        <NuxtLink to="/login" class="hidden rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors hover:bg-muted sm:inline-flex">
           Sign in
         </NuxtLink>
         <Button as-child size="sm" class="rounded-full bg-brand px-4 text-white shadow-sm shadow-brand/25 hover:bg-brand/90">
@@ -57,7 +57,7 @@ const solid = computed(() => open.value || y.value > 8)
         <Button
           variant="ghost"
           size="icon-sm"
-          class="rounded-full md:hidden"
+          class="rounded-full lg:hidden"
           :aria-label="open ? 'Close menu' : 'Open menu'"
           :aria-expanded="open"
           aria-controls="landing-menu"
@@ -69,7 +69,7 @@ const solid = computed(() => open.value || y.value > 8)
       </div>
     </div>
 
-    <nav v-if="open" id="landing-menu" class="border-t px-4 pt-2 pb-5 md:hidden" aria-label="Main">
+    <nav v-if="open" id="landing-menu" class="border-t px-4 pt-2 pb-5 lg:hidden" aria-label="Main">
       <NuxtLink v-for="l in links" :key="l.to" :to="l.to" class="block rounded-xl px-3 py-2.5 text-[15px] font-medium hover:bg-muted">
         {{ l.label }}
       </NuxtLink>
