@@ -8,9 +8,7 @@ const Query = z.object({
 
 /** Subreddit suggestions for the "watch a subreddit" box. */
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event)
-  const userId = session.user?.id
-  if (!userId) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  const { user: { id: userId } } = await requireUser(event)
   const { q, remote } = await getValidatedQuery(event, Query.parse)
   return findSubreddits(event, userId, q, { remote: remote === '1' })
 })

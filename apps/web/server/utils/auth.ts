@@ -1,6 +1,6 @@
 import type { NuxtRequestEvent as RequestEvent } from 'nuxt/server'
 import { TRIAL_DAYS, TRIAL_PLAN, trialStart } from '@mochiscout/core'
-import { and, count, eq, schema } from '@mochiscout/db'
+import { and, count, eq, inArray, ne, schema } from '@mochiscout/db'
 
 type Db = ReturnType<typeof getDb>
 type User = typeof schema.users.$inferSelect
@@ -156,14 +156,25 @@ export async function signInWithOAuth(event: RequestEvent, profile: {
   let user = await db.select().from(schema.users).where(eq(schema.users.email, email)).get()
   if (user) {
     // An unverified account is being claimed by the email's real owner: whoever
-    // registered it first loses the password, every signed-in session and every API key.
+    // registered it first loses the password, every signed-in session and every API key,
+    // and anyone they let into the account's orgs (members, invites, alert webhooks) is cut off.
     const claim = !user.emailVerified
+    const ownedOrgIds = claim
+      ? (await db.select({ id: schema.orgs.id }).from(schema.orgs).where(eq(schema.orgs.ownerId, user.id))).map(o => o.id)
+      : []
     const statements = [
       db.update(schema.users).set({ emailVerified: true, image: user.image ?? profile.image ?? null, updatedAt: new Date() }).where(eq(schema.users.id, user.id)),
       ...(claim
         ? [
             db.delete(schema.accounts).where(and(eq(schema.accounts.userId, user.id), eq(schema.accounts.providerId, 'credential'))),
             db.delete(schema.apiKeys).where(eq(schema.apiKeys.userId, user.id)),
+          ]
+        : []),
+      ...(ownedOrgIds.length
+        ? [
+            db.delete(schema.orgMembers).where(and(inArray(schema.orgMembers.orgId, ownedOrgIds), ne(schema.orgMembers.userId, user.id))),
+            db.delete(schema.orgInvites).where(inArray(schema.orgInvites.orgId, ownedOrgIds)),
+            db.update(schema.projects).set({ alertWebhookUrl: null }).where(inArray(schema.projects.orgId, ownedOrgIds)),
           ]
         : []),
     ]
