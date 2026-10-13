@@ -97,7 +97,7 @@ const ago = (iso: string | null) => {
             <p v-if="l.snippet" class="line-clamp-2 text-sm text-muted-foreground">{{ l.snippet }}</p>
           </li>
         </ol>
-        <div class="flex flex-col items-start gap-3 rounded-2xl border border-violet-500/30 bg-violet-500/6 p-5 sm:flex-row sm:items-center">
+        <div class="flex flex-col items-start gap-3 rounded-2xl border border-brand/25 bg-brand-soft p-5 sm:flex-row sm:items-center">
           <p class="flex-1 text-sm"><span class="font-semibold">Get these as they're posted.</span> Mochiscout checks every 15 minutes, scores each thread for buying intent, flags subreddit rules and drafts a reply you post yourself.</p>
           <LandingCta source="tool-lead-finder-results" />
         </div>

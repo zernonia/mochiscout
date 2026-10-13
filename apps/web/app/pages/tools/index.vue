@@ -29,7 +29,7 @@ const icons = { 'reddit-lead-finder': RadarIcon, 'subreddit-rules': ShieldCheckI
       </div>
       <div class="grid gap-4 sm:grid-cols-2">
         <NuxtLink v-for="t in FREE_TOOLS" :key="t.slug" :to="`/tools/${t.slug}`" class="group flex flex-col gap-3 rounded-2xl border p-6 transition-colors hover:bg-muted/40">
-          <component :is="icons[t.slug]" class="size-6 text-violet-600" />
+          <component :is="icons[t.slug]" class="size-6 text-brand" />
           <h2 class="text-lg font-semibold">{{ t.name }}</h2>
           <p class="text-sm text-muted-foreground">{{ t.tagline }}</p>
           <span class="mt-auto inline-flex items-center gap-1 text-sm font-medium">Open <ArrowRightIcon class="size-4 transition-transform group-hover:translate-x-0.5" /></span>

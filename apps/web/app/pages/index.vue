@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CheckIcon, CodeIcon, GaugeIcon, HandIcon, MessageSquareTextIcon, ScaleIcon, ShieldCheckIcon, SproutIcon } from '@lucide/vue'
+
 const { edition } = useRuntimeConfig().public
 
 // Self-hosted instances have no marketing page.
@@ -17,12 +19,13 @@ useMarketingSeo({
 })
 
 const sources = ['reddit', 'hn', 'bluesky', 'x'] as const
+const heroFacts = ['No card needed', 'Free plan after the trial', 'You always post yourself']
 
 const differentiators = [
-  { title: 'Leads, not mentions', body: 'Every post gets a buying-intent score and a reason. Fresh, uncrowded threads rise to the top; archived, locked and removed ones are flagged so you never draft for a dead thread.' },
-  { title: 'Replies that fit the thread', body: 'Drafts read the full post and the replies so far, say fairly how you differ from a competitor someone already suggested, and learn your voice from what you post.' },
-  { title: 'Gets better as you use it', body: 'Reply, save or dismiss with a reason, and scoring learns what fits your product. Hot leads can email you within the hour.' },
-  { title: 'Won\'t disappear on you', body: 'No Reddit Data API to lose, and the code is open source. If the hosted service ever changed, you could run your own copy.' },
+  { icon: GaugeIcon, title: 'Leads, not mentions', body: 'Every post gets a buying-intent score and a reason. Fresh, uncrowded threads rise to the top; archived, locked and removed ones are flagged so you never draft for a dead thread.' },
+  { icon: MessageSquareTextIcon, title: 'Replies that fit the thread', body: 'Drafts read the full post and the replies so far, say fairly how you differ from a competitor someone already suggested, and learn your voice from what you post.' },
+  { icon: SproutIcon, title: 'Gets better as you use it', body: 'Reply, save or dismiss with a reason, and scoring learns what fits your product. Hot leads can email you within the hour.' },
+  { icon: ShieldCheckIcon, title: 'Won\'t disappear on you', body: 'No Reddit Data API to lose, and the code is open source. If the hosted service ever changed, you could run your own copy.' },
 ]
 
 const pains = [
@@ -45,9 +48,9 @@ const steps = [
 ]
 
 const principles = [
-  { title: 'You post. Always.', body: 'No auto-posting, auto-commenting, votes or DMs. Mochiscout finds the thread and drafts a reply; you edit it and post it from your own account.' },
-  { title: 'Rules first', body: 'Each subreddit\'s promotion rules, karma and account-age limits are checked before you post, with per-sub cooldowns and a daily promo cap.' },
-  { title: 'Open source', body: 'AGPL-licensed. Run it free on your own Cloudflare account, or let us host it for you.' },
+  { icon: HandIcon, title: 'You post. Always.', body: 'No auto-posting, auto-commenting, votes or DMs. Mochiscout finds the thread and drafts a reply; you edit it and post it from your own account.' },
+  { icon: ScaleIcon, title: 'Rules first', body: 'Each subreddit\'s promotion rules, karma and account-age limits are checked before you post, with per-sub cooldowns and a daily promo cap.' },
+  { icon: CodeIcon, title: 'Open source', body: 'AGPL-licensed. Run it free on your own Cloudflare account, or let us host it for you.' },
 ]
 
 const openSource = [
@@ -94,37 +97,49 @@ useJsonLd([
 
     <main>
       <!-- Hero -->
-      <section class="mx-auto flex max-w-4xl flex-col items-center gap-6 px-4 pt-20 pb-12 text-center sm:pt-28">
-        <NuxtLink to="/alternatives/gummysearch" class="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm text-muted-foreground shadow-xs/5 transition-colors hover:text-foreground">
-          <span class="size-1.5 rounded-full bg-amber-500" />
-          GummySearch shuts down Dec 1. Moving over? <span class="font-medium text-foreground">See how we compare →</span>
-        </NuxtLink>
-        <h1 class="text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
-          Find the people already asking for your product.
-        </h1>
-        <p class="max-w-2xl text-balance text-lg text-muted-foreground">
-          Mochiscout watches Reddit, Hacker News, Bluesky and X for posts from people who need what you built. You reply yourself, by each community's rules.
-        </p>
-        <LandingCta source="hero" />
-        <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-          <span class="flex items-center gap-3">
-            Posts from
-            <span class="flex -space-x-1.5">
-              <LandingSourceBadge v-for="s in sources" :key="s" :source="s" />
+      <section class="relative isolate -mt-16 overflow-hidden pt-16">
+        <div aria-hidden="true" class="absolute inset-0 -z-10 bg-[radial-gradient(55%_60%_at_50%_0%,var(--brand-soft),transparent_75%)]" />
+        <div aria-hidden="true" class="absolute inset-0 -z-10 bg-[radial-gradient(var(--color-neutral-300)_1px,transparent_1px)] mask-[radial-gradient(60%_55%_at_50%_10%,black,transparent)] bg-size-[22px_22px] opacity-50" />
+        <div class="mx-auto flex max-w-4xl flex-col items-center gap-7 px-4 pt-16 pb-14 text-center sm:pt-24">
+          <NuxtLink to="/alternatives/gummysearch" class="group inline-flex items-center gap-2 rounded-full border bg-background/80 py-1 ps-1 pe-3 text-sm text-muted-foreground shadow-xs/5 backdrop-blur transition-colors hover:text-foreground">
+            <span class="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand-foreground">New</span>
+            <span class="hidden sm:inline">GummySearch shuts down Dec 1.</span>
+            <span class="font-medium text-foreground"><span class="sm:hidden">Moving from GummySearch?</span><span class="hidden sm:inline">See how we compare</span> <span class="inline-block transition-transform group-hover:translate-x-0.5">→</span></span>
+          </NuxtLink>
+          <h1 class="text-balance text-[2.75rem] leading-[1.05] font-semibold tracking-tighter sm:text-7xl">
+            Find the people already
+            <span class="relative whitespace-nowrap text-brand">
+              asking
+              <svg aria-hidden="true" viewBox="0 0 220 16" preserveAspectRatio="none" class="absolute inset-x-0 -bottom-1.5 h-3 w-full sm:-bottom-2 sm:h-4"><path d="M3 11c38-6 76-9 108-8s70 4 106 7" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" class="opacity-35" /></svg>
             </span>
-          </span>
-          <span class="hidden h-4 w-px bg-border sm:block" />
-          <a :href="site.repo" target="_blank" rel="noopener" class="inline-flex items-center gap-2 transition-colors hover:text-foreground">
-            <GitHubMark class="size-4 text-foreground" /> Open source, AGPL-3.0
-          </a>
+            for your product.
+          </h1>
+          <p class="max-w-2xl text-balance text-lg text-muted-foreground sm:text-xl">
+            Mochiscout watches Reddit, Hacker News, Bluesky and X for people who need what you built, scores how ready they are to buy, and drafts a reply you post yourself.
+          </p>
+          <LandingCta source="hero" secondary="how" />
+          <ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+            <li v-for="t in heroFacts" :key="t" class="flex items-center gap-1.5"><CheckIcon class="size-4 text-brand" /> {{ t }}</li>
+            <li>
+              <a :href="site.repo" target="_blank" rel="noopener" class="flex items-center gap-1.5 transition-colors hover:text-foreground">
+                <GitHubMark class="size-4 text-foreground" /> Open source
+              </a>
+            </li>
+          </ul>
         </div>
       </section>
 
       <!-- Product mockup -->
       <section class="mx-auto max-w-6xl px-3 sm:px-4">
-        <div class="relative rounded-3xl bg-neutral-100 px-3 pt-10 pb-0 sm:px-10 sm:pt-14">
+        <div class="relative rounded-[2rem] bg-linear-to-b from-brand-soft to-neutral-50 px-3 pt-10 ring-1 ring-black/5 sm:px-10 sm:pt-14">
           <LandingMochiMascot class="absolute -top-8 right-6 h-16 w-24 sm:right-12 sm:h-20 sm:w-28" />
-          <div class="mx-auto max-w-4xl translate-y-0 pb-3 sm:pb-10">
+          <div class="absolute top-4 left-4 hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
+            Watching
+            <span class="flex -space-x-1.5">
+              <LandingSourceBadge v-for="src in sources" :key="src" :source="src" size="sm" />
+            </span>
+          </div>
+          <div class="mx-auto max-w-4xl pb-3 sm:pb-10">
             <LandingFeedMockup />
           </div>
         </div>
@@ -132,7 +147,10 @@ useJsonLd([
 
       <!-- Problem -->
       <section class="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-24">
-        <h2 class="max-w-2xl text-balance text-3xl font-semibold tracking-tight sm:text-4xl">You built it. You launched it. It went quiet.</h2>
+        <div class="flex max-w-2xl flex-col gap-3">
+          <p class="text-sm font-medium text-brand-foreground">The problem</p>
+          <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">You built it. You launched it. It went quiet.</h2>
+        </div>
         <div class="grid gap-4 md:grid-cols-3">
           <div v-for="(p, i) in pains" :key="p.title" class="flex flex-col gap-3 rounded-2xl border p-5">
             <div v-if="i === 0" class="rounded-xl bg-muted/60 p-3 text-xs">
@@ -159,6 +177,7 @@ useJsonLd([
       <section class="bg-neutral-50">
         <div class="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-24">
           <div class="flex max-w-2xl flex-col gap-3">
+            <p class="text-sm font-medium text-brand-foreground">The opportunity</p>
             <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Your customers are already posting.</h2>
             <p class="text-muted-foreground">People describe their problem in public every day, often naming the tool they're unhappy with. These are the kinds of posts Mochiscout surfaces.</p>
           </div>
@@ -176,11 +195,13 @@ useJsonLd([
       <!-- Why Mochiscout -->
       <section class="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-24">
         <div class="flex max-w-2xl flex-col gap-3">
+          <p class="text-sm font-medium text-brand-foreground">Why Mochiscout</p>
           <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">More than keyword alerts.</h2>
           <p class="text-muted-foreground">Alert tools tell you a word appeared. Mochiscout tells you who is ready to buy, whether you can still reply, and what to say.</p>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
           <div v-for="d in differentiators" :key="d.title" class="flex flex-col gap-2 rounded-2xl border p-5">
+            <span class="mb-1 flex size-9 items-center justify-center rounded-xl bg-brand-soft text-brand-foreground"><component :is="d.icon" class="size-4.5" /></span>
             <h3 class="font-semibold">{{ d.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ d.body }}</p>
           </div>
@@ -189,21 +210,22 @@ useJsonLd([
       </section>
 
       <!-- How it works -->
-      <section class="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-24">
+      <section id="how" class="mx-auto flex max-w-5xl scroll-mt-20 flex-col gap-10 px-4 py-24">
         <div class="flex max-w-2xl flex-col gap-3">
+          <p class="text-sm font-medium text-brand-foreground">How it works</p>
           <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Three steps. Ten minutes a day.</h2>
           <p class="text-muted-foreground">Set up once, then check your feed with your morning coffee. A daily email brings the best threads to you.</p>
         </div>
         <ol class="grid gap-4 md:grid-cols-3">
           <li v-for="(s, i) in steps" :key="s.title" class="flex flex-col gap-3 rounded-2xl border p-5">
-            <span class="flex size-8 items-center justify-center rounded-full bg-neutral-900 text-sm font-semibold text-white tabular-nums">{{ i + 1 }}</span>
+            <span class="flex size-8 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-brand-foreground tabular-nums">{{ i + 1 }}</span>
             <h3 class="font-semibold">{{ s.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ s.body }}</p>
           </li>
         </ol>
         <div class="grid gap-6 border-t pt-10 md:grid-cols-3">
           <div v-for="p in principles" :key="p.title" class="flex flex-col gap-2">
-            <h3 class="font-semibold">{{ p.title }}</h3>
+            <h3 class="flex items-center gap-2 font-semibold"><component :is="p.icon" class="size-4 text-brand" /> {{ p.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ p.body }}</p>
           </div>
         </div>
@@ -241,12 +263,13 @@ useJsonLd([
       <section id="pricing" class="scroll-mt-20 bg-neutral-50">
         <div class="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-24">
           <div class="flex flex-col items-center gap-3 text-center">
+            <p class="text-sm font-medium text-brand-foreground">Pricing</p>
             <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">Simple pricing</h2>
             <p class="text-muted-foreground">Every account starts with 14 days of Pro, free and without a card. Then keep the free plan or upgrade when the feed starts paying for itself. Self-hosting is always free.</p>
           </div>
           <PlanCards v-if="catalogue" :plans="catalogue.plans" highlight="solo">
             <template #action="{ plan }">
-              <Button as-child :variant="plan.id === 'solo' ? 'default' : 'outline'" class="rounded-full">
+              <Button as-child :variant="plan.id === 'solo' ? 'default' : 'outline'" class="rounded-full" :class="plan.id === 'solo' ? 'bg-brand text-white shadow-sm shadow-brand/25 hover:bg-brand/90' : ''">
                 <NuxtLink to="/login?mode=signup">{{ plan.id === 'free' ? 'Start free' : `Try ${plan.label} free` }}</NuxtLink>
               </Button>
             </template>
@@ -266,12 +289,14 @@ useJsonLd([
       </section>
 
       <!-- Final CTA -->
-      <section class="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 pb-28 text-center">
-        <LandingMochiMascot class="h-20 w-28" />
-        <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Someone asked for your product today.</h2>
-        <p class="text-muted-foreground">Start with one project. It takes about five minutes.</p>
-        <LandingCta source="footer" secondary="selfhost" />
-      </section>
+      <div class="px-4 pb-24">
+        <section class="mx-auto flex max-w-5xl flex-col items-center gap-6 rounded-[2rem] bg-linear-to-b from-brand-soft to-background px-4 py-16 text-center ring-1 ring-black/5 sm:py-20">
+          <LandingMochiMascot class="h-20 w-28" />
+          <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Someone asked for your product today.</h2>
+          <p class="text-muted-foreground">Start with one project. It takes about five minutes.</p>
+          <LandingCta source="footer" secondary="selfhost" />
+        </section>
+      </div>
     </main>
 
     <LandingFooter />
