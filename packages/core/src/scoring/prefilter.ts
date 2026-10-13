@@ -70,3 +70,26 @@ export function createMatcher(project: PrefilterProject) {
     return [...matched]
   }
 }
+
+const MAKER_ASKING = ['alternative', 'looking for', 'recommend', 'suggestions', 'is there', 'any tool', 'any app', 'switch from', 'switching from', 'help with', 'need a', 'need help']
+
+const MAKER_TITLE = [
+  /\b(i|we)\s+(just\s+|finally\s+|recently\s+)?(made|built|created|launched|developed|coded|shipped|released|designed|vibe[- ]?coded)\b(?!\s+(the|a)\s+(mistake|switch|decision|move)\b)/i,
+  /\b(i|we)('m|'re|\s+am|\s+are)\s+(building|making|launching|developing)\b/i,
+  /^\s*(show hn|launch hn)\s*:/i,
+  /\b([Ii]ntroducing|[Aa]nnouncing)\s+[A-Z]/,
+  /\bmy\s+(new\s+|first\s+)?(side project|app|saas|startup|tool|extension|website|product)\b.*\b(feedback|launch|live|beta|roast)\b/i,
+]
+
+/**
+ * A post whose title says its author made something is a launch or showcase,
+ * not a request, whatever the model makes of it. The title is the only
+ * reliable signal: search snippets mix in text from other threads. A title
+ * that also asks for something ("we built on Bubble, any alternative?") is
+ * still a lead.
+ */
+export function isMakerPost(title: string) {
+  if (!MAKER_TITLE.some(r => r.test(title))) return false
+  const t = normalize(title)
+  return !/\?\s*$/.test(title.trim()) && !MAKER_ASKING.some(p => t.includes(normalize(p)))
+}

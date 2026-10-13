@@ -6,7 +6,7 @@ import { z } from 'zod'
 const Body = z.object({
   status: z.enum(['new', 'saved', 'replied', 'dismissed']).optional(),
   /** Why it was dismissed; fit reasons calibrate future scoring. */
-  dismissReason: z.enum(['off_topic', 'not_buyer', 'already_answered', 'closed', 'other']).optional(),
+  dismissReason: z.enum(['off_topic', 'not_buyer', 'self_promo', 'already_answered', 'closed', 'other']).optional(),
   /** The user's edits to the drafted reply. */
   replyDraft: z.string().max(10_000).optional(),
   /** Link to the reply the user posted, to track whether it stays up. Null clears it. */

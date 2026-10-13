@@ -1,6 +1,6 @@
 import type { Post, SearchClient, SearchQuery, SearchResult, SourceAdapter } from '@mochiscout/sources'
 import { cleanRedditTitle, parseRedditThreadUrl } from '@mochiscout/sources'
-import { INTENT_PHRASES, normalize } from '../scoring/prefilter'
+import { INTENT_PHRASES, isMakerPost, normalize } from '../scoring/prefilter'
 
 /**
  * The free lead finder: recent Reddit and Hacker News threads where people
@@ -50,7 +50,7 @@ export function rankFoundLeads(what: string, items: Omit<FoundLead, 'asking' | '
   const seen = new Set<string>()
   const out: FoundLead[] = []
   for (const item of items) {
-    if (seen.has(item.url)) continue
+    if (seen.has(item.url) || isMakerPost(item.title)) continue
     seen.add(item.url)
     const text = normalize(`${item.title} ${item.snippet}`)
     const title = normalize(item.title)

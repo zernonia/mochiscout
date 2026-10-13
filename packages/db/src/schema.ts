@@ -191,7 +191,7 @@ export const threadScores = sqliteTable(
     status: text('status', { enum: ['new', 'replied', 'dismissed', 'saved'] }).notNull().default('new'),
     statusChangedAt: integer('status_changed_at', { mode: 'timestamp' }),
     /** Why a thread was dismissed; fit reasons calibrate future scoring. */
-    dismissReason: text('dismiss_reason', { enum: ['off_topic', 'not_buyer', 'already_answered', 'closed', 'other'] }),
+    dismissReason: text('dismiss_reason', { enum: ['off_topic', 'not_buyer', 'self_promo', 'already_answered', 'closed', 'other'] }),
     /** When a hot-lead alert went out for this thread. */
     alertedAt: integer('alerted_at', { mode: 'timestamp' }),
     /** The founder's posted reply, for survival tracking. */

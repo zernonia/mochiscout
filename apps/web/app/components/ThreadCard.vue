@@ -5,7 +5,7 @@ import { toast } from '@/lib/toast'
 
 type Status = 'new' | 'saved' | 'replied' | 'dismissed'
 type ThreadState = 'open' | 'archived' | 'locked' | 'removed' | 'deleted'
-type DismissReason = 'off_topic' | 'not_buyer' | 'already_answered' | 'closed' | 'other'
+type DismissReason = 'off_topic' | 'not_buyer' | 'self_promo' | 'already_answered' | 'closed' | 'other'
 
 const props = defineProps<{
   projectId: string
@@ -51,12 +51,14 @@ const closedLabel: Record<ThreadState, string> = {
 const dismissReasons: { value: DismissReason, label: string }[] = [
   { value: 'off_topic', label: 'Not relevant' },
   { value: 'not_buyer', label: 'Not my audience' },
+  { value: 'self_promo', label: 'Self-promotion' },
   { value: 'already_answered', label: 'Already answered' },
   { value: 'other', label: 'Other reason' },
 ]
 const reasonLabel: Record<DismissReason, string> = {
   off_topic: 'Not relevant',
   not_buyer: 'Not my audience',
+  self_promo: 'Self-promotion',
   already_answered: 'Already answered',
   closed: 'Closed to replies',
   other: 'Other',

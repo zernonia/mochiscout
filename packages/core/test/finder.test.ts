@@ -16,14 +16,15 @@ describe('lead finder', () => {
     expect(leadQueries('x')[0]).toMatchObject({ domains: ['reddit.com'] })
   })
 
-  it('puts people asking for the product first and drops threads that don\'t mention it', () => {
+  it('puts people asking for the product first and drops makers\' launches and threads that don\'t mention it', () => {
     const ranked = rankFoundLeads('changelog tool', [
-      item('We shipped our changelog'),
+      item('Our changelog is always out of date'),
+      item('We shipped our changelog tool', { url: 'https://www.reddit.com/r/saas/comments/s1/' }),
       item('Any recommendation for a changelog tool?', { url: 'https://www.reddit.com/r/saas/comments/a1/' }),
       item('Best pizza in town'),
       item('Any recommendation for a changelog tool?', { url: 'https://www.reddit.com/r/saas/comments/a1/' }),
     ])
-    expect(ranked.map(r => [r.title, r.asking])).toEqual([['Any recommendation for a changelog tool?', true], ['We shipped our changelog', false]])
+    expect(ranked.map(r => [r.title, r.asking])).toEqual([['Any recommendation for a changelog tool?', true], ['Our changelog is always out of date', false]])
   })
 
   it('combines Reddit search and Hacker News, and survives a failing source', async () => {

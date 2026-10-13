@@ -34,3 +34,20 @@ describe('scoreThreads', () => {
     expect(res.scores.map(s => s?.intent ?? null)).toEqual([100, 5, null])
   })
 })
+
+describe('self-promotion', () => {
+  it('caps a maker post the model scored high, but leaves others alone', async () => {
+    const res = await scoreThreads(fakeLlm([
+      { id: 1, intent: 70, kind: 'seeking_tool', reason: 'r', reply_angle: 'a' },
+      { id: 2, intent: 70, kind: 'seeking_tool', reason: 'r', reply_angle: 'a' },
+    ]), project, [
+      { channel: 'studytips', title: 'classical w no lyrics is my go to for focus so i made a free ...', snippet: 'Any free alternatives to Brain.fm?' },
+      { channel: 'studytips', title: 'Any free alternatives to Brain.fm?', snippet: null },
+    ])
+    expect(res.scores.map(s => [s?.intent, s?.kind])).toEqual([[25, 'other'], [70, 'seeking_tool']])
+  })
+
+  it('marks search snippets so other threads\' titles aren\'t read as the poster\'s words', () => {
+    expect(scoringUserPrompt([{ channel: 'x', title: 'T', snippet: 'S', source: 'search' }])).toContain('[search snippet] S')
+  })
+})

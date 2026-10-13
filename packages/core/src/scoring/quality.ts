@@ -4,14 +4,14 @@ import { and, eq, inArray, schema } from '@mochiscout/db'
 /**
  * How good the intent scores are, judged by what the founder did with each
  * thread: replied or saved means it was a real lead; dismissed as not
- * relevant or not their audience means it wasn't. Dismissals for timing
+ * relevant, not their audience or self-promotion means it wasn't. Dismissals for timing
  * (closed, already answered) or "other" say nothing about the score.
  */
 export type Label = 'good' | 'bad'
 
 export function labelFor(status: string, dismissReason: string | null): Label | null {
   if (status === 'replied' || status === 'saved') return 'good'
-  if (status === 'dismissed' && (dismissReason === null || dismissReason === 'off_topic' || dismissReason === 'not_buyer')) return 'bad'
+  if (status === 'dismissed' && (dismissReason === null || dismissReason === 'off_topic' || dismissReason === 'not_buyer' || dismissReason === 'self_promo')) return 'bad'
   return null
 }
 

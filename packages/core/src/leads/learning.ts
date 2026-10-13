@@ -7,17 +7,18 @@ import { truncate } from '@mochiscout/sources'
  * rewrite drafts teaches scoring and drafting for their project.
  */
 
-export type DismissReason = 'off_topic' | 'not_buyer' | 'already_answered' | 'closed' | 'other'
+export type DismissReason = 'off_topic' | 'not_buyer' | 'self_promo' | 'already_answered' | 'closed' | 'other'
 
 export const DISMISS_REASONS: { value: DismissReason, label: string }[] = [
   { value: 'off_topic', label: 'Not relevant' },
   { value: 'not_buyer', label: 'Not my audience' },
+  { value: 'self_promo', label: 'Someone promoting their own product' },
   { value: 'already_answered', label: 'Already answered' },
   { value: 'closed', label: 'Can\'t reply (archived or locked)' },
   { value: 'other', label: 'Other' },
 ]
 
-const FIT_LABEL: Partial<Record<DismissReason, string>> = { off_topic: 'not relevant', not_buyer: 'not their audience' }
+const FIT_LABEL: Partial<Record<DismissReason, string>> = { off_topic: 'not relevant', not_buyer: 'not their audience', self_promo: 'the poster is promoting their own product, not asking' }
 
 export interface ScoringExamples {
   liked: { title: string, snippet: string | null }[]
@@ -36,7 +37,7 @@ export async function scoringExamples(db: Db, projectId: string): Promise<Scorin
       .where(and(eq(s.projectId, projectId), inArray(s.status, ['replied', 'saved'])))
       .orderBy(desc(sql`${s.status} = 'replied'`), recent).limit(EXAMPLES_EACH),
     db.select({ title: t.title, reason: s.dismissReason }).from(s).innerJoin(t, eq(t.id, s.threadId))
-      .where(and(eq(s.projectId, projectId), eq(s.status, 'dismissed'), or(isNull(s.dismissReason), inArray(s.dismissReason, ['off_topic', 'not_buyer']))))
+      .where(and(eq(s.projectId, projectId), eq(s.status, 'dismissed'), or(isNull(s.dismissReason), inArray(s.dismissReason, ['off_topic', 'not_buyer', 'self_promo']))))
       .orderBy(recent).limit(EXAMPLES_EACH),
   ])
   return {

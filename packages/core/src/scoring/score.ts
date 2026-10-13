@@ -5,6 +5,7 @@ import type { ScoringExamples } from '../leads/learning'
 import { LlmParseError, LlmRefusalError, z } from '@mochiscout/llm'
 import { stateFromAge } from '@mochiscout/sources'
 import { scoringExamples, scoringExamplesBrief } from '../leads/learning'
+import { isMakerPost } from './prefilter'
 import { recordUsage } from '../usage'
 
 export const SCORE_BATCH = 20
@@ -37,7 +38,12 @@ export interface ScoringThread {
   channel: string | null
   title: string
   snippet: string | null
+  /** 'search' when the thread came from a web search result rather than the platform's own feed. */
+  source?: string
 }
+
+/** Highest intent for a post whose title says the poster made the thing ("I built…", "Show HN:"). */
+export const MAKER_POST_MAX_INTENT = 25
 
 export function scoringSystemPrompt(p: ScoringProject, examples?: ScoringExamples) {
   return `You find threads and posts (Reddit, Hacker News, Bluesky, X) where a founder could genuinely help someone, and where their product may be relevant. You never write the reply yourself.
@@ -53,7 +59,9 @@ For each thread, return:
   80-100: the poster is looking for a solution like this product right now (asking for a tool, alternatives, or recommendations).
   60-79: clear pain or a comparison where a helpful reply that mentions this product would be welcome.
   30-59: related topic, weak or indirect need.
-  0-29: unrelated, or the poster is promoting their own product ("I built X"), hiring, or selling.
+  0-29: unrelated, or the poster is promoting their own product, hiring, or selling.
+- Self-promotion is never a lead, however close the topic. Score 0-20 when the poster made, built, launched or sells the thing they describe: "I made/built/created X", "so I made a free…", "Show HN", "introducing X", a title that names and pitches a product, asking for feedback or beta testers on their own app, or a frustration story that ends with what they built ("I got so frustrated… so I built…"). The founder can't sell to another maker showing off their own app.
+- Judge the poster's own words. Text marked as a search snippet can include titles of other, related threads from the same page ("Any free alternatives to X?"); never score a thread on those.
 - kind: seeking_tool (asks for a tool or service), comparison (weighs named products), complaint (about a specific product), pain (describes the problem without asking for tools), other.
 - reason: one sentence.
 - reply_angle: one sentence on how to help in a reply.
@@ -63,6 +71,11 @@ Score every thread exactly once, using its number as id.`
 
 const PLATFORM_LABEL: Record<string, string> = { hn: 'Hacker News', bluesky: 'Bluesky', x: 'X', web: 'Web' }
 
+function snippetLine(t: ScoringThread) {
+  if (!t.snippet) return ''
+  return t.source === 'search' ? `[search snippet] ${t.snippet}` : t.snippet
+}
+
 function sourceLabel(t: ScoringThread) {
   if (t.channel) return `r/${t.channel} · `
   return t.platform && PLATFORM_LABEL[t.platform] ? `${PLATFORM_LABEL[t.platform]} · ` : ''
@@ -70,7 +83,7 @@ function sourceLabel(t: ScoringThread) {
 
 export function scoringUserPrompt(threads: ScoringThread[]) {
   return threads
-    .map((t, i) => `<thread id="${i + 1}">\n${sourceLabel(t)}${t.title}\n${t.snippet ?? ''}\n</thread>`)
+    .map((t, i) => `<thread id="${i + 1}">\n${sourceLabel(t)}${t.title}\n${snippetLine(t)}\n</thread>`)
     .join('\n\n')
 }
 
@@ -88,9 +101,14 @@ export async function scoreThreads(llm: Llm, project: ScoringProject, threads: S
   }
   return {
     usage: res.usage,
-    scores: threads.map((_, i) => {
+    scores: threads.map((t, i) => {
       const s = byIndex.get(i + 1)
-      return s ? { ...s, intent: Math.max(0, Math.min(100, Math.round(s.intent))) } : null
+      if (!s) return null
+      const intent = Math.max(0, Math.min(100, Math.round(s.intent)))
+      if (isMakerPost(t.title) && intent > MAKER_POST_MAX_INTENT) {
+        return { ...s, intent: MAKER_POST_MAX_INTENT, kind: 'other' as const, reason: 'The poster is sharing something they made, not asking for one.' }
+      }
+      return { ...s, intent }
     }),
   }
 }
@@ -124,6 +142,7 @@ export async function runScoring(ctx: JobContext, opts: { maxBatches?: number, p
         snippet: schema.threads.snippet,
         createdUtc: schema.threads.createdUtc,
         state: schema.threads.state,
+        source: schema.threads.source,
       })
       .from(schema.scoreQueue)
       .innerJoin(schema.threads, eq(schema.threads.id, schema.scoreQueue.threadId))
