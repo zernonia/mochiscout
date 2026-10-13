@@ -6,7 +6,7 @@ import type { H3Event } from 'h3'
  */
 export async function limitFreeTool(event: H3Event, tool: string, opts: { perHour: number, perDay: number }) {
   const env = getEnv(event)
-  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event) ?? 'unknown'
+  const ip = clientKey(event)
   const hour = Math.floor(Date.now() / 3_600_000)
   const day = new Date().toISOString().slice(0, 10)
   const ipKey = `tool:${tool}:${ip}:${hour}`

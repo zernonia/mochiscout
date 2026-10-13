@@ -4,6 +4,7 @@ import { fillLink, generateReply, linksAllowed } from '../src/drafter/reply'
 import { renderHotAlert } from '../src/leads/alerts'
 import { assessLead, competitorMentions } from '../src/leads/assess'
 import { scoringExamplesBrief } from '../src/leads/learning'
+import { sameSite } from '../src/leads/attribution'
 import { scoringSystemPrompt } from '../src/scoring/score'
 
 const now = new Date('2026-10-09T12:00:00Z')
@@ -169,5 +170,18 @@ describe('generateReply prompt', () => {
     })
     expect(calls[0].prompt).toContain('Links: not allowed here')
     expect(calls[0].system).not.toContain('<founder_facts>')
+  })
+})
+
+describe('sameSite', () => {
+  it('accepts the site, its subdomains, and its parent domain', () => {
+    expect(sameSite('https://example.com', 'https://example.com/pricing')).toBe(true)
+    expect(sameSite('https://app.example.com', 'https://example.com')).toBe(true)
+    expect(sameSite('https://example.com', 'https://app.example.com')).toBe(true)
+  })
+  it('rejects other sites and bare suffixes', () => {
+    expect(sameSite('https://evil.com', 'https://example.com')).toBe(false)
+    expect(sameSite('https://com', 'https://example.com')).toBe(false)
+    expect(sameSite('https://notexample.com', 'https://example.com')).toBe(false)
   })
 })

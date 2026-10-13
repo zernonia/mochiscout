@@ -200,7 +200,7 @@ export async function signInWithOAuth(event: RequestEvent, profile: {
  */
 export async function rateLimitAuth(event: RequestEvent, email: string) {
   const env = getEnv(event)
-  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event) ?? 'unknown'
+  const ip = clientKey(event)
   const address = normalizeEmail(email)
   const limits = [
     { key: `auth:attempts:${ip}:${address}`, max: 10 },
@@ -214,7 +214,7 @@ export async function rateLimitAuth(event: RequestEvent, email: string) {
 /** New accounts per IP per day (each hosted account starts a Pro trial). */
 export async function rateLimitSignup(event: RequestEvent) {
   const env = getEnv(event)
-  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event) ?? 'unknown'
+  const ip = clientKey(event)
   const key = `auth:signups:${ip}:${new Date().toISOString().slice(0, 10)}`
   const n = Number(await env.CACHE.get(key) ?? 0)
   if (n >= 10) throw new AuthError(429, 'Too many new accounts from this network today. Try again tomorrow.')

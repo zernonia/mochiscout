@@ -15,6 +15,8 @@ export default defineEventHandler(async (event) => {
     const raw = await readRawBody(event)
     const parsed = Body.safeParse(JSON.parse(raw ?? ''))
     if (parsed.success) {
+      // Anyone can send a beacon, so cap how fast one network can count events.
+      await rateLimit(event, `beacon:${clientKey(event)}`, { max: 30, windowSeconds: 60 })
       await recordRefEvent(getDb(event), {
         projectId: parsed.data.p,
         code: parsed.data.c,
@@ -23,6 +25,6 @@ export default defineEventHandler(async (event) => {
       })
     }
   }
-  catch { /* malformed beacons are ignored */ }
+  catch { /* malformed and over-limit beacons are ignored */ }
   return null
 })

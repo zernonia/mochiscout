@@ -58,7 +58,8 @@ export function sameSite(origin: string | null | undefined, projectUrl: string) 
   const b = hostOf(projectUrl)
   if (!a || !b) return false
   if (a === 'localhost' || a === '127.0.0.1') return true
-  return a === b || a.endsWith(`.${b}`) || b.endsWith(`.${a}`)
+  // The site's own parent domain counts only when it is a real domain, not a bare suffix like "com".
+  return a === b || a.endsWith(`.${b}`) || (a.includes('.') && b.endsWith(`.${a}`))
 }
 
 /**

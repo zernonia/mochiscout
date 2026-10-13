@@ -10,8 +10,7 @@ const Body = z.object({
 export default defineEventHandler(async (event) => {
   requireCloud(event)
   const env = getEnv(event)
-  // cf-connecting-ip is set by Cloudflare; X-Forwarded-For can be anything the client sends.
-  const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestIP(event) ?? 'unknown'
+  const ip = clientKey(event)
   const key = `waitlist:ip:${ip}`
   const hits = Number(await env.CACHE.get(key) ?? 0)
   if (hits >= 5) throw createError({ statusCode: 429, statusMessage: 'Too many sign-ups from this network. Try again later.' })

@@ -22,10 +22,12 @@ export default defineEventHandler(async (event) => {
   if (existing) throw createError({ statusCode: 409, statusMessage: 'That post is already tracked.' })
 
   let title: string | null = null
+  let draftId: string | null = null
   if (body.draftId) {
-    const draft = await db.select({ title: schema.drafts.title }).from(schema.drafts)
+    const draft = await db.select({ id: schema.drafts.id, title: schema.drafts.title }).from(schema.drafts)
       .where(and(eq(schema.drafts.id, body.draftId), eq(schema.drafts.projectId, project.id))).get()
     title = draft?.title ?? null
+    draftId = draft?.id ?? null
   }
 
   const [post] = await db.insert(schema.trackedPosts).values({
@@ -35,7 +37,7 @@ export default defineEventHandler(async (event) => {
     threadId: ref.id,
     subreddit: ref.subreddit,
     title,
-    draftId: body.draftId ?? null,
+    draftId,
     promo: body.promo,
     postedAt: new Date(),
   }).returning()
