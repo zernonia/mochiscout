@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ProjectProfile } from '~/components/ProjectProfileForm.vue'
+import { IdCardIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -45,23 +46,23 @@ async function save() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <AppPageHeader title="Project profile" description="What we know about your product. Keywords and search terms decide which threads match, so keep them in your buyers' words." />
+  <div class="flex max-w-4xl flex-col gap-8">
+    <AppPageHeader title="Project profile" description="What we know about your product. Keywords and search terms decide which threads match, so keep them in your buyers' words." :icon="IdCardIcon" />
     <SkeletonCards v-if="!project || !form" :count="3" :lines="3" />
     <template v-else>
-    <form class="flex flex-col gap-5" @submit.prevent="save">
-      <Card>
-        <CardContent>
-          <ProjectProfileForm v-model="form" />
-        </CardContent>
-      </Card>
-      <div>
-        <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save profile' }}</Button>
-      </div>
-    </form>
-    <!-- Separate form: nested forms break hydration. -->
-    <ReplyInstructionsCard :project-id="projectId" :product-name="project.name" />
-    <AlertWebhookCard :project-id="projectId" :initial-url="project.alertWebhookUrl" />
+      <form class="flex flex-col gap-8" @submit.prevent="save">
+        <ProjectProfileForm v-model="form" layout="sections" />
+        <div class="grid md:grid-cols-[14rem_1fr] md:gap-8">
+          <div class="max-md:hidden" />
+          <div>
+            <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save profile' }}</Button>
+          </div>
+        </div>
+      </form>
+      <Separator class="opacity-60" />
+      <!-- Separate form: nested forms break hydration. -->
+      <ReplyInstructionsCard :project-id="projectId" :product-name="project.name" />
+      <AlertWebhookCard :project-id="projectId" :initial-url="project.alertWebhookUrl" />
     </template>
   </div>
 </template>

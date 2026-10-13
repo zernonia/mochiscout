@@ -2,6 +2,8 @@
 import { MenuIcon } from '@lucide/vue'
 
 useSeoMeta({ robots: 'noindex' })
+// The app's mochi theme (assets/css/main.css), on <html> so overlays get it too.
+useHead({ htmlAttrs: { class: 'theme-mochi' } })
 const mobileOpen = ref(false)
 </script>
 

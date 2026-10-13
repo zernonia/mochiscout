@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { PackageIcon, RadarIcon, TargetIcon } from '@lucide/vue'
+import FormSection from './FormSection.vue'
+
 export interface ProjectProfile {
   url: string
   name: string
@@ -12,6 +15,8 @@ export interface ProjectProfile {
 }
 
 const profile = defineModel<ProjectProfile>({ required: true })
+/** `sections` splits the form into labelled groups (profile page); the default is one plain stack (onboarding). */
+withDefaults(defineProps<{ layout?: 'stack' | 'sections' }>(), { layout: 'stack' })
 
 const sourceOptions = [
   { id: 'hn', label: 'Hacker News', hint: 'Stories and comments' },
@@ -32,43 +37,76 @@ const lists = [
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <div class="grid gap-5 sm:grid-cols-2">
-      <div class="flex flex-col gap-2">
-        <Label for="name">Product name</Label>
-        <Input id="name" v-model="profile.name" required />
+  <div class="flex flex-col" :class="layout === 'sections' ? 'gap-8' : 'gap-5'">
+    <component
+      :is="layout === 'sections' ? FormSection : 'div'"
+      v-bind="layout === 'sections' ? { title: 'About the product', description: 'What it is and who buys it.', icon: PackageIcon } : {}"
+    >
+      <div class="flex flex-col gap-5">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div class="flex min-w-0 flex-col gap-2">
+            <Label for="name">Product name</Label>
+            <Input id="name" v-model="profile.name" required />
+          </div>
+          <div class="flex min-w-0 flex-col gap-2">
+            <Label for="category">Category</Label>
+            <Input id="category" v-model="profile.category" placeholder="e.g. invoicing app" />
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <Label for="url">URL</Label>
+          <Input id="url" v-model="profile.url" type="url" required />
+        </div>
+        <div class="flex flex-col gap-2">
+          <Label for="icp">Who buys it</Label>
+          <Textarea id="icp" v-model="profile.icp" rows="3" placeholder="Freelance designers who chase late invoices every month" />
+        </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <Label for="category">Category</Label>
-        <Input id="category" v-model="profile.category" placeholder="e.g. invoicing app" />
+    </component>
+
+    <component
+      :is="layout === 'sections' ? FormSection : 'div'"
+      v-bind="layout === 'sections' ? { title: 'What to match', description: 'Keep these in your buyers\' words.', icon: TargetIcon } : {}"
+    >
+      <div class="flex flex-col gap-5">
+        <div v-for="list in lists" :key="list.key" class="flex flex-col gap-2">
+          <Label :for="list.key">{{ list.label }}</Label>
+          <TagsInput v-model="profile[list.key]">
+            <TagsInputItem v-for="item in profile[list.key]" :key="item" :value="item">
+              <TagsInputItemText />
+              <TagsInputItemDelete />
+            </TagsInputItem>
+            <TagsInputInput :id="list.key" placeholder="Type and press Enter" />
+          </TagsInput>
+          <p class="text-xs text-muted-foreground">{{ list.hint }}</p>
+        </div>
       </div>
-    </div>
-    <div class="flex flex-col gap-2">
-      <Label for="url">URL</Label>
-      <Input id="url" v-model="profile.url" type="url" required />
-    </div>
-    <div class="flex flex-col gap-2">
-      <Label for="icp">Who buys it</Label>
-      <Textarea id="icp" v-model="profile.icp" rows="3" placeholder="Freelance designers who chase late invoices every month" />
-    </div>
-    <div v-for="list in lists" :key="list.key" class="flex flex-col gap-2">
-      <Label :for="list.key">{{ list.label }}</Label>
-      <TagsInput v-model="profile[list.key]">
-        <TagsInputItem v-for="item in profile[list.key]" :key="item" :value="item">
-          <TagsInputItemText />
-          <TagsInputItemDelete />
-        </TagsInputItem>
-        <TagsInputInput :id="list.key" placeholder="Type and press Enter" />
-      </TagsInput>
-      <p class="text-xs text-muted-foreground">{{ list.hint }}</p>
-    </div>
-    <div class="flex flex-col gap-2">
-      <Label>Also watch</Label>
-      <p class="text-xs text-muted-foreground">Reddit is always on.</p>
-      <label v-for="s in sourceOptions" :key="s.id" class="flex items-center gap-2 text-sm">
-        <Switch :model-value="profile.sources.includes(s.id)" @update:model-value="(v: boolean) => toggleSource(s.id, v)" />
-        {{ s.label }} <span class="text-xs text-muted-foreground">{{ s.hint }}</span>
-      </label>
-    </div>
+    </component>
+
+    <component
+      :is="layout === 'sections' ? FormSection : 'div'"
+      v-bind="layout === 'sections' ? { title: 'Also watch', description: 'Reddit is always on.', icon: RadarIcon } : {}"
+    >
+      <div class="flex flex-col gap-2">
+        <template v-if="layout !== 'sections'">
+          <Label>Also watch</Label>
+          <p class="text-xs text-muted-foreground">Reddit is always on.</p>
+        </template>
+        <div class="grid gap-2">
+          <label
+            v-for="s in sourceOptions"
+            :key="s.id"
+            class="flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors has-data-[state=checked]:border-brand/30 has-data-[state=checked]:bg-brand-soft/40"
+          >
+            <SourceAvatar :platform="s.id" size="md" />
+            <span class="flex min-w-0 flex-1 flex-col">
+              <span class="font-medium">{{ s.label }}</span>
+              <span class="text-xs text-muted-foreground">{{ s.hint }}</span>
+            </span>
+            <Switch :model-value="profile.sources.includes(s.id)" @update:model-value="(v: boolean) => toggleSource(s.id, v)" />
+          </label>
+        </div>
+      </div>
+    </component>
   </div>
 </template>

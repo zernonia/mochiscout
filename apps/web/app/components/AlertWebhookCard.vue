@@ -47,25 +47,25 @@ async function test() {
 </script>
 
 <template>
-  <Card>
-    <CardContent class="flex flex-col gap-4">
-      <div>
-        <h2 class="flex items-center gap-2 font-semibold">
-          <BellIcon class="size-4 text-orange-600 dark:text-orange-400" /> Hot lead alerts in Slack or Discord
-          <span v-if="me && !me.limits.hotAlerts" class="rounded-full bg-violet-500/12 px-1.5 text-[10px] leading-4 font-medium text-violet-700 dark:text-violet-400">Solo+</span>
-        </h2>
-        <p class="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Hot leads are posted to a channel as well as emailed, at most once an hour. Create an incoming webhook in
-          <a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener" class="underline">Slack</a> or
-          <a href="https://support.discord.com/hc/en-us/articles/228383668" target="_blank" rel="noopener" class="underline">Discord</a> and paste its URL.
-          Turn alerts on or off with "Hot lead alerts" in the inbox.
-        </p>
-      </div>
+  <FormSection title="Hot lead alerts in Slack or Discord" description="Hot leads are posted to a channel as well as emailed, at most once an hour." :icon="BellIcon">
+    <template v-if="me && !me.limits.hotAlerts" #badge>
+      <span class="rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-medium text-brand-foreground">Solo+</span>
+    </template>
+    <div class="flex flex-col gap-4">
+      <p class="text-sm text-pretty text-muted-foreground">
+        Create an incoming webhook in
+        <a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener" class="underline decoration-brand/40 underline-offset-2 hover:text-foreground">Slack</a> or
+        <a href="https://support.discord.com/hc/en-us/articles/228383668" target="_blank" rel="noopener" class="underline decoration-brand/40 underline-offset-2 hover:text-foreground">Discord</a> and paste its URL.
+        Turn alerts on or off with "Hot lead alerts" in the inbox.
+      </p>
       <form class="flex flex-col gap-2 sm:flex-row" @submit.prevent="save">
-        <Input v-model="url" type="url" placeholder="https://hooks.slack.com/services/…" class="flex-1" aria-label="Webhook URL" />
+        <Input v-model="url" type="url" placeholder="https://hooks.slack.com/services/…" class="min-w-0 flex-1" aria-label="Webhook URL" />
         <Button type="submit" size="sm" :loading="saving" :disabled="url.trim() === saved">{{ url.trim() || !saved ? 'Save' : 'Remove' }}</Button>
         <Button v-if="kind" type="button" size="sm" variant="outline" :loading="testing" @click="test"><SendIcon /> Send a test</Button>
       </form>
-    </CardContent>
-  </Card>
+      <p v-if="kind" class="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400">
+        <span class="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" /> Connected to {{ kind }}
+      </p>
+    </div>
+  </FormSection>
 </template>

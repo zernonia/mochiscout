@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AtSignIcon, BellRingIcon, CircleCheckIcon, CircleDashedIcon, KeyRoundIcon, MailIcon, ServerCogIcon, SettingsIcon, UsersIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -129,10 +130,11 @@ const keyRows = computed(() => settings.value
 </script>
 
 <template>
-  <div class="mx-auto flex max-w-2xl flex-col gap-6">
-    <AppPageHeader title="Settings" description="Your digest, Reddit account, team and API keys." />
+  <div class="mx-auto flex max-w-4xl flex-col gap-8">
+    <AppPageHeader title="Settings" description="Your digest, Reddit account, team and API keys." :icon="SettingsIcon" />
 
-    <Alert v-if="myInvites?.length">
+    <Alert v-if="myInvites?.length" class="rounded-2xl border-brand/20 bg-brand-soft/40 [&>svg]:text-brand">
+      <MailIcon />
       <AlertTitle>You're invited to a team</AlertTitle>
       <AlertDescription class="flex flex-wrap items-center gap-3">
         {{ myInvites.map(i => i.invitedBy).filter(Boolean).join(', ') || 'Someone' }} invited you.
@@ -142,14 +144,10 @@ const keyRows = computed(() => settings.value
 
     <!-- Team and API key cards hold their own forms, so this form ends before them. -->
     <SkeletonCards v-if="!settings" :count="2" :lines="2" />
-    <form v-else class="flex flex-col gap-6" @submit.prevent="save">
-      <Card>
-        <CardHeader>
-          <CardTitle>Daily digest</CardTitle>
-          <CardDescription>Sent to {{ settings?.email }} at this hour, your time.</CardDescription>
-        </CardHeader>
-        <CardContent class="grid gap-4 sm:grid-cols-2">
-          <div class="flex flex-col gap-2">
+    <form v-else class="flex flex-col gap-8" @submit.prevent="save">
+      <FormSection title="Daily digest" :description="`Sent to ${settings?.email} at this hour, your time.`" :icon="BellRingIcon">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="flex min-w-0 flex-col gap-2">
             <Label for="tz">Time zone</Label>
             <Select v-model="form.timezone">
               <SelectTrigger id="tz"><SelectValue /></SelectTrigger>
@@ -157,9 +155,9 @@ const keyRows = computed(() => settings.value
                 <SelectItem v-for="tz in timezones" :key="tz" :value="tz">{{ tz }}</SelectItem>
               </SelectContent>
             </Select>
-            <button type="button" class="self-start text-xs text-muted-foreground underline" @click="useBrowserTimezone">Use this device's time zone</button>
+            <button type="button" class="self-start text-xs text-muted-foreground underline decoration-brand/40 underline-offset-2 hover:text-brand-foreground" @click="useBrowserTimezone">Use this device's time zone</button>
           </div>
-          <div class="flex flex-col gap-2">
+          <div class="flex min-w-0 flex-col gap-2">
             <Label for="hour">Digest hour</Label>
             <Select v-model="form.digestHour">
               <SelectTrigger id="hour"><SelectValue /></SelectTrigger>
@@ -169,106 +167,112 @@ const keyRows = computed(() => settings.value
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </FormSection>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Reddit account</CardTitle>
-          <CardDescription>Never your password. The username is checked publicly for suspensions and shadowbans; karma and age are checked against each subreddit's minimums.</CardDescription>
-        </CardHeader>
-        <CardContent class="grid gap-4 sm:grid-cols-3">
-          <div class="flex flex-col gap-2">
-            <Label for="username">Username</Label>
-            <Input id="username" v-model="form.redditUsername" placeholder="u/yourname" />
-            <p v-if="settings?.redditAccountStatus === 'not_found'" class="text-xs text-destructive">
-              Profile not publicly visible: the account may be suspended or shadowbanned.
-            </p>
-            <p v-else-if="settings?.redditAccountStatus === 'ok'" class="text-xs text-muted-foreground">Profile visible.</p>
+      <FormSection title="Your Reddit account" description="Never your password." :icon="AtSignIcon">
+        <div class="flex flex-col gap-4">
+          <p class="text-sm text-pretty text-muted-foreground">The username is checked publicly for suspensions and shadowbans; karma and age are checked against each subreddit's minimums.</p>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div class="flex min-w-0 flex-col gap-2">
+              <Label for="username">Username</Label>
+              <Input id="username" v-model="form.redditUsername" placeholder="u/yourname" />
+              <p v-if="settings?.redditAccountStatus === 'not_found'" class="text-xs text-destructive">
+                Profile not publicly visible: the account may be suspended or shadowbanned.
+              </p>
+              <p v-else-if="settings?.redditAccountStatus === 'ok'" class="flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400"><CircleCheckIcon class="size-3.5" /> Profile visible.</p>
+            </div>
+            <div class="flex min-w-0 flex-col gap-2">
+              <Label for="karma">Karma</Label>
+              <Input id="karma" v-model="form.redditKarma" type="number" inputmode="numeric" placeholder="e.g. 1200" />
+            </div>
+            <div class="flex min-w-0 flex-col gap-2">
+              <Label for="created">Account created</Label>
+              <Input id="created" v-model="form.redditAccountCreatedAt" type="date" />
+            </div>
           </div>
-          <div class="flex flex-col gap-2">
-            <Label for="karma">Karma</Label>
-            <Input id="karma" v-model="form.redditKarma" type="number" inputmode="numeric" placeholder="e.g. 1200" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <Label for="created">Account created</Label>
-            <Input id="created" v-model="form.redditAccountCreatedAt" type="date" />
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </FormSection>
 
-      <div>
-        <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save settings' }}</Button>
+      <div class="grid md:grid-cols-[14rem_1fr] md:gap-8">
+        <div class="max-md:hidden" />
+        <div>
+          <Button type="submit" :disabled="saving">{{ saving ? 'Saving…' : 'Save settings' }}</Button>
+        </div>
       </div>
     </form>
 
-    <Card v-if="team">
-      <CardHeader>
-        <CardTitle>Team</CardTitle>
-        <CardDescription>Teammates share projects, the inbox and drafts.</CardDescription>
-      </CardHeader>
-      <CardContent class="flex flex-col gap-3 text-sm">
-        <div v-for="m in team.members" :key="m.userId" class="flex items-center justify-between gap-3">
-          <div class="min-w-0 truncate">{{ m.email }} <span class="text-muted-foreground">· {{ m.role }}</span></div>
-          <button v-if="team.role === 'owner' && m.userId !== team.me" type="button" class="text-xs text-muted-foreground underline" @click="removeMember(m.userId)">Remove</button>
-        </div>
-        <div v-for="i in team.invites" :key="i.id" class="flex items-center justify-between gap-3 text-muted-foreground">
-          <div class="min-w-0 truncate">{{ i.email }} · invited</div>
-          <button v-if="team.role === 'owner'" type="button" class="text-xs underline" @click="cancelInvite(i.id)">Cancel</button>
-        </div>
+    <Separator v-if="team || apiKeys" class="opacity-60" />
+
+    <FormSection v-if="team" title="Team" description="Teammates share projects, the inbox and drafts." :icon="UsersIcon">
+      <div class="flex flex-col gap-3 text-sm">
+        <ul class="flex flex-col gap-1">
+          <li v-for="m in team.members" :key="m.userId" class="flex items-center gap-3 rounded-xl px-1 py-1.5">
+            <SourceAvatar :channel="m.email" size="md" />
+            <div class="min-w-0 flex-1 truncate">{{ m.email }}</div>
+            <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" :class="m.role === 'owner' ? 'bg-brand-soft text-brand-foreground' : 'bg-muted text-muted-foreground'">{{ m.role }}</span>
+            <button v-if="team.role === 'owner' && m.userId !== team.me" type="button" class="text-xs text-muted-foreground underline hover:text-foreground" @click="removeMember(m.userId)">Remove</button>
+          </li>
+          <li v-for="i in team.invites" :key="i.id" class="flex items-center gap-3 rounded-xl px-1 py-1.5 text-muted-foreground">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-xl border border-dashed" aria-hidden="true"><MailIcon class="size-4" /></span>
+            <div class="min-w-0 flex-1 truncate">{{ i.email }} · invited</div>
+            <button v-if="team.role === 'owner'" type="button" class="text-xs underline hover:text-foreground" @click="cancelInvite(i.id)">Cancel</button>
+          </li>
+        </ul>
         <button v-if="team.role !== 'owner'" type="button" class="self-start text-xs text-muted-foreground underline" @click="leaveTeam">Leave this team</button>
-        <form v-if="team.role === 'owner'" class="flex gap-2 pt-1" @submit.prevent="invite">
-          <Input v-model="inviteEmail" type="email" placeholder="teammate@example.com" required class="flex-1" />
+        <form v-if="team.role === 'owner'" class="flex gap-2 border-t pt-4" @submit.prevent="invite">
+          <Input v-model="inviteEmail" type="email" placeholder="teammate@example.com" required class="min-w-0 flex-1" aria-label="Teammate email" />
           <Button type="submit" variant="secondary">Invite</Button>
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </FormSection>
 
-    <Card v-if="apiKeys">
-      <CardHeader>
-        <CardTitle>API keys</CardTitle>
-        <CardDescription>For the browser extension and for AI agents like Claude Code (MCP). Neither ever posts for you.</CardDescription>
-      </CardHeader>
-      <CardContent class="flex flex-col gap-3 text-sm">
-        <div v-if="newKey" class="flex flex-col gap-2 rounded-md border bg-muted p-3">
+    <FormSection v-if="apiKeys" title="API keys" description="For the browser extension and for AI agents like Claude Code (MCP)." :icon="KeyRoundIcon">
+      <div class="flex flex-col gap-3 text-sm">
+        <p class="text-sm text-muted-foreground">Neither ever posts for you.</p>
+        <div v-if="newKey" class="flex flex-col gap-2 rounded-xl bg-brand-soft/70 p-3">
           <div class="font-medium">Copy this key now. It won't be shown again.</div>
-          <code class="break-all text-xs">{{ newKey }}</code>
+          <code class="rounded-lg bg-background/70 px-2 py-1 text-xs break-all">{{ newKey }}</code>
           <template v-if="apiKeys.mcpAllowed">
             <div class="text-xs text-muted-foreground">Add it to Claude Code:</div>
-            <code class="break-all text-xs">{{ mcpCommand }}</code>
+            <code class="rounded-lg bg-background/70 px-2 py-1 text-xs break-all">{{ mcpCommand }}</code>
           </template>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             <Button size="sm" type="button" variant="outline" @click="copyText(newKey)">Copy key</Button>
             <Button v-if="apiKeys.mcpAllowed" size="sm" type="button" variant="outline" @click="copyText(mcpCommand)">Copy command</Button>
           </div>
         </div>
-        <div v-for="k in apiKeys.keys" :key="k.id" class="flex items-center justify-between gap-3">
-          <div class="min-w-0 truncate">{{ k.label }} <code class="text-xs text-muted-foreground">{{ k.prefix }}…</code></div>
-          <button type="button" class="text-xs text-muted-foreground underline" @click="revokeKey(k.id)">Revoke</button>
-        </div>
-        <form class="flex gap-2 pt-1" @submit.prevent="createKey">
-          <Input v-model="keyLabel" placeholder="Label" required class="flex-1" />
+        <ul v-if="apiKeys.keys.length" class="flex flex-col gap-1">
+          <li v-for="k in apiKeys.keys" :key="k.id" class="flex items-center gap-3 rounded-xl px-1 py-1.5">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground" aria-hidden="true"><KeyRoundIcon class="size-4" /></span>
+            <div class="min-w-0 flex-1 truncate">{{ k.label }} <code class="text-xs text-muted-foreground">{{ k.prefix }}…</code></div>
+            <button type="button" class="text-xs text-muted-foreground underline hover:text-foreground" @click="revokeKey(k.id)">Revoke</button>
+          </li>
+        </ul>
+        <form class="flex gap-2" :class="apiKeys.keys.length ? 'border-t pt-4' : ''" @submit.prevent="createKey">
+          <Input v-model="keyLabel" placeholder="Label" required class="min-w-0 flex-1" aria-label="Key label" />
           <Button type="submit" variant="secondary">Create key</Button>
         </form>
-        <p v-if="!apiKeys.mcpAllowed" class="text-xs text-muted-foreground">The MCP server for AI agents is part of the Pro plan. <NuxtLink to="/app/billing?plan=pro" class="underline">Upgrade</NuxtLink></p>
-      </CardContent>
-    </Card>
+        <p v-if="!apiKeys.mcpAllowed" class="text-xs text-muted-foreground">The MCP server for AI agents is part of the Pro plan. <NuxtLink to="/app/billing?plan=pro" class="font-medium text-brand-foreground underline underline-offset-2">Upgrade</NuxtLink></p>
+      </div>
+    </FormSection>
 
-    <Card v-if="settings?.edition === 'selfhost'">
-      <CardHeader>
-        <CardTitle>API keys</CardTitle>
-        <CardDescription>Set with <code>wrangler secret put NAME</code> (or <code>.dev.vars</code> locally).</CardDescription>
-      </CardHeader>
-      <CardContent class="flex flex-col divide-y text-sm">
-        <div v-for="k in keyRows" :key="k.env" class="flex items-center justify-between gap-3 py-2">
-          <div>
+    <FormSection v-if="settings?.edition === 'selfhost'" title="API keys" :icon="ServerCogIcon">
+      <template #description>Set with <code class="text-xs">wrangler secret put NAME</code> (or <code class="text-xs">.dev.vars</code> locally).</template>
+      <ul class="flex flex-col divide-y text-sm">
+        <li v-for="k in keyRows" :key="k.env" class="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+          <div class="min-w-0">
             <div>{{ k.label }}</div>
-            <code class="text-xs text-muted-foreground">{{ k.env }}</code>
+            <code class="text-xs break-all text-muted-foreground">{{ k.env }}</code>
           </div>
-          <Badge :variant="k.set ? 'secondary' : 'outline'">{{ k.set ? 'Set' : 'Not set' }}</Badge>
-        </div>
-      </CardContent>
-    </Card>
-
+          <span
+            class="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium"
+            :class="k.set ? 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-400' : 'bg-muted text-muted-foreground'"
+          >
+            <component :is="k.set ? CircleCheckIcon : CircleDashedIcon" class="size-3" aria-hidden="true" />{{ k.set ? 'Set' : 'Not set' }}
+          </span>
+        </li>
+      </ul>
+    </FormSection>
   </div>
 </template>

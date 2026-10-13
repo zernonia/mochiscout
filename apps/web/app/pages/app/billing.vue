@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CreditCardIcon, FolderIcon, HashIcon, SearchCheckIcon, SparklesIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -57,48 +58,46 @@ async function go(path: '/api/billing/checkout' | '/api/billing/portal', body?: 
 
 const meters = computed(() => me.value
   ? [
-      { label: 'Projects', used: me.value.usage.projects, limit: me.value.limits.projects },
-      { label: 'Watched subreddits', used: me.value.usage.watchedSubreddits, limit: me.value.limits.watchedSubreddits },
-      { label: 'Research runs this month', used: me.value.usage.researchRuns, limit: me.value.limits.manualResearchPerMonth },
+      { label: 'Projects', icon: FolderIcon, used: me.value.usage.projects, limit: me.value.limits.projects },
+      { label: 'Watched subreddits', icon: HashIcon, used: me.value.usage.watchedSubreddits, limit: me.value.limits.watchedSubreddits },
+      { label: 'Research runs this month', icon: SearchCheckIcon, used: me.value.usage.researchRuns, limit: me.value.limits.manualResearchPerMonth },
     ]
   : [])
 </script>
 
 <template>
   <div class="flex flex-col gap-6">
-    <AppPageHeader title="Billing" description="Your plan, what you have used this month, and upgrades." />
+    <AppPageHeader title="Billing" description="Your plan, what you have used this month, and upgrades." :icon="CreditCardIcon" />
 
     <template v-if="!me">
-      <Skeleton class="h-36 w-full rounded-xl" />
-      <div class="grid gap-4 md:grid-cols-3"><Skeleton v-for="i in 3" :key="i" class="h-72 rounded-xl" /></div>
+      <Skeleton class="h-36 w-full rounded-2xl" />
+      <div class="grid gap-4 md:grid-cols-3"><Skeleton v-for="i in 3" :key="i" class="h-72 rounded-2xl" /></div>
     </template>
-    <p v-else-if="me.edition !== 'cloud'" class="text-muted-foreground">Self-hosted instances have no plans or limits.</p>
+    <AppEmpty v-else-if="me.edition !== 'cloud'" title="Self-hosted" description="Self-hosted instances have no plans or limits." />
 
     <template v-else-if="me">
-      <Card>
-        <CardHeader>
-          <CardTitle>{{ me.org.trial ? 'Pro trial' : `${me.limits.label} plan` }}</CardTitle>
-          <CardDescription v-if="me.org.trial">
-            Everything in Pro, free until {{ new Date(me.org.trial.endsAt!).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) }} ({{ me.org.trial.daysLeft }} day{{ me.org.trial.daysLeft === 1 ? '' : 's' }} left), with up to {{ me.limits.draftsPerMonth }} AI drafts.
-            After that you move to Free unless you choose a plan below. No card needed until then.
-          </CardDescription>
-          <CardDescription v-else-if="me.org.trialEnded && me.org.plan === 'free'">
-            Your Pro trial has ended. We kept your top 3 subreddits running; choose a plan to bring back the rest.
-          </CardDescription>
-          <CardDescription v-else-if="me.org.plan !== 'free'">
-            <template v-if="me.org.planStatus === 'past_due'">Payment failed: update your card in Manage billing. </template>
-            <template v-else-if="me.org.planStatus === 'canceled'">Cancelled; active until the end of the period. </template>
-            <template v-if="me.org.currentPeriodEnd">Current period ends {{ new Date(me.org.currentPeriodEnd).toLocaleDateString() }}.</template>
-          </CardDescription>
-        </CardHeader>
-        <CardContent class="flex flex-col gap-4">
-          <div v-for="m in meters" :key="m.label" class="flex flex-col gap-1.5">
-            <div class="flex justify-between text-sm">
-              <span>{{ m.label }}</span>
-              <span class="tabular-nums text-muted-foreground">{{ m.used }}{{ m.limit !== null ? ` / ${m.limit}` : '' }}</span>
-            </div>
-            <div v-if="m.limit" class="h-1.5 overflow-hidden rounded-full bg-muted">
-              <div class="h-full rounded-full" :class="m.used >= m.limit ? 'bg-amber-500' : 'bg-foreground'" :style="{ width: `${Math.min(100, (m.used / m.limit) * 100)}%` }" />
+      <section class="flex flex-col gap-5 rounded-2xl border bg-gradient-to-br from-brand-soft/60 via-card to-card p-4 shadow-xs/5 sm:p-5">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div class="flex min-w-0 items-start gap-3">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-foreground" aria-hidden="true"><SparklesIcon class="size-4.5" /></span>
+            <div class="flex min-w-0 flex-col gap-1">
+              <h2 class="flex flex-wrap items-center gap-2 font-semibold tracking-tight">
+                {{ me.org.trial ? 'Pro trial' : `${me.limits.label} plan` }}
+                <span v-if="me.org.planStatus === 'past_due'" class="rounded-full bg-red-500/12 px-2 py-0.5 text-[11px] font-medium text-red-700 dark:text-red-400">Payment failed</span>
+                <span v-else-if="me.org.planStatus === 'canceled'" class="rounded-full bg-amber-500/14 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-400">Cancelled</span>
+              </h2>
+              <p v-if="me.org.trial" class="max-w-2xl text-sm text-pretty text-muted-foreground">
+                Everything in Pro, free until {{ new Date(me.org.trial.endsAt!).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) }} ({{ me.org.trial.daysLeft }} day{{ me.org.trial.daysLeft === 1 ? '' : 's' }} left), with up to {{ me.limits.draftsPerMonth }} AI drafts.
+                After that you move to Free unless you choose a plan below. No card needed until then.
+              </p>
+              <p v-else-if="me.org.trialEnded && me.org.plan === 'free'" class="max-w-2xl text-sm text-pretty text-muted-foreground">
+                Your Pro trial has ended. We kept your top 3 subreddits running; choose a plan to bring back the rest.
+              </p>
+              <p v-else-if="me.org.plan !== 'free'" class="max-w-2xl text-sm text-pretty text-muted-foreground">
+                <template v-if="me.org.planStatus === 'past_due'">Payment failed: update your card in Manage billing. </template>
+                <template v-else-if="me.org.planStatus === 'canceled'">Cancelled; active until the end of the period. </template>
+                <template v-if="me.org.currentPeriodEnd">Current period ends {{ new Date(me.org.currentPeriodEnd).toLocaleDateString() }}.</template>
+              </p>
             </div>
           </div>
           <Button
@@ -110,8 +109,22 @@ const meters = computed(() => me.value
           >
             {{ busy === '/api/billing/portal' ? 'Opening…' : 'Manage billing' }}
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div v-for="m in meters" :key="m.label" class="flex flex-col gap-2 rounded-xl bg-background/70 p-3 ring-1 ring-border/60">
+            <div class="flex items-center gap-2 text-sm">
+              <component :is="m.icon" class="size-4 shrink-0 text-brand" aria-hidden="true" />
+              <span class="min-w-0 flex-1 truncate">{{ m.label }}</span>
+            </div>
+            <div class="text-xl font-semibold tabular-nums">
+              {{ m.used }}<span v-if="m.limit !== null" class="text-sm font-normal text-muted-foreground"> / {{ m.limit }}</span>
+            </div>
+            <div v-if="m.limit" class="h-1.5 overflow-hidden rounded-full bg-muted">
+              <div class="h-full rounded-full" :class="m.used >= m.limit ? 'bg-amber-500' : 'bg-brand'" :style="{ width: `${Math.min(100, (m.used / m.limit) * 100)}%` }" />
+            </div>
+          </div>
+        </div>
+      </section>
 
       <PlanCards v-if="catalogue" :plans="catalogue.plans" :current="me.org.plan" :highlight="String(route.query.plan ?? '')">
         <template #action="{ plan }">

@@ -125,7 +125,7 @@ const showList = computed(() => open.value && !!typed.value && (options.value.le
       v-if="showList"
       :id="listId"
       role="listbox"
-      class="absolute inset-x-0 top-full z-30 mt-1 max-h-96 overflow-y-auto rounded-xl border bg-popover p-1 text-popover-foreground shadow-lg"
+      class="absolute inset-x-0 top-full z-30 mt-1 max-h-96 overflow-y-auto rounded-2xl border bg-popover p-1 text-popover-foreground shadow-lg"
     >
       <li
         v-for="(o, i) in options"
@@ -133,11 +133,12 @@ const showList = computed(() => open.value && !!typed.value && (options.value.le
         :key="o.name"
         role="option"
         :aria-selected="i === active"
-        class="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2"
-        :class="i === active && 'bg-accent'"
+        class="flex cursor-pointer items-start gap-3 rounded-lg px-2.5 py-2"
+        :class="i === active && 'bg-brand-soft/70'"
         @mousedown.prevent="choose(o)"
         @mousemove="active = i"
       >
+        <SourceAvatar :channel="o.name" size="sm" class="mt-0.5" />
         <div class="min-w-0 flex-1">
           <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <span class="font-medium">r/{{ o.name }}</span>

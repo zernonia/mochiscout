@@ -93,7 +93,7 @@ export async function projectResults(db: Db, projectId: string, opts: { days?: n
   const s = schema.threadScores
   const t = schema.threads
   const r = schema.refStats
-  const [replies, perCode] = await Promise.all([
+  const [replies, perCode, perDay] = await Promise.all([
     db.select({
       threadId: t.id, title: t.title, url: t.url, platform: t.platform, channel: t.channel,
       repliedAt: s.statusChangedAt, replyUrl: s.replyUrl, replyStatus: s.replyStatus, refCode: s.refCode, intent: s.intent,
@@ -103,7 +103,16 @@ export async function projectResults(db: Db, projectId: string, opts: { days?: n
     db.select({ code: r.code, visits: sql<number>`sum(${r.visits})`, signups: sql<number>`sum(${r.signups})` })
       .from(r).where(and(eq(r.projectId, projectId), gte(r.day, since.toISOString().slice(0, 10))))
       .groupBy(r.code),
+    db.select({ day: r.day, visits: sql<number>`sum(${r.visits})`, signups: sql<number>`sum(${r.signups})` })
+      .from(r).where(and(eq(r.projectId, projectId), gte(r.day, since.toISOString().slice(0, 10))))
+      .groupBy(r.day),
   ])
+  // One entry per day of the window (oldest first), zeros included, for charts.
+  const dayMap = new Map(perDay.map(d => [d.day, { visits: Number(d.visits), signups: Number(d.signups) }]))
+  const daily = Array.from({ length: days }, (_, i) => {
+    const day = new Date(now.getTime() - (days - 1 - i) * 86_400_000).toISOString().slice(0, 10)
+    return { day, ...(dayMap.get(day) ?? { visits: 0, signups: 0 }) }
+  })
   const byCode = new Map(perCode.map(c => [c.code, { visits: Number(c.visits), signups: Number(c.signups) }]))
   const rows = replies.map(x => ({ ...x, ...(x.refCode ? byCode.get(x.refCode) : undefined) ?? { visits: 0, signups: 0 } }))
   // Codes copied for threads not (yet) marked replied still count toward totals.
@@ -118,6 +127,7 @@ export async function projectResults(db: Db, projectId: string, opts: { days?: n
     visits: totals.visits,
     signups: totals.signups,
     hasEvents: perCode.length > 0,
+    daily,
     rows,
   }
 }

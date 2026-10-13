@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CheckIcon } from '@lucide/vue'
+
 defineProps<{
   plans: {
     id: 'free' | 'solo' | 'pro'
@@ -41,18 +43,20 @@ function features(p: { projects: number | null, watchedSubreddits: number | null
     <div
       v-for="p in plans"
       :key="p.id"
-      class="flex flex-col gap-4 rounded-xl border p-5"
-      :class="highlight === p.id ? 'border-foreground ring-1 ring-foreground' : ''"
+      class="flex flex-col gap-4 rounded-2xl border bg-card p-5 shadow-xs/5"
+      :class="highlight === p.id ? 'border-brand/40 bg-gradient-to-b from-brand-soft/50 to-card ring-4 ring-brand/10' : current === p.id ? 'border-brand/25' : ''"
     >
       <div>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-2">
           <h3 class="font-semibold">{{ p.label }}</h3>
-          <Badge v-if="current === p.id" variant="secondary">Current</Badge>
+          <span v-if="current === p.id" class="rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-medium text-brand-foreground">Current</span>
         </div>
         <div class="mt-1 text-3xl font-semibold tabular-nums">${{ p.price }}<span class="text-sm font-normal text-muted-foreground">/mo</span></div>
       </div>
-      <ul class="flex flex-1 flex-col gap-1.5 text-sm">
-        <li v-for="f in features(p)" :key="f" class="flex gap-2"><span aria-hidden="true">✓</span>{{ f }}</li>
+      <ul class="flex flex-1 flex-col gap-2 text-sm">
+        <li v-for="f in features(p)" :key="f" class="flex gap-2">
+          <span class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-foreground" aria-hidden="true"><CheckIcon class="size-3" :stroke-width="3" /></span>{{ f }}
+        </li>
       </ul>
       <slot name="action" :plan="p" />
     </div>

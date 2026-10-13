@@ -35,19 +35,14 @@ async function save(instructions: string | null) {
 </script>
 
 <template>
-  <Card id="reply-instructions" class="scroll-mt-6">
-    <CardContent class="flex flex-col gap-4">
-      <div class="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 class="flex items-center gap-2 font-semibold">
-            <SparklesIcon class="size-4 text-violet-600 dark:text-violet-400" /> Reply instructions
-            <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" :class="isDefault ? 'bg-muted text-muted-foreground' : 'bg-violet-500/12 text-violet-700 dark:text-violet-400'">{{ isDefault ? 'Default' : 'Custom' }}</span>
-          </h2>
-          <p class="mt-1 max-w-2xl text-sm text-muted-foreground">
-            How AI drafts should reply for you: tone, when to mention {{ productName }}, what to avoid. Write <code class="rounded bg-muted px-1 text-xs">{product}</code> for the product name.
-          </p>
-        </div>
-      </div>
+  <FormSection id="reply-instructions" class="scroll-mt-6" title="Reply instructions" description="How AI drafts should reply for you." :icon="SparklesIcon">
+    <template #badge>
+      <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" :class="isDefault ? 'bg-muted text-muted-foreground' : 'bg-brand-soft text-brand-foreground'">{{ isDefault ? 'Default' : 'Custom' }}</span>
+    </template>
+    <div class="flex flex-col gap-4">
+      <p class="text-sm text-pretty text-muted-foreground">
+        Tone, when to mention {{ productName }}, what to avoid. Write <code class="rounded bg-muted px-1 text-xs">{product}</code> for the product name.
+      </p>
 
       <form class="flex flex-col gap-3" @submit.prevent="save(text)">
         <Textarea v-model="text" rows="10" :maxlength="MAX" class="font-mono text-[13px] leading-relaxed" aria-label="Reply instructions" />
@@ -58,13 +53,13 @@ async function save(instructions: string | null) {
         </div>
       </form>
 
-      <div class="flex gap-2.5 rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
-        <ShieldCheckIcon class="mt-0.5 size-4 shrink-0" />
+      <div class="flex gap-2.5 rounded-xl bg-muted/70 p-3 text-xs text-muted-foreground">
+        <ShieldCheckIcon class="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
         <p>
           Always applied, whatever the instructions say: each community's rules (which win over your instructions), the platform's length and style,
           your voice from replies you posted, and no invented facts or customer stories. You review and post every reply yourself.
         </p>
       </div>
-    </CardContent>
-  </Card>
+    </div>
+  </FormSection>
 </template>

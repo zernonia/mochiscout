@@ -48,7 +48,7 @@ watch(doneCount, (n) => {
 </script>
 
 <template>
-  <div v-if="data && !dismissed && next" class="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-xs/5">
+  <div v-if="data && !dismissed && next" class="flex flex-col gap-3 rounded-2xl border bg-card p-4 shadow-xs/5">
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <h2 class="font-semibold">Getting started</h2>
@@ -57,14 +57,14 @@ watch(doneCount, (n) => {
       <button type="button" class="text-muted-foreground hover:text-foreground" aria-label="Hide getting started" @click="dismiss"><XIcon class="size-4" /></button>
     </div>
     <div class="h-1 overflow-hidden rounded-full bg-muted">
-      <div class="h-full rounded-full bg-emerald-500 transition-all" :style="{ width: `${(doneCount / steps.length) * 100}%` }" />
+      <div class="h-full rounded-full bg-brand transition-all" :style="{ width: `${(doneCount / steps.length) * 100}%` }" />
     </div>
     <ol class="grid gap-2 sm:grid-cols-4">
       <li
         v-for="(s, i) in steps"
         :key="s.title"
-        class="flex flex-col gap-1 rounded-lg p-2.5 text-sm"
-        :class="s === next ? 'bg-violet-500/8 ring-1 ring-violet-500/30' : ''"
+        class="flex flex-col gap-1 rounded-xl p-2.5 text-sm"
+        :class="s === next ? 'bg-brand-soft/70 ring-1 ring-brand/25' : ''"
       >
         <div class="flex items-center gap-2 font-medium" :class="s.done && 'text-muted-foreground line-through decoration-muted-foreground/40'">
           <span class="flex size-5 shrink-0 items-center justify-center rounded-full border text-[11px]" :class="s.done ? 'border-emerald-500 bg-emerald-500 text-white' : ''">
@@ -74,7 +74,7 @@ watch(doneCount, (n) => {
           {{ s.title }}
         </div>
         <p v-if="s === next" class="text-xs text-muted-foreground">{{ s.body }}</p>
-        <NuxtLink v-if="s === next && $route.fullPath !== s.to" :to="s.to" class="text-xs font-medium underline">{{ s.cta }} →</NuxtLink>
+        <NuxtLink v-if="s === next && $route.fullPath !== s.to" :to="s.to" class="text-xs font-medium text-brand-foreground underline">{{ s.cta }} →</NuxtLink>
       </li>
     </ol>
   </div>

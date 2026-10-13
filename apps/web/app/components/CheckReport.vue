@@ -6,12 +6,14 @@ defineProps<{ report: CheckReport | null }>()
 const icon = { pass: '✓', warn: '!', fail: '✕' } as const
 const color = { pass: 'text-muted-foreground', warn: 'text-amber-600 dark:text-amber-400', fail: 'text-destructive' } as const
 const label = { pass: 'Ready to post', warn: 'Check before posting', fail: 'Fix before posting' } as const
+const tint = { pass: 'border-emerald-500/20 bg-emerald-500/5', warn: 'border-amber-500/25 bg-amber-500/6', fail: 'border-red-500/20 bg-red-500/5' } as const
+const headColor = { pass: 'text-emerald-700 dark:text-emerald-400', warn: 'text-amber-700 dark:text-amber-400', fail: 'text-destructive' } as const
 </script>
 
 <template>
-  <div v-if="report" class="flex flex-col gap-3 rounded-xl border p-4">
-    <div class="flex items-center gap-2 font-medium" :class="color[report.level]">
-      <span aria-hidden="true">{{ icon[report.level] }}</span> {{ label[report.level] }}
+  <div v-if="report" class="flex flex-col gap-3 rounded-2xl border p-4" :class="tint[report.level]">
+    <div class="flex items-center gap-2 font-medium" :class="headColor[report.level]">
+      <span aria-hidden="true" class="flex size-6 items-center justify-center rounded-full bg-current/12 text-xs">{{ icon[report.level] }}</span> {{ label[report.level] }}
     </div>
     <ul class="flex flex-col gap-1.5 text-sm">
       <li v-for="r in report.results.filter(r => r.level !== 'pass')" :key="r.id" class="flex gap-2" :class="color[r.level]">

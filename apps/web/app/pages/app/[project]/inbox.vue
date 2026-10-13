@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BellIcon, BookmarkIcon, BrainIcon, CheckCheckIcon, FlameIcon, InboxIcon, LockIcon, SparklesIcon, TimerIcon, XIcon } from '@lucide/vue'
+import { BellIcon, BookmarkIcon, BrainIcon, CheckCheckIcon, FlameIcon, InboxIcon, LockIcon, SparklesIcon, TimerIcon, XIcon, ZapIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -139,46 +139,47 @@ function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], n
 
 <template>
   <div class="flex flex-col gap-6">
-    <AppPageHeader
-      title="Inbox"
-      :description="`Threads scored ${inbox?.threshold ?? 60}+ for buying intent, best opportunities first: fresh, uncrowded and still open. Draft a reply, edit it, then copy it into the thread.`"
-    >
+    <AppPageHeader title="Inbox" :icon="InboxIcon" :description="`Threads scored ${inbox?.threshold ?? 60}+ for buying intent, best first.`">
       <template #actions>
-        <div class="flex flex-col gap-2 sm:flex-row">
-          <Label class="flex cursor-pointer items-center gap-2.5 rounded-lg border bg-card px-3 py-2 font-normal shadow-xs/5">
-            <SparklesIcon class="size-4 text-violet-600 dark:text-violet-400" />
-            <span class="flex flex-1 flex-col leading-tight">
-              <span class="flex items-center gap-1.5 text-sm font-medium">
-                Auto-draft replies
-                <span v-if="me && !me.limits.autoReplies" class="rounded-full bg-violet-500/12 px-1.5 text-[10px] leading-4 font-medium text-violet-700 dark:text-violet-400">Solo+</span>
+        <Menu>
+          <MenuTrigger as-child>
+            <Button variant="outline" size="sm">
+              <ZapIcon /> Automations
+              <span v-if="autoReply || (hotAlerts && me?.limits.hotAlerts)" class="size-1.5 rounded-full bg-brand" aria-label="On" />
+            </Button>
+          </MenuTrigger>
+          <MenuPopup align="end" class="w-76">
+            <MenuCheckboxItem variant="switch" :model-value="autoReply" :disabled="savingAuto" @update:model-value="(v: boolean | 'indeterminate') => setAutoReply(v === true)">
+              <span class="flex flex-col gap-0.5 py-1">
+                <span class="flex items-center gap-1.5 font-medium"><SparklesIcon class="size-4 text-brand" /> Auto-draft replies
+                  <span v-if="me && !me.limits.autoReplies" class="rounded-full bg-brand-soft px-1.5 text-[10px] leading-4 font-medium text-brand-foreground">Solo+</span>
+                </span>
+                <span class="text-xs text-muted-foreground">A drafted reply for every hot lead</span>
               </span>
-              <span class="text-xs text-muted-foreground">For hot leads</span>
-            </span>
-            <Switch :model-value="autoReply" :disabled="savingAuto" class="ms-1" @update:model-value="(v: boolean) => setAutoReply(v)" />
-          </Label>
-          <Label class="flex cursor-pointer items-center gap-2.5 rounded-lg border bg-card px-3 py-2 font-normal shadow-xs/5">
-            <BellIcon class="size-4 text-orange-600 dark:text-orange-400" />
-            <span class="flex flex-1 flex-col leading-tight">
-              <span class="flex items-center gap-1.5 text-sm font-medium">
-                Hot lead alerts
-                <span v-if="me && !me.limits.hotAlerts" class="rounded-full bg-violet-500/12 px-1.5 text-[10px] leading-4 font-medium text-violet-700 dark:text-violet-400">Solo+</span>
+            </MenuCheckboxItem>
+            <MenuCheckboxItem variant="switch" :model-value="hotAlerts && (!me || me.limits.hotAlerts)" :disabled="savingAlerts" @update:model-value="(v: boolean | 'indeterminate') => setHotAlerts(v === true)">
+              <span class="flex flex-col gap-0.5 py-1">
+                <span class="flex items-center gap-1.5 font-medium"><BellIcon class="size-4 text-brand" /> Hot lead alerts
+                  <span v-if="me && !me.limits.hotAlerts" class="rounded-full bg-brand-soft px-1.5 text-[10px] leading-4 font-medium text-brand-foreground">Solo+</span>
+                </span>
+                <span class="text-xs text-muted-foreground">Email, Slack or Discord, at most hourly</span>
               </span>
-              <span class="text-xs text-muted-foreground">Email<NuxtLink :to="`/app/${projectId}/profile`" class="hover:underline">, Slack or Discord</NuxtLink>, at most hourly</span>
-            </span>
-            <Switch :model-value="hotAlerts && (!me || me.limits.hotAlerts)" :disabled="savingAlerts" class="ms-1" @update:model-value="(v: boolean) => setHotAlerts(v)" />
-          </Label>
-        </div>
+            </MenuCheckboxItem>
+            <MenuSeparator />
+            <MenuItem @select="navigateTo(`/app/${projectId}/profile`)">Set up Slack or Discord</MenuItem>
+          </MenuPopup>
+        </Menu>
       </template>
     </AppPageHeader>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div class="inline-flex w-full gap-1 overflow-x-auto rounded-lg bg-muted p-1 sm:w-auto">
+      <div class="inline-flex w-full gap-1 overflow-x-auto rounded-xl bg-muted p-1 sm:w-auto">
         <button
           v-for="tab in tabs"
           :key="tab.value"
           type="button"
-          class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors"
-          :class="status === tab.value ? 'bg-background font-medium shadow-xs/5' : 'text-muted-foreground hover:text-foreground'"
+          class="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-colors"
+          :class="status === tab.value ? 'bg-background font-medium text-foreground shadow-xs/5 [&>svg]:text-brand' : 'text-muted-foreground hover:text-foreground'"
           @click="status = tab.value"
         >
           <component :is="tab.icon" class="size-4" />
@@ -186,21 +187,17 @@ function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], n
           <span
             v-if="inbox?.counts[tab.value]"
             class="rounded-full px-1.5 text-[11px] leading-5 tabular-nums"
-            :class="tab.value === 'new' ? 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-400' : 'bg-background text-muted-foreground'"
+            :class="tab.value === 'new' ? 'bg-brand text-primary-foreground' : 'bg-background text-muted-foreground'"
           >{{ inbox.counts[tab.value] }}</span>
         </button>
       </div>
-      <div class="flex gap-1.5 overflow-x-auto">
-        <button
-          v-for="p in platforms"
-          :key="p.label"
-          type="button"
-          class="shrink-0 rounded-full border px-3 py-1 text-xs transition-colors"
-          :class="platform === p.value ? 'border-foreground bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'"
-          @click="platform = p.value"
-        >
-          {{ p.label }}
-        </button>
+      <div class="flex items-center gap-2">
+        <select v-model="platform" class="h-8 rounded-lg border bg-card px-2 text-sm" aria-label="Source">
+          <option v-for="p in platforms" :key="p.label" :value="p.value">{{ p.label }}</option>
+        </select>
+        <select v-model="sort" class="h-8 rounded-lg border bg-card px-2 text-sm" aria-label="Sort threads">
+          <option v-for="o in sorts" :key="o.value" :value="o.value">{{ o.label }}</option>
+        </select>
       </div>
     </div>
 
@@ -208,54 +205,28 @@ function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], n
       <GettingStarted :project-id="projectId" />
     </ClientOnly>
 
-    <div v-if="inbox" class="-mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-      <span v-if="status === 'new' && inbox.hot" class="inline-flex items-center gap-1 font-medium text-orange-700 dark:text-orange-400"><FlameIcon class="size-3.5" /> {{ inbox.hot }} hot lead{{ inbox.hot === 1 ? '' : 's' }}: reply while {{ inbox.hot === 1 ? 'it\'s' : 'they\'re' }} fresh</span>
-      <span class="inline-flex items-center gap-1">
-        <BrainIcon class="size-3.5" />
-        <template v-if="learned">Scoring learns from your {{ learned }} decision{{ learned === 1 ? '' : 's' }}<template v-if="inbox.learning.edited">, drafts from your {{ inbox.learning.edited }} edited repl{{ inbox.learning.edited === 1 ? 'y' : 'ies' }}</template></template>
-        <template v-else>Reply, save or dismiss with a reason: scoring learns what fits you</template>
-      </span>
-      <span class="ms-auto flex items-center gap-1">
-        Sort
-        <select v-model="sort" class="rounded-md border bg-background px-1.5 py-0.5 text-xs text-foreground" aria-label="Sort threads">
-          <option v-for="o in sorts" :key="o.value" :value="o.value">{{ o.label }}</option>
-        </select>
-      </span>
+    <p v-if="inbox && status === 'new' && inbox.hot" class="-mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-brand-foreground">
+      <FlameIcon class="size-4" /> {{ inbox.hot }} hot lead{{ inbox.hot === 1 ? '' : 's' }}: reply while {{ inbox.hot === 1 ? 'it\'s' : 'they\'re' }} fresh
+    </p>
+
+    <div v-if="inbox && status === 'new' && inbox.closed > 0" class="flex items-center gap-2.5 rounded-xl bg-muted/70 px-3 py-2 text-sm text-muted-foreground">
+      <LockIcon class="size-4 shrink-0" />
+      <span class="flex-1">{{ inbox.closed }} thread{{ inbox.closed === 1 ? '' : 's' }} can't be answered any more (archived, locked or removed). They're at the bottom.</span>
+      <Button size="xs" variant="ghost" :loading="clearing" @click="dismissClosed">Clear</Button>
+    </div>
+    <div v-if="inbox && inbox.pendingScoring > 0" class="flex items-center gap-2.5 rounded-xl bg-sky-500/8 px-3 py-2 text-sm text-sky-900 dark:text-sky-200">
+      <TimerIcon class="size-4 shrink-0" />
+      <span>{{ inbox.pendingScoring }} matching thread{{ inbox.pendingScoring === 1 ? '' : 's' }} waiting to be scored. {{ inbox.llmConfigured ? 'Scored every 15 minutes.' : 'Set ANTHROPIC_API_KEY to score them.' }}</span>
     </div>
 
-    <Alert v-if="inbox && status === 'new' && inbox.closed > 0">
-      <LockIcon />
-      <AlertTitle>{{ inbox.closed }} thread{{ inbox.closed === 1 ? '' : 's' }} can't be answered any more</AlertTitle>
-      <AlertDescription class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <span>Archived, locked or removed since they were found. They're at the bottom of the list.</span>
-        <Button size="xs" variant="outline" :loading="clearing" @click="dismissClosed">Clear them</Button>
-      </AlertDescription>
-    </Alert>
-
-    <Alert v-if="inbox && inbox.pendingScoring > 0" variant="info">
-      <TimerIcon />
-      <AlertTitle>{{ inbox.pendingScoring }} matching threads waiting to be scored</AlertTitle>
-      <AlertDescription>
-        {{ inbox.llmConfigured
-          ? 'They are scored on the next scheduled run, every 15 minutes.'
-          : 'Set ANTHROPIC_API_KEY to score them for buying intent.' }}
-      </AlertDescription>
-    </Alert>
-
     <SkeletonThreads v-if="!inbox" />
-    <Empty v-else-if="!inbox.threads.length" class="rounded-xl border border-dashed">
-      <EmptyHeader>
-        <EmptyMedia variant="icon"><component :is="tabs.find(t => t.value === status)!.icon" /></EmptyMedia>
-        <EmptyTitle>{{ status === 'new' ? 'No new threads yet' : `Nothing ${status}` }}</EmptyTitle>
-        <EmptyDescription>
-          <template v-if="status === 'new'">Threads scoring {{ inbox?.threshold ?? 60 }}+ show up here as they are found. Watching more subreddits widens the net.</template>
-          <template v-else>Threads you mark as {{ status }} appear here.</template>
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent v-if="status === 'new'">
-        <Button as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
-      </EmptyContent>
-    </Empty>
+    <AppEmpty
+      v-else-if="!inbox.threads.length"
+      :title="status === 'new' ? 'No new threads yet' : `Nothing ${status}`"
+      :description="status === 'new' ? `Threads scoring ${inbox?.threshold ?? 60}+ show up here as they are found. Watching more subreddits widens the net.` : `Threads you mark as ${status} appear here.`"
+    >
+      <Button v-if="status === 'new'" as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
+    </AppEmpty>
 
     <!-- Switching tabs keeps the current list on screen, dimmed, until the new one arrives. -->
     <TransitionGroup
@@ -270,5 +241,11 @@ function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], n
     >
       <ThreadCard v-for="t in inbox?.threads" :key="t.id" :project-id="projectId" :thread="t" :status="status" @status="(next, reason) => setStatus(t, next, reason)" />
     </TransitionGroup>
+
+    <p v-if="inbox?.threads.length" class="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+      <BrainIcon class="size-3.5" />
+      <template v-if="learned">Scoring learns from your {{ learned }} decision{{ learned === 1 ? '' : 's' }}<template v-if="inbox.learning.edited">, drafts from your {{ inbox.learning.edited }} edited repl{{ inbox.learning.edited === 1 ? 'y' : 'ies' }}</template></template>
+      <template v-else>Reply, save or dismiss with a reason: scoring learns what fits you</template>
+    </p>
   </div>
 </template>

@@ -20,6 +20,7 @@ describe('renderDigest', () => {
       plan: {
         threads: [{ id: 't', platform: 'reddit', channel: 'saas', title: 'Need a <b>CRM</b>', url: 'https://www.reddit.com/r/saas/comments/t/', snippet: null, createdUtc: null, intent: 88, kind: 'seeking_tool', reason: null, replyAngle: 'Share your setup' }],
         newCount: 3,
+        trend: [],
         pendingScoring: 0,
         suggestion: { subreddit: 'saas', angle: 'story', promo: true, topic: 'Pricing', why: 'Fits best.' },
         pacing: { promoToday: 0, promoLimit: 1, nextPromoAt: null, cooldowns: [] },
@@ -33,7 +34,7 @@ describe('renderDigest', () => {
   })
 
   it('adds the weekly summary on Mondays', () => {
-    const plan = { threads: [], newCount: 0, pendingScoring: 0, suggestion: null, pacing: { promoToday: 0, promoLimit: 1, nextPromoAt: null, cooldowns: [] } }
+    const plan = { threads: [], newCount: 0, trend: [], pendingScoring: 0, suggestion: null, pacing: { promoToday: 0, promoLimit: 1, nextPromoAt: null, cooldowns: [] } }
     const { subject, text } = renderDigest('https://app.test', [{
       project: { id: 'p1', name: 'Acme' },
       plan,

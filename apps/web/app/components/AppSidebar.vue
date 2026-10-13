@@ -122,9 +122,8 @@ async function signOut() {
           type="button"
           class="flex w-full items-center gap-2.5 rounded-lg border bg-background p-2 text-left shadow-xs/5 outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/40 data-[state=open]:bg-accent"
         >
-          <span class="flex size-8 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-sm font-semibold text-white">
-            {{ current ? initial(current.name) : '·' }}
-          </span>
+          <SourceAvatar v-if="current" :channel="current.name" />
+          <span v-else class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-sm font-semibold text-brand-foreground">·</span>
           <span class="min-w-0 flex-1 leading-tight">
             <span class="block truncate text-sm font-medium">{{ current?.name ?? 'All projects' }}</span>
             <span class="block truncate text-xs text-muted-foreground">{{ current ? current.url.replace(/^https?:\/\//, '').replace(/\/$/, '') : `${projects?.length ?? 0} project${projects?.length === 1 ? '' : 's'}` }}</span>
@@ -135,7 +134,7 @@ async function signOut() {
       <MenuPopup align="start" class="w-(--reka-dropdown-menu-trigger-width) min-w-56">
         <MenuGroupLabel>Projects</MenuGroupLabel>
         <MenuItem v-for="p in projects" :key="p.id" @select="openProject(p.id)">
-          <span class="flex size-5 items-center justify-center rounded bg-neutral-900 text-[10px] font-semibold text-white">{{ initial(p.name) }}</span>
+          <SourceAvatar :channel="p.name" size="sm" />
           <span class="truncate">{{ p.name }}</span>
         </MenuItem>
         <MenuSeparator />
@@ -156,17 +155,17 @@ async function signOut() {
           v-for="item in g.items"
           :key="item.to"
           :to="item.to"
-          class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors"
-          :class="isActive(item.to) ? 'bg-accent font-medium text-foreground' : 'text-muted-foreground hover:bg-accent/60 hover:text-foreground'"
+          class="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors"
+          :class="isActive(item.to) ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground' : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-foreground'"
           @click="emit('navigate')"
         >
-          <component :is="item.icon" class="size-4 shrink-0" :class="isActive(item.to) ? 'text-foreground' : ''" />
+          <component :is="item.icon" class="size-4 shrink-0" :class="isActive(item.to) ? 'text-brand' : ''" />
           <span class="flex-1 truncate">{{ item.label }}</span>
           <span
             v-if="item.count"
             class="min-w-5 rounded-full px-1.5 text-center text-[11px] leading-5 font-medium tabular-nums"
             :class="item.tone === 'primary'
-              ? 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-400'
+              ? 'bg-brand text-primary-foreground'
               : item.tone === 'alert'
                 ? 'bg-red-500/12 text-red-700 dark:text-red-400'
                 : 'bg-muted text-muted-foreground'"
@@ -174,20 +173,20 @@ async function signOut() {
         </NuxtLink>
       </div>
     </nav>
-    <div v-else class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
+    <div v-else class="rounded-xl border border-dashed bg-background/60 p-3 text-xs text-muted-foreground">
       Pick a project to see its inbox, subreddits and drafts.
     </div>
 
     <div class="mt-auto flex flex-col gap-3">
       <!-- Plan and usage -->
-      <div v-if="!me && edition === 'cloud'" class="flex flex-col gap-2.5 rounded-lg border bg-background p-3">
+      <div v-if="!me && edition === 'cloud'" class="flex flex-col gap-2.5 rounded-xl border bg-background p-3">
         <Skeleton class="h-4 w-20" /><Skeleton class="h-1.5 w-full" /><Skeleton class="h-1.5 w-full" />
       </div>
-      <div v-if="me && edition === 'cloud'" class="flex flex-col gap-2.5 rounded-lg border bg-background p-3">
+      <div v-if="me && edition === 'cloud'" class="flex flex-col gap-2.5 rounded-xl border bg-background p-3">
         <div class="flex items-center justify-between">
           <span class="text-sm font-medium">{{ me.org.trial ? 'Pro trial' : `${me.limits.label} plan` }}</span>
           <span v-if="me.org.planStatus === 'past_due'" class="text-[11px] font-medium text-red-600">Payment due</span>
-          <span v-else-if="me.org.trial" class="text-[11px] font-medium" :class="me.org.trial.daysLeft <= 3 ? 'text-amber-700 dark:text-amber-400' : 'text-violet-700 dark:text-violet-400'">{{ me.org.trial.daysLeft }} day{{ me.org.trial.daysLeft === 1 ? '' : 's' }} left</span>
+          <span v-else-if="me.org.trial" class="text-[11px] font-medium" :class="me.org.trial.daysLeft <= 3 ? 'text-amber-700 dark:text-amber-400' : 'text-brand-foreground'">{{ me.org.trial.daysLeft }} day{{ me.org.trial.daysLeft === 1 ? '' : 's' }} left</span>
         </div>
         <div v-for="m in meters" :key="m.label" class="flex flex-col gap-1">
           <div class="flex justify-between text-[11px] text-muted-foreground">
@@ -197,7 +196,7 @@ async function signOut() {
           <div class="h-1.5 overflow-hidden rounded-full bg-muted">
             <div
               class="h-full rounded-full transition-all"
-              :class="m.used >= (m.limit ?? 0) ? 'bg-amber-500' : 'bg-neutral-900 dark:bg-neutral-100'"
+              :class="m.used >= (m.limit ?? 0) ? 'bg-amber-500' : 'bg-brand'"
               :style="{ width: `${Math.min(100, (m.used / Math.max(1, m.limit ?? 1)) * 100)}%` }"
             />
           </div>
@@ -212,7 +211,7 @@ async function signOut() {
         <MenuTrigger as-child>
           <button type="button" class="flex w-full items-center gap-2.5 rounded-lg p-2 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/40 data-[state=open]:bg-accent">
             <img v-if="user?.image" :src="user.image" alt="" class="size-7 rounded-full">
-            <span v-else class="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-semibold">{{ initial(user?.name || user?.email) }}</span>
+            <span v-else class="flex size-7 items-center justify-center rounded-full bg-brand-soft text-xs font-semibold text-brand-foreground">{{ initial(user?.name || user?.email) }}</span>
             <span class="min-w-0 flex-1 leading-tight">
               <span class="block truncate text-sm font-medium">{{ user?.name || 'Account' }}</span>
               <span class="block truncate text-xs text-muted-foreground">{{ user?.email }}</span>
