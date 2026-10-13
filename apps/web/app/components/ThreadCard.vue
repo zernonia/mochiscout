@@ -269,7 +269,7 @@ async function copyAndOpen() {
         <div class="flex items-center justify-between gap-2">
           <span class="inline-flex items-center gap-1.5 text-xs font-medium text-brand-foreground"><SparklesIcon class="size-3.5" /> Your reply · AI draft, edit before posting</span>
           <div class="flex items-center gap-1">
-            <Button as-child size="xs" variant="ghost"><NuxtLink :to="`/app/${projectId}/profile#reply-instructions`">Instructions</NuxtLink></Button>
+            <Button as-child size="xs" variant="ghost"><NuxtLink :to="`/app/${projectId}/profile#reply-instructions`">Tune drafts</NuxtLink></Button>
             <Button size="xs" variant="ghost" :disabled="drafting" :aria-expanded="directing" @click="directing ? (directing = false) : openDirection()"><RefreshCwIcon /> Redraft</Button>
           </div>
         </div>

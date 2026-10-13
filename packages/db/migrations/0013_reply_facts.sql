@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `reply_facts` text;

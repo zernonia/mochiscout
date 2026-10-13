@@ -61,6 +61,7 @@ async function save() {
       </form>
       <Separator class="opacity-60" />
       <!-- Separate form: nested forms break hydration. -->
+      <ReplyFactsCard :project-id="projectId" :product-name="project.name" />
       <ReplyInstructionsCard :project-id="projectId" :product-name="project.name" />
       <AlertWebhookCard :project-id="projectId" :initial-url="project.alertWebhookUrl" />
     </template>

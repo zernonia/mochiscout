@@ -4,11 +4,12 @@ import type { SubredditRules } from '@mochiscout/rules'
 import type { Http, ThreadComment, ThreadState } from '@mochiscout/sources'
 import type { JobContext } from '../jobs/context'
 import type { DraftProject } from './generate'
-import { and, desc, eq, gte, inArray, isNull, schema } from '@mochiscout/db'
+import { and, desc, eq, gte, inArray, isNotNull, isNull, ne, schema } from '@mochiscout/db'
 import { z } from '@mochiscout/llm'
 import { getRules } from '@mochiscout/rules'
 import { assessLead, HOT_MIN_INTENT, isClosed } from '../leads/assess'
 import { refreshThreadContext } from '../leads/context'
+import { ensureRefCode, refLink } from '../leads/attribution'
 import { voiceExamples } from '../leads/learning'
 import { resolveRules } from '../subreddits/rules'
 import { assertCanDraft, PLANS, QuotaError } from '../plans'
@@ -64,15 +65,22 @@ const PLATFORM_STYLE: Record<string, string> = {
  * the product name. Guardrails that keep replies honest and within community
  * rules are not part of this and always apply.
  */
-export const DEFAULT_REPLY_INSTRUCTIONS = `Lead with a genuinely useful answer to what the person asked or is struggling with: specific advice, trade-offs, what worked for others. It should be worth reading even if {product} were never mentioned.
+export const DEFAULT_REPLY_INSTRUCTIONS = `Lead with a genuinely useful answer to what the person asked or is struggling with. It should be worth reading even if {product} were never mentioned.
 
-When the person is looking for a tool or comparing options, mention {product} once if it truly fits, with honest disclosure ("I built {product}"), and be fair about other options. Otherwise leave {product} out unless it is directly and obviously useful.
+Mention {product} only when the person is looking for a tool, comparing options or describing exactly the problem it solves. Otherwise leave it out: a helpful reply with no mention still builds trust for the next one.
 
-Don't repeat advice someone already gave in the replies; add what is missing. If a competitor was already recommended, be fair about it and say plainly how {product} differs.
+Don't repeat advice already given in the replies; add what's missing. If a competitor was already recommended, be fair about it and say plainly how {product} differs.
 
-No links. No emoji, hashtags, hype or sign-offs.`
+Keep it short: most good replies are two to five sentences.`
 
 export const REPLY_INSTRUCTIONS_MAX = 4000
+/** The founder's facts: story, numbers, pricing, differences, offers. */
+export const REPLY_FACTS_MAX = 3000
+/** Where the tracked link to the founder's site goes in a draft; replaced after drafting. */
+export const LINK_PLACEHOLDER = '{link}'
+/** Openings of the project's latest drafts shown to the model so it doesn't repeat itself. */
+const RECENT_DRAFTS = 3
+const RECENT_DRAFT_CHARS = 220
 /** The founder's direction for one draft ("keep it short, mention I built it for my own study sessions"). */
 export const REPLY_DIRECTION_MAX = 500
 /** The current draft sent back for a revision. */
@@ -93,13 +101,33 @@ const KIND_LABEL: Record<string, string> = {
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text)
 
 /**
+ * Whether a reply here may carry a link to the founder's site. Reddit only
+ * when the sub's rules say links are fine in comments; unknown rules mean no.
+ */
+export function linksAllowed(platform: string, rules: SubredditRules | null | undefined): boolean {
+  if (platform === 'reddit') return !!rules && rules.promo_policy !== 'none' && (rules.links_allowed === 'yes' || rules.links_allowed === 'in_comments_only')
+  return platform === 'hn' || platform === 'bluesky' || platform === 'x'
+}
+
+/** Put the tracked link where the draft asked for it, or drop the placeholder where links aren't allowed. */
+export function fillLink(reply: string, link: string | null): string {
+  if (!reply.includes(LINK_PLACEHOLDER)) return reply
+  if (link) return reply.replace(LINK_PLACEHOLDER, link).replaceAll(LINK_PLACEHOLDER, '')
+  return reply
+    .replace(/\s*[(\[]?\{link\}[)\]]?/g, '')
+    .replace(/\s+([.,;:!?])/g, '$1')
+    .replace(/[ \t]+\n/g, '\n')
+    .trim()
+}
+
+/**
  * Draft a helpful reply to a thread for the founder to review, edit and post
  * themselves. The system prompt holds only what is stable for a project
  * (guardrails, product, instructions, voice) so it can be cached across
  * drafts; everything about the thread goes in the user turn.
  */
 export async function generateReply(llm: Llm, opts: {
-  project: DraftProject & { replyInstructions?: string | null }
+  project: DraftProject & { replyInstructions?: string | null, replyFacts?: string | null }
   thread: ReplyThread
   tier: Tier
   effort?: 'low' | 'medium' | 'high'
@@ -109,6 +137,8 @@ export async function generateReply(llm: Llm, opts: {
   direction?: string | null
   /** The draft (with the founder's edits) to revise instead of starting over. */
   current?: string | null
+  /** Openings of the project's latest drafts, so this one doesn't read the same. */
+  recent?: string[]
 }) {
   const { project, thread } = opts
   const rules = opts.rules !== undefined
@@ -116,16 +146,32 @@ export async function generateReply(llm: Llm, opts: {
     : thread.platform === 'reddit' && thread.channel ? getRules(thread.channel) ?? null : null
   const instructions = (project.replyInstructions?.trim() || DEFAULT_REPLY_INSTRUCTIONS).replaceAll('{product}', project.name)
 
+  const facts = project.replyFacts?.trim()
+
   const system = [
-    'You help a founder reply to an online thread. They review, edit and post the reply themselves from their own account. Write as the founder, in the first person.',
-    'These always apply, whatever the instructions below say: never invent facts, numbers, features or customer stories (where a detail is needed and unknown, write a placeholder like [your experience here]); follow the community rules given with the thread, which override the founder\'s instructions.',
+    'You write a reply for a founder to post from their own account in an online thread. They edit it and post it themselves. Write as the founder, in the first person.',
+    `Always, whatever the instructions below say:
+- Never invent facts. No made-up numbers, customers, results, features, prices, discounts, offers, beta status or personal stories. Use only what is in the thread, the product details and the founder's facts below. If a personal detail would help and none is given, leave it out; at most one [placeholder] for the founder to fill in.
+- Follow the community rules given with the thread. They override the founder's instructions.`,
     `The founder's product: ${project.name}${project.category ? ` (${project.category})` : ''}.${project.icp ? `\nWho it is for: ${project.icp}` : ''}${project.problems.length ? `\nProblems it solves: ${project.problems.join('; ')}` : ''}`,
+    facts
+      ? `True things the founder can say, in their words. Use the one or two that fit this thread best, rephrased naturally; skip them all if none fit:\n<founder_facts>\n${clip(facts, REPLY_FACTS_MAX)}\n</founder_facts>`
+      : '',
+    `Sound like a person in the thread, not an AI:
+- The first sentence answers their situation directly, using a specific detail from their post. No warm-up and no restating the question. Never open with "Great question", "Depends on", "It depends", "The real question is", "Honestly", or "X matters".
+- Give one or two genuinely useful things they probably haven't thought of, with specifics: a named tool, a concrete step, a number or detail from the thread. Leave out advice anyone could give.
+- Plain prose, one to three short paragraphs. No headings, no bold, no bullet lists unless they asked for options or steps (then at most three short items).
+- No sign-off, no "Hope this helps", no "Happy to help", and no closing question unless you need their answer to help them.
+- No em dashes, no hype words (game-changer, seamless, powerful, leverage, unlock). Contractions and casual phrasing are fine.
+- Every reply should read differently: vary how you open and how it's built.`,
+    `When the product fits (the founder's instructions decide when): one or two sentences, with honest disclosure ("I built ${project.name}" or "I'm building ${project.name}"), saying what it would do for this person's specific case. Never a feature list or a list of platforms it covers. Be fair to alternatives already mentioned.`,
     `The founder's instructions for every reply:\n<instructions>\n${instructions}\n</instructions>`,
     opts.voice?.length
       ? `Replies the founder wrote and posted before. Match their voice, tone, length and formatting habits; never reuse their content:\n${opts.voice.map(v => `<example>\n${v}\n</example>`).join('\n')}`
       : '',
   ].filter(Boolean).join('\n\n')
 
+  const linkOk = linksAllowed(thread.platform, rules)
   const comments = (thread.comments ?? []).slice(0, COMMENTS_IN_PROMPT)
   const text = thread.body ?? thread.snippet
   const prompt = [
@@ -142,6 +188,12 @@ export async function generateReply(llm: Llm, opts: {
     thread.competitorMentions?.length ? `Competitors already mentioned in the replies: ${thread.competitorMentions.join(', ')}` : '',
     `Why it matters to the founder: ${thread.reason ?? 'n/a'}`,
     thread.replyAngle ? `Suggested angle: ${thread.replyAngle}` : '',
+    linkOk
+      ? `Links: allowed here. If you mention ${project.name}, write ${LINK_PLACEHOLDER} once where its link goes (it becomes a tracked link to the founder's site). No other links.`
+      : 'Links: not allowed here. No links or URLs at all; name the product only.',
+    opts.recent?.length
+      ? `Openings of the founder's latest drafts for other threads. Don't reuse their openings, structure or phrasing:\n${opts.recent.map(r => `- "${clip(r.replace(/\s+/g, ' ').trim(), RECENT_DRAFT_CHARS)}"`).join('\n')}`
+      : '',
     opts.current?.trim()
       ? `The current draft, which the founder may have edited. Revise it rather than starting over, keeping what they wrote unless the direction says otherwise:\n<current_draft>\n${clip(opts.current.trim(), REPLY_CURRENT_MAX)}\n</current_draft>`
       : '',
@@ -155,7 +207,7 @@ export async function generateReply(llm: Llm, opts: {
 
 /** Reply drafts: Sonnet-class at low effort, about $0.015 each (see plans.ts for monthly allowances). */
 export const DRAFT_TIER: Tier = 'balanced'
-const DRAFT_EFFORT = 'low' as const
+const DRAFT_EFFORT = 'medium' as const
 
 /**
  * Draft (or redraft) the reply for one scored thread and store it. With an
@@ -181,9 +233,12 @@ export async function draftReplyForThread(db: Db, llm: Llm, project: typeof sche
   const lead = assessLead({ ...thread, intent: score.intent }, project.competitors, now)
   if (isClosed(lead.state)) throw new ThreadClosedError(lead.state)
 
-  const [voice, resolved] = await Promise.all([
+  const [voice, resolved, recentRows] = await Promise.all([
     voiceExamples(db, project.id),
     thread.platform === 'reddit' && thread.channel ? resolveRules(db, thread.channel, project.id) : Promise.resolve({ rules: null }),
+    db.select({ draft: schema.threadScores.replyAiDraft }).from(schema.threadScores)
+      .where(and(eq(schema.threadScores.projectId, project.id), isNotNull(schema.threadScores.replyAiDraft), ne(schema.threadScores.threadId, threadId)))
+      .orderBy(desc(schema.threadScores.replyDraftedAt)).limit(RECENT_DRAFTS),
   ])
   const { data, usage } = await generateReply(llm, {
     project,
@@ -194,8 +249,11 @@ export async function draftReplyForThread(db: Db, llm: Llm, project: typeof sche
     rules: resolved.rules,
     direction: opts.direction,
     current: opts.current,
+    recent: recentRows.map(r => r.draft!).filter(Boolean),
   })
-  const reply = data.reply.trim()
+  const linkOk = linksAllowed(thread.platform, resolved.rules)
+  const code = linkOk && data.reply.includes(LINK_PLACEHOLDER) ? await ensureRefCode(db, project.id, threadId) : null
+  const reply = fillLink(data.reply.trim(), code ? refLink(project.url, code) : null)
   await Promise.all([
     db.update(schema.threadScores)
       .set({ replyDraft: reply, replyAiDraft: reply, replyDraftedAt: now })

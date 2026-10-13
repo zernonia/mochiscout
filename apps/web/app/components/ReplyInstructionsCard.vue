@@ -57,7 +57,8 @@ async function save(instructions: string | null) {
         <ShieldCheckIcon class="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
         <p>
           Always applied, whatever the instructions say: each community's rules (which win over your instructions), the platform's length and style,
-          your voice from replies you posted, and no invented facts or customer stories. You review and post every reply yourself.
+          your voice from replies you posted, and no invented facts or customer stories. A link to your site is added only where the community allows links,
+          as your tracking link. You review and post every reply yourself.
         </p>
       </div>
     </div>
