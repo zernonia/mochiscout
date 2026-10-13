@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ActivityIcon, CheckCircle2Icon, CircleAlertIcon, CircleHelpIcon, ShieldAlertIcon, ShieldCheckIcon, TrashIcon, UserIcon } from '@lucide/vue'
+import { ActivityIcon, LinkIcon, CheckCircle2Icon, CircleAlertIcon, CircleHelpIcon, ShieldAlertIcon, ShieldCheckIcon, TrashIcon, UserIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -25,6 +25,7 @@ const summary = computed(() => {
   return {
     live: posts.filter(p => p.status === 'live').length,
     problems: posts.filter(p => p.status === 'removed' || p.status === 'not_listed').length,
+    total: posts.length,
   }
 })
 
@@ -56,18 +57,18 @@ function when(d: string | null) {
 
 <template>
   <div class="flex flex-col gap-6">
-    <AppPageHeader title="Tracker" description="Paste the posts you publish. We check every 12 hours that they're still visible, so you hear about removals early." />
+    <AppPageHeader title="Tracker" description="Paste the posts you publish. We check every 12 hours that they're still visible, so you hear about removals early." :icon="ActivityIcon" />
 
     <!-- Account health -->
-    <Skeleton v-if="!tracker" class="h-[74px] w-full rounded-xl" />
+    <Skeleton v-if="!tracker" class="h-[74px] w-full rounded-2xl" />
     <div
       v-else
-      class="flex items-start gap-3 rounded-xl border p-4"
+      class="flex items-start gap-3 rounded-2xl border p-4 shadow-xs/5 sm:p-5"
       :class="tracker?.account?.status === 'not_found' ? 'border-red-500/30 bg-red-500/5' : tracker?.account?.status === 'ok' ? 'border-emerald-500/30 bg-emerald-500/5' : 'bg-card'"
     >
       <span
-        class="flex size-9 shrink-0 items-center justify-center rounded-lg"
-        :class="tracker?.account?.status === 'not_found' ? 'bg-red-500/12 text-red-700 dark:text-red-400' : tracker?.account?.status === 'ok' ? 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-400' : 'bg-muted text-muted-foreground'"
+        class="flex size-10 shrink-0 items-center justify-center rounded-xl"
+        :class="tracker?.account?.status === 'not_found' ? 'bg-red-500/12 text-red-700 dark:text-red-400' : tracker?.account?.status === 'ok' ? 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-400' : 'bg-brand-soft text-brand-foreground'"
       >
         <ShieldAlertIcon v-if="tracker?.account?.status === 'not_found'" class="size-5" />
         <ShieldCheckIcon v-else-if="tracker?.account?.status === 'ok'" class="size-5" />
@@ -89,8 +90,8 @@ function when(d: string | null) {
       </div>
     </div>
 
-    <form class="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-xs/5" @submit.prevent="add">
-      <Label for="url">Track a post you made</Label>
+    <form class="flex flex-col gap-3 rounded-2xl border bg-card p-4 shadow-xs/5 sm:p-5" @submit.prevent="add">
+      <Label for="url" class="flex items-center gap-2"><LinkIcon class="size-4 text-brand" /> Track a post you made</Label>
       <div class="flex flex-col gap-2 sm:flex-row">
         <Input id="url" v-model="form.url" placeholder="https://www.reddit.com/r/…/comments/…" required class="flex-1" />
         <Button type="submit" :loading="adding"><ActivityIcon /> Track</Button>
@@ -100,24 +101,25 @@ function when(d: string | null) {
       </Label>
     </form>
 
-    <div v-if="tracker?.posts.length" class="flex items-center gap-4 text-sm">
-      <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-emerald-500" /> {{ summary.live }} live</span>
-      <span class="inline-flex items-center gap-1.5" :class="summary.problems > 0 ? 'font-medium text-red-700 dark:text-red-400' : ''"><span class="size-2 rounded-full bg-red-500" /> {{ summary.problems }} removed or hidden</span>
+    <div v-if="tracker?.posts.length" class="flex flex-col gap-2.5">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+        <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-full bg-emerald-500" /> {{ summary.live }} live</span>
+        <span class="inline-flex items-center gap-1.5" :class="summary.problems > 0 ? 'font-medium text-red-700 dark:text-red-400' : ''"><span class="size-2 rounded-full bg-red-500" /> {{ summary.problems }} removed or hidden</span>
+      </div>
+      <div class="flex h-2 gap-0.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+        <div v-if="summary.live" class="h-full rounded-full bg-emerald-500" :style="{ width: `${(summary.live / summary.total) * 100}%` }" />
+        <div v-if="summary.problems" class="h-full rounded-full bg-red-500" :style="{ width: `${(summary.problems / summary.total) * 100}%` }" />
+      </div>
     </div>
 
     <SkeletonCards v-if="!tracker" :count="2" :lines="2" />
-    <Empty v-else-if="!tracker.posts.length" class="rounded-xl border border-dashed">
-      <EmptyHeader>
-        <EmptyMedia variant="icon"><ActivityIcon /></EmptyMedia>
-        <EmptyTitle>No tracked posts</EmptyTitle>
-        <EmptyDescription>After you post, paste the link above. We check it every 12 hours for removals.</EmptyDescription>
-      </EmptyHeader>
-    </Empty>
+    <AppEmpty v-else-if="!tracker.posts.length" title="No tracked posts" description="After you post, paste the link above. We check it every 12 hours for removals." />
 
-    <div class="flex flex-col gap-2">
-      <div v-for="p in tracker?.posts" :key="p.id" class="flex items-start gap-3 rounded-xl border bg-card p-4 shadow-xs/5">
-        <span class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg" :class="statusInfo[p.status].class">
-          <component :is="statusInfo[p.status].icon" class="size-4" />
+    <div class="flex flex-col gap-2.5">
+      <div v-for="p in tracker?.posts" :key="p.id" class="flex items-start gap-3 rounded-2xl border bg-card p-4 shadow-xs/5">
+        <span class="relative mt-0.5 shrink-0">
+          <SourceAvatar :channel="p.subreddit" />
+          <span class="absolute -right-0.5 -bottom-0.5 size-3 rounded-full ring-2 ring-card" :class="statusInfo[p.status].dot" aria-hidden="true" />
         </span>
         <div class="flex min-w-0 flex-1 flex-col gap-1">
           <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

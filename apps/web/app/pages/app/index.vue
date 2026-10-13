@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRightIcon, FolderPlusIcon, PlusIcon } from '@lucide/vue'
+import { ArrowRightIcon, FolderKanbanIcon, GlobeIcon, PlusIcon } from '@lucide/vue'
 
 definePageMeta({ layout: 'app' })
 useHead({ title: 'Projects · Mochiscout' })
@@ -18,39 +18,36 @@ function host(url: string) {
 
 <template>
   <div class="flex flex-col gap-6">
-    <AppPageHeader title="Projects" description="One project per product. Each has its own inbox, subreddits and drafts.">
+    <AppPageHeader title="Projects" description="One project per product. Each has its own inbox, subreddits and drafts." :icon="FolderKanbanIcon">
       <template v-if="projects?.length" #actions>
         <Button as-child><NuxtLink to="/app/new"><PlusIcon /> New project</NuxtLink></Button>
       </template>
     </AppPageHeader>
 
     <SkeletonCards v-if="!projects" :count="2" :lines="1" :cols="2" />
-    <Empty v-else-if="!projects.length" class="rounded-xl border border-dashed">
-      <EmptyHeader>
-        <EmptyMedia variant="icon"><FolderPlusIcon /></EmptyMedia>
-        <EmptyTitle>No projects yet</EmptyTitle>
-        <EmptyDescription>Paste your product URL and we'll find where your buyers talk.</EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Button as-child><NuxtLink to="/app/new"><PlusIcon /> New project</NuxtLink></Button>
-      </EmptyContent>
-    </Empty>
+    <AppEmpty v-else-if="!projects.length" title="No projects yet" description="Paste your product URL and we'll find where your buyers talk.">
+      <Button as-child><NuxtLink to="/app/new"><PlusIcon /> New project</NuxtLink></Button>
+    </AppEmpty>
 
     <div v-else class="grid gap-3 sm:grid-cols-2">
       <NuxtLink
         v-for="p in projects"
         :key="p.id"
         :to="`/app/${p.id}/today`"
-        class="group flex items-center gap-3 rounded-xl border bg-card p-4 shadow-xs/5 transition-colors hover:bg-accent/50"
+        class="group flex items-center gap-3.5 rounded-2xl border bg-card p-4 shadow-xs/5 transition-[border-color,box-shadow] hover:border-brand/30 hover:shadow-sm"
       >
-        <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-neutral-900 font-semibold text-white">{{ p.name.trim()[0]?.toUpperCase() }}</span>
+        <SourceAvatar :channel="p.name.trim() || '?'" size="lg" />
         <div class="min-w-0 flex-1">
           <div class="truncate font-medium">{{ p.name }}</div>
-          <div class="truncate text-sm text-muted-foreground">{{ p.category ? `${p.category} · ` : '' }}{{ host(p.url) }}</div>
+          <div class="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
+            <span v-if="p.category" class="max-w-[50%] shrink-0 truncate rounded-full bg-muted px-2 py-px text-xs">{{ p.category }}</span>
+            <GlobeIcon class="size-3.5 shrink-0" aria-hidden="true" />
+            <span class="truncate">{{ host(p.url) }}</span>
+          </div>
         </div>
-        <ArrowRightIcon class="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+        <ArrowRightIcon class="size-4 shrink-0 text-muted-foreground transition-[color,translate] group-hover:translate-x-0.5 group-hover:text-brand" />
       </NuxtLink>
-      <NuxtLink to="/app/new" class="flex items-center justify-center gap-2 rounded-xl border border-dashed p-4 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground">
+      <NuxtLink to="/app/new" class="flex items-center justify-center gap-2 rounded-2xl border border-dashed p-4 text-sm text-muted-foreground transition-colors hover:border-brand/30 hover:bg-brand-soft/40 hover:text-brand-foreground">
         <PlusIcon class="size-4" /> New project
       </NuxtLink>
     </div>

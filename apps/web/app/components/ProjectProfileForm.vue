@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PackageIcon, RadarIcon, TargetIcon } from '@lucide/vue'
+import FormSection from './FormSection.vue'
 
 export interface ProjectProfile {
   url: string
@@ -91,7 +92,7 @@ const lists = [
           <Label>Also watch</Label>
           <p class="text-xs text-muted-foreground">Reddit is always on.</p>
         </template>
-        <div class="grid gap-2 sm:grid-cols-3">
+        <div class="grid gap-2">
           <label
             v-for="s in sourceOptions"
             :key="s.id"
