@@ -4,6 +4,10 @@
   "main": "./.output/server/index.mjs",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
+  // Run requests next to the Anthropic API and the D1 primary (both US East). From some
+  // edge locations (e.g. Hong Kong) the Anthropic API answers 403 "Request not allowed",
+  // and every D1 query is a round trip to ENAM anyway. Static assets still serve from the edge.
+  "placement": { "mode": "targeted", "region": "aws:us-east-1" },
   "assets": {
     "directory": "./.output/public",
     "binding": "ASSETS"
