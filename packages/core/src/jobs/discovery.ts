@@ -1,6 +1,6 @@
 import type { DiscoveryMode } from '../search/queries'
 import type { JobContext } from './context'
-import { eq, inArray, schema } from '@mochiscout/db'
+import { and, eq, inArray, ne, schema } from '@mochiscout/db'
 import { cleanRedditTitle, HttpDeferredError, parseRedditThreadUrl, SNIPPET_MAX, truncate } from '@mochiscout/sources'
 import { queueSearchThreads } from '../scoring/queue'
 import { buildDiscoveryQueries } from '../search/queries'
@@ -77,13 +77,18 @@ export async function upsertSearchResults(
 
   const ids = [...rows.keys()]
   const existing = new Set(
-    (await ctx.db.select({ id: schema.threads.id }).from(schema.threads).where(inArray(schema.threads.id, ids)))
+    // Extension uploads don't count as seen: the search copy replaces them (see upsertPosts).
+    (await ctx.db.select({ id: schema.threads.id }).from(schema.threads).where(and(inArray(schema.threads.id, ids), ne(schema.threads.source, 'extension'))))
       .map(r => r.id),
   )
   const fresh = ids.filter(id => !existing.has(id))
 
   const statements = [
-    ...fresh.map(id => ctx.db.insert(schema.threads).values(rows.get(id)!).onConflictDoNothing()),
+    ...fresh.map((id) => {
+      const { id: _, ...row } = rows.get(id)!
+      return ctx.db.insert(schema.threads).values(rows.get(id)!)
+        .onConflictDoUpdate({ target: schema.threads.id, set: row, setWhere: eq(schema.threads.source, 'extension') })
+    }),
     ...(mode === 'evergreen'
       ? [...existing].map(id =>
           ctx.db.update(schema.threads).set({ searchRankFlag: true }).where(eq(schema.threads.id, id)))

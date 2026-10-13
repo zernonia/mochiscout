@@ -2,7 +2,7 @@ import type { Db, SubredditStats } from '@mochiscout/db'
 import type { SubredditRules } from '@mochiscout/rules'
 import type { JobContext } from '../jobs/context'
 import type { RulesSource } from './rules'
-import { and, eq, gte, inArray, schema, sql } from '@mochiscout/db'
+import { and, eq, gte, inArray, ne, schema, sql } from '@mochiscout/db'
 import { allRules } from '@mochiscout/rules'
 import { readMissingRules, resolveRulesMany } from './rules'
 
@@ -31,15 +31,15 @@ export async function computeSubredditStats(ctx: JobContext): Promise<Map<string
   const s = schema.threadScores
   const [hours, buying, checks, own, replies, watched] = await Promise.all([
     ctx.db.select({ sub: t.channel, hour: sql<string>`strftime('%H', ${t.createdUtc}, 'unixepoch')`, n: sql<number>`count(*)` })
-      .from(t).where(and(eq(t.platform, 'reddit'), gte(t.createdUtc, new Date(since * 1000))))
+      .from(t).where(and(eq(t.platform, 'reddit'), ne(t.source, 'extension'), gte(t.createdUtc, new Date(since * 1000))))
       .groupBy(t.channel, sql`2`),
     ctx.db.select({ sub: t.channel, n: sql<number>`count(distinct ${t.id})` })
       .from(s).innerJoin(t, eq(t.id, s.threadId))
-      .where(and(eq(t.platform, 'reddit'), inArray(s.kind, ['seeking_tool', 'comparison']), gte(s.intent, 60), gte(sql`coalesce(${t.createdUtc}, ${t.ingestedAt})`, since)))
+      .where(and(eq(t.platform, 'reddit'), ne(t.source, 'extension'), inArray(s.kind, ['seeking_tool', 'comparison']), gte(s.intent, 60), gte(sql`coalesce(${t.createdUtc}, ${t.ingestedAt})`, since)))
       .groupBy(t.channel),
     // Author deletions aren't moderation; leave them out of both counts.
     ctx.db.select({ sub: t.channel, checked: sql<number>`count(*)`, removed: sql<number>`sum(${t.state} = 'removed')` })
-      .from(t).where(and(eq(t.platform, 'reddit'), sql`${t.contextFetchedAt} is not null`, sql`${t.state} != 'deleted'`))
+      .from(t).where(and(eq(t.platform, 'reddit'), ne(t.source, 'extension'), sql`${t.contextFetchedAt} is not null`, sql`${t.state} != 'deleted'`))
       .groupBy(t.channel),
     ctx.db.select({ sub: schema.trackedPosts.subreddit, n: sql<number>`count(*)`, removed: sql<number>`sum(${schema.trackedPosts.status} in ('removed', 'not_listed'))` })
       .from(schema.trackedPosts).where(inArray(schema.trackedPosts.status, ['live', 'removed', 'not_listed']))
@@ -51,7 +51,7 @@ export async function computeSubredditStats(ctx: JobContext): Promise<Map<string
       linked: sql<number>`sum(${s.replyDraft} like '%http%')`,
       linkedRemoved: sql<number>`sum(${s.replyDraft} like '%http%' and ${s.replyStatus} = 'removed')`,
     }).from(s).innerJoin(t, eq(t.id, s.threadId))
-      .where(and(eq(t.platform, 'reddit'), inArray(s.replyStatus, ['live', 'removed'])))
+      .where(and(eq(t.platform, 'reddit'), ne(t.source, 'extension'), inArray(s.replyStatus, ['live', 'removed'])))
       .groupBy(t.channel),
     ctx.db.selectDistinct({ sub: schema.projectSubreddits.subreddit }).from(schema.projectSubreddits).where(eq(schema.projectSubreddits.watching, true)),
   ])

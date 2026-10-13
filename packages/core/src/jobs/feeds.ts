@@ -1,6 +1,6 @@
 import type { Platform, Post, SourceAdapter } from '@mochiscout/sources'
 import type { JobContext } from './context'
-import { eq, inArray, schema } from '@mochiscout/db'
+import { and, eq, inArray, ne, schema } from '@mochiscout/db'
 import { HttpDeferredError } from '@mochiscout/sources'
 import { PLANS } from '../plans'
 import { queueSearchThreads } from '../scoring/queue'
@@ -26,21 +26,29 @@ export function projectTerms(project: { searchTerms: string[], keywords: string[
 export async function upsertPosts(ctx: JobContext, posts: Post[], source: 'api' | 'search' | 'extension') {
   const unique = [...new Map(posts.map(p => [p.id, p])).values()]
   if (!unique.length) return []
+  // A row uploaded from someone's browser extension could say anything, so a copy
+  // from the platform itself replaces it (and counts as new); uploads never replace anything.
+  const trusted = source !== 'extension'
   const existing = new Set((await ctx.db.select({ id: schema.threads.id }).from(schema.threads)
-    .where(inArray(schema.threads.id, unique.map(p => p.id)))).map(r => r.id))
+    .where(and(inArray(schema.threads.id, unique.map(p => p.id)), trusted ? ne(schema.threads.source, 'extension') : undefined))).map(r => r.id))
   const fresh = unique.filter(p => !existing.has(p.id))
-  const inserts = fresh.map(p => ctx.db.insert(schema.threads).values({
-    id: p.id,
-    platform: p.platform,
-    channel: p.channel,
-    title: p.title,
-    url: p.url,
-    author: p.author,
-    createdUtc: p.createdAt,
-    snippet: p.snippet,
-    engagement: p.engagement ?? null,
-    source,
-  }).onConflictDoNothing())
+  const inserts = fresh.map((p) => {
+    const row = {
+      platform: p.platform,
+      channel: p.channel,
+      title: p.title,
+      url: p.url,
+      author: p.author,
+      createdUtc: p.createdAt,
+      snippet: p.snippet,
+      engagement: p.engagement ?? null,
+      source,
+    }
+    const insert = ctx.db.insert(schema.threads).values({ id: p.id, ...row })
+    return trusted
+      ? insert.onConflictDoUpdate({ target: schema.threads.id, set: row, setWhere: eq(schema.threads.source, 'extension') })
+      : insert.onConflictDoNothing()
+  })
   for (let i = 0; i < inserts.length; i += 50) {
     const batch = inserts.slice(i, i + 50)
     await ctx.db.batch(batch as [typeof batch[number], ...typeof batch])

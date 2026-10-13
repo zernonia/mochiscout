@@ -72,7 +72,7 @@ export async function runFetchGroup(ctx: JobContext, job: FetchGroupJob): Promis
       // Reddit's own copy (the upload could say anything), then queued like a new one.
       .onConflictDoUpdate({
         target: schema.threads.id,
-        set: { title: p.title, url: p.url, author: p.author, createdUtc: p.createdAt, snippet: p.snippet, source: 'rss' },
+        set: { channel: p.channel, title: p.title, url: p.url, author: p.author, createdUtc: p.createdAt, snippet: p.snippet, source: 'rss' },
         setWhere: eq(schema.threads.source, 'extension'),
       })
       .returning({ id: schema.threads.id }),
