@@ -21,14 +21,15 @@ export default defineEventHandler(async (event) => {
     throw new Error('Health check test error (safe to ignore)')
   }
 
-  const [db] = await Promise.all([
+  // Read-only: the endpoint is public, and a KV write per request could be run up by anyone.
+  const [db, cache] = await Promise.all([
     getDb(event).get<{ ok: number }>(sql`select 1 as ok`),
-    env.CACHE.put('health:last', new Date().toISOString()),
+    env.CACHE.get('health:probe').then(() => true, () => false),
   ])
   return {
     ok: true,
     db: db?.ok === 1,
-    cache: (await env.CACHE.get('health:last')) !== null,
+    cache,
     edition: config.public.edition,
     // Sign-in needs a 32+ character NUXT_SESSION_PASSWORD at runtime (value never returned).
     session: sessionSecretStatus(config.session.password),

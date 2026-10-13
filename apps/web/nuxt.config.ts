@@ -30,8 +30,19 @@ export default defineNuxtConfig({
     componentDir: './app/components/ui',
   },
 
-  // Retired comparison pages.
   routeRules: {
+    // No page is meant to be framed; the tracking script is loaded with <script>, which these don't affect.
+    '/**': {
+      headers: {
+        'Strict-Transport-Security': 'max-age=31536000',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Content-Security-Policy': "frame-ancestors 'none'",
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+      },
+    },
+    // Retired comparison pages.
     '/alternatives/ownfeed': { redirect: { to: '/alternatives', statusCode: 301 } },
   },
 
