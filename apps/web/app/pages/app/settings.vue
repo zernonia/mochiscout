@@ -249,7 +249,7 @@ const keyRows = computed(() => settings.value
             <button type="button" class="text-xs text-muted-foreground underline hover:text-foreground" @click="revokeKey(k.id)">Revoke</button>
           </li>
         </ul>
-        <form class="flex gap-2" :class="apiKeys.keys.length && 'border-t pt-4'" @submit.prevent="createKey">
+        <form class="flex gap-2" :class="apiKeys.keys.length ? 'border-t pt-4' : ''" @submit.prevent="createKey">
           <Input v-model="keyLabel" placeholder="Label" required class="min-w-0 flex-1" aria-label="Key label" />
           <Button type="submit" variant="secondary">Create key</Button>
         </form>
