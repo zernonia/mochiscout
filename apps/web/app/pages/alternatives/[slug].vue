@@ -124,7 +124,7 @@ useJsonLd([
 
       <!-- CTA -->
       <section class="flex flex-col items-center gap-5 rounded-3xl bg-neutral-100 px-6 py-12 text-center">
-        <LandingMochiMascot class="h-16 w-24" />
+        <LandingMochiMascot lively class="h-16 w-24" />
         <h2 class="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">Someone asked for your product today.</h2>
         <p class="max-w-xl text-muted-foreground">Paste your URL and see the threads worth answering in about five minutes. 14 days of Pro free, no card.</p>
         <LandingCta :source="`alt-${c.slug}-footer`" />

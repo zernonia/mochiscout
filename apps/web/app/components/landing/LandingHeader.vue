@@ -24,7 +24,7 @@ const solid = computed(() => open.value || y.value > 8)
   >
     <div class="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6 lg:gap-8">
       <NuxtLink to="/" class="flex shrink-0 items-center gap-2 text-[15px] font-semibold tracking-tight">
-        <LandingMochiMascot :blink="false" outline class="h-5 w-7" />
+        <LandingMochiMascot lively :blink="false" outline class="h-5 w-7" />
         Mochiscout
       </NuxtLink>
 

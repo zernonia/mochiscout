@@ -150,7 +150,7 @@ useJsonLd([
 
       <!-- CTA -->
       <section class="flex flex-col items-center gap-4 rounded-3xl bg-neutral-100 px-6 py-10 text-center">
-        <LandingMochiMascot class="h-14 w-20" />
+        <LandingMochiMascot lively class="h-14 w-20" />
         <h2 class="text-balance text-2xl font-semibold tracking-tight">See who in r/{{ dn }} is asking for what you sell</h2>
         <p class="max-w-lg text-sm text-muted-foreground">Mochiscout scores every new post for buying intent, checks these rules before you reply, and drafts an answer you post yourself.</p>
         <LandingCta :source="`sub-${s.name}`" />

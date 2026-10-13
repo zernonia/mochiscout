@@ -26,7 +26,7 @@ const links = [
     <div class="mx-auto grid grid-cols-1 max-w-5xl gap-10 px-4 py-14 sm:grid-cols-[1.2fr_1fr_1fr_1.6fr]">
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2 font-semibold text-white">
-          <LandingMochiMascot :blink="false" class="h-6 w-8" />
+          <LandingMochiMascot lively :blink="false" class="h-6 w-8" />
           Mochiscout
         </div>
         <p class="text-sm text-neutral-400">Find the people who need your product, and reply to them yourself.</p>

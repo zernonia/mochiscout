@@ -132,7 +132,7 @@ useJsonLd([
       <!-- Product mockup -->
       <section class="mx-auto max-w-6xl px-3 sm:px-4">
         <div class="relative rounded-[2rem] bg-linear-to-b from-brand-soft to-neutral-50 px-3 pt-10 ring-1 ring-black/5 sm:px-10 sm:pt-14">
-          <LandingMochiMascot class="absolute -top-8 right-6 h-16 w-24 sm:right-12 sm:h-20 sm:w-28" />
+          <LandingMochiMascot lively class="absolute -top-8 right-6 h-16 w-24 sm:right-12 sm:h-20 sm:w-28" />
           <div class="absolute top-4 left-4 hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
             Watching
             <span class="flex -space-x-1.5">
@@ -234,7 +234,7 @@ useJsonLd([
       <!-- Open source -->
       <section class="mx-auto max-w-5xl px-4 pb-24">
         <div class="relative overflow-hidden rounded-3xl bg-neutral-950 px-6 py-12 text-neutral-300 sm:px-12 sm:py-16">
-          <LandingMochiMascot :blink="false" class="absolute -right-4 -bottom-6 h-24 w-32 opacity-90 sm:right-10 sm:bottom-auto sm:top-10" />
+          <LandingMochiMascot lively :blink="false" class="absolute -right-4 -bottom-6 h-24 w-32 opacity-90 sm:right-10 sm:bottom-auto sm:top-10" />
           <div class="relative flex max-w-2xl flex-col gap-4">
             <span class="inline-flex w-fit items-center gap-2 rounded-full border border-neutral-800 px-3 py-1 text-xs font-medium text-neutral-300">
               <GitHubMark class="size-3.5 text-white" /> Open source
@@ -291,7 +291,7 @@ useJsonLd([
       <!-- Final CTA -->
       <div class="px-4 pb-24">
         <section class="mx-auto flex max-w-5xl flex-col items-center gap-6 rounded-[2rem] bg-linear-to-b from-brand-soft to-background px-4 py-16 text-center ring-1 ring-black/5 sm:py-20">
-          <LandingMochiMascot class="h-20 w-28" />
+          <LandingMochiMascot lively class="h-20 w-28" />
           <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Someone asked for your product today.</h2>
           <p class="text-muted-foreground">Start with one project. It takes about five minutes.</p>
           <LandingCta source="footer" secondary="selfhost" />
