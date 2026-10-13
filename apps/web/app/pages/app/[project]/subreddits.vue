@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EyeIcon, HashIcon, SearchIcon } from '@lucide/vue'
+import { HashIcon, SearchIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -10,7 +10,6 @@ const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}
 const { data: map, refresh } = useCachedFetch(() => `/api/projects/${projectId.value}/subreddits`)
 useHead({ title: () => `Subreddits · ${project.value?.name ?? 'Project'}` })
 
-const newSub = ref('')
 async function onImported() {
   await Promise.all([refresh(), refreshNuxtData('project-nav')])
 }
@@ -25,7 +24,8 @@ watch(map, (m) => {
   setTimeout(() => refresh(), 5000)
 }, { immediate: true })
 
-const watchedCount = computed(() => map.value?.subreddits.filter(s => s.watching).length ?? 0)
+const watchedNames = computed(() => map.value?.subreddits.filter(s => s.watching).map(s => s.name) ?? [])
+const watchedCount = computed(() => watchedNames.value.length)
 
 function errorMessage(error: unknown) {
   const e = error as { data?: { statusMessage?: string } }
@@ -42,10 +42,8 @@ async function setWatching(name: string, watching: boolean) {
   }
 }
 
-async function add() {
-  if (!newSub.value.trim()) return
-  await setWatching(newSub.value, true)
-  newSub.value = ''
+async function add(name: string) {
+  await setWatching(name, true)
 }
 
 async function discover() {
@@ -79,13 +77,7 @@ async function discover() {
       </template>
     </AppPageHeader>
 
-    <form class="flex gap-2" @submit.prevent="add">
-      <InputGroup class="flex-1">
-        <InputGroupAddon><HashIcon /></InputGroupAddon>
-        <InputGroupInput v-model="newSub" placeholder="Add a subreddit to watch, e.g. SaaS" aria-label="Subreddit" />
-      </InputGroup>
-      <Button type="submit"><EyeIcon /> Watch</Button>
-    </form>
+    <SubredditPicker :watched="watchedNames" @select="add" />
     <details class="-mt-3 rounded-lg border p-3">
       <summary class="cursor-pointer text-sm font-medium">Import a list of subreddits</summary>
       <div class="mt-3"><SubredditImport :project-id="projectId" @imported="onImported" /></div>
