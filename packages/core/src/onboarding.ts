@@ -1,7 +1,7 @@
 import type { Llm } from '@mochiscout/llm'
 import type { Http } from '@mochiscout/sources'
 import { z } from '@mochiscout/llm'
-import { decodeEntities, htmlToText, truncate } from '@mochiscout/sources'
+import { decodeEntities, htmlToText, stripElements, truncate } from '@mochiscout/sources'
 
 export const ProductProfile = z.object({
   product: z.string().describe('Product name'),
@@ -44,11 +44,15 @@ export interface ProductPage {
 }
 
 /** Fetch a landing page and reduce it to the text an LLM needs. */
+/** Bytes of HTML read from a landing page. */
+const HTML_MAX = 600_000
+
 export async function fetchProductPage(http: Http, input: string): Promise<ProductPage> {
   const url = assertPublicUrl(input).toString()
   const res = await http.getText(url, { headers: { Accept: 'text/html,application/xhtml+xml' } })
   if (res.status !== 'ok') throw new Error('Unexpected 304 for product page')
-  const html = res.body
+  // The landing copy is near the top; big bundled pages can be megabytes of inline JS.
+  const html = res.body.length > HTML_MAX ? res.body.slice(0, HTML_MAX) : res.body
 
   const meta = (name: string) => {
     const re = new RegExp(`<meta[^>]+(?:name|property)=["']${name}["'][^>]*>`, 'i')
@@ -56,8 +60,9 @@ export async function fetchProductPage(http: Http, input: string): Promise<Produ
     return tag ? decodeEntities(tag.match(/content=["']([^"']*)["']/i)?.[1] ?? '').trim() : ''
   }
   const title = decodeEntities(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? '').trim()
-  const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)?.[1] ?? html
-  const text = htmlToText(body.replace(/<(nav|footer|svg|noscript|iframe)[\s\S]*?<\/\1>/gi, ' '))
+  const bodyStart = html.search(/<body[\s>]/i)
+  const body = bodyStart === -1 ? html : html.slice(bodyStart)
+  const text = htmlToText(stripElements(body, ['nav', 'footer', 'svg', 'noscript', 'iframe', 'script', 'style']))
 
   return {
     url,

@@ -27,11 +27,13 @@ const projectId = computed(() => (route.params.project ? String(route.params.pro
 const { data: projects } = useCachedFetch('/api/projects', { key: 'sidebar-projects' })
 const { data: me } = useCachedFetch('/api/me', { key: 'sidebar-me' })
 const { data: orgs } = useCachedFetch('/api/orgs', { key: 'sidebar-orgs' })
-const { data: counts } = useCachedFetch(() => `/api/projects/${projectId.value}/nav`, {
-  key: 'project-nav',
-  immediate: !!projectId.value,
-  watch: [projectId],
-})
+// Only inside a project: pages like /app/new or /app/billing have none (and the
+// background revalidation refreshes every key, so the request itself must skip).
+const { data: counts } = useLazyAsyncData(
+  'project-nav',
+  () => (projectId.value ? $fetch(`/api/projects/${projectId.value}/nav`) : Promise.resolve(null)),
+  { watch: [projectId], getCachedData: swrCachedData },
+)
 // Counts are refreshed after each navigation by plugins/revalidate.client.ts.
 
 const current = computed(() => projects.value?.find(p => p.id === projectId.value) ?? null)

@@ -30,6 +30,12 @@ watch(open, (v) => {
   if (!v) close()
 })
 
+/** Every onboarding failure goes to PostHog with its step and status, so we can see where people get stuck. */
+function reportFailure(where: 'analyse' | 'create' | 'build', error: unknown) {
+  const e = error as { statusCode?: number, status?: number, statusMessage?: string, data?: { statusMessage?: string } }
+  trackClient('onboarding_failed', { step: where, status: e.statusCode ?? e.status ?? null, message: e.data?.statusMessage ?? e.statusMessage ?? String(error).slice(0, 200), url: url.value })
+}
+
 // ---- Step 1: URL ----------------------------------------------------------
 const url = ref('')
 const analysing = ref(false)
@@ -68,7 +74,11 @@ async function analyse() {
     step.value = 'review'
   }
   catch (error) {
-    toast.error(apiErrorMessage(error, 'Could not read that page'))
+    reportFailure('analyse', error)
+    const status = (error as { statusCode?: number }).statusCode ?? 0
+    toast.error(status >= 500 && status !== 503
+      ? 'We couldn\'t read that page right now. Describe your product below instead.'
+      : apiErrorMessage(error, 'Could not read that page'))
     profile.value = blank(/^https?:\/\//i.test(url.value) ? url.value : url.value && `https://${url.value}`)
     step.value = 'edit'
   }
@@ -99,11 +109,12 @@ async function create() {
   try {
     const project = await $fetch('/api/projects', { method: 'POST', body: profile.value })
     projectId.value = project!.id
-    refreshNuxtData('project-nav')
+    refreshNuxtData('sidebar-projects')
     step.value = 'building'
     build()
   }
   catch (error) {
+    reportFailure('create', error)
     if (!isPlanLimit(error)) toast.error(apiErrorMessage(error, 'Could not create the project'))
   }
   finally {
@@ -154,6 +165,7 @@ async function build() {
     }
   }
   catch (error) {
+    reportFailure('build', error)
     note.value = apiErrorMessage(error, 'Something went wrong while building your feed. It keeps filling in the background.')
   }
   step.value = 'result'
@@ -179,7 +191,8 @@ onBeforeUnmount(() => clearInterval(stageTimer))
       :show-close-button="!first && step !== 'building'"
       :bottom-stick-on-mobile="false"
       @escape-key-down="(e: Event) => (first || step === 'building') && e.preventDefault()"
-      @pointer-down-outside="(e: Event) => e.preventDefault()"
+      @interact-outside="(e: Event) => e.preventDefault()"
+      @focus-outside="(e: Event) => e.preventDefault()"
     >
       <div class="flex min-h-0 flex-col gap-6 overflow-y-auto p-6 sm:p-8">
         <!-- Progress -->
