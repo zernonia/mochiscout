@@ -222,7 +222,7 @@ onBeforeUnmount(() => clearInterval(stageTimer))
           <ol v-if="analysing" class="flex flex-col gap-1.5 text-sm" aria-live="polite">
             <li v-for="(s, i) in STAGES" :key="s" class="flex items-center gap-2" :class="i > stage && 'text-muted-foreground'">
               <CheckIcon v-if="i < stage" class="size-4 text-emerald-600" />
-              <LoaderIcon v-else-if="i === stage" class="size-4 animate-spin text-violet-600" />
+              <LoaderIcon v-else-if="i === stage" class="size-4 animate-spin text-brand" />
               <span v-else class="size-4" />
               {{ s }}…
             </li>
@@ -288,7 +288,7 @@ onBeforeUnmount(() => clearInterval(stageTimer))
           <ol class="flex flex-col gap-3 text-sm">
             <li v-for="s in buildSteps" :key="s.label" class="flex items-center gap-2.5" :class="!s.done && !s.active && 'text-muted-foreground'">
               <CheckIcon v-if="s.done" class="size-4 text-emerald-600" />
-              <LoaderIcon v-else-if="s.active" class="size-4 animate-spin text-violet-600" />
+              <LoaderIcon v-else-if="s.active" class="size-4 animate-spin text-brand" />
               <span v-else class="size-4" />
               <span>{{ s.label }}</span>
               <span v-if="s.detail" class="text-xs text-muted-foreground">· {{ s.detail }}</span>

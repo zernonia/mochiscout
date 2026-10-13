@@ -64,13 +64,16 @@ const level = {
 
 <template>
   <div class="flex flex-col gap-6">
-    <AppPageHeader title="Drafts" description="Write posts with each subreddit's rules checked as you go. You review, edit and post them yourself." />
+    <AppPageHeader title="Drafts" :icon="FileTextIcon" description="Write posts with each subreddit's rules checked as you go. You review, edit and post them yourself." />
 
     <div class="grid gap-6 lg:grid-cols-[1fr_20rem]">
-      <section class="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-xs/5">
-        <div>
-          <h2 class="font-semibold">New post</h2>
-          <p class="text-sm text-muted-foreground">Pick a subreddit and an angle. To answer a thread, use Draft reply in your inbox.</p>
+      <section class="flex flex-col gap-4 rounded-2xl border bg-gradient-to-br from-brand-soft/60 via-card to-card p-5 shadow-xs/5">
+        <div class="flex items-start gap-3">
+          <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-foreground"><PenLineIcon class="size-4" /></span>
+          <div>
+            <h2 class="font-semibold">New post</h2>
+            <p class="text-sm text-muted-foreground">Pick a subreddit and an angle. To answer a thread, use Draft reply in your inbox.</p>
+          </div>
         </div>
         <form class="flex flex-col gap-4" @submit.prevent="create(true)">
           <div class="grid gap-4 sm:grid-cols-2">
@@ -114,19 +117,15 @@ const level = {
           Your drafts <span v-if="drafts?.length" class="tabular-nums">{{ drafts.length }}</span>
         </h2>
         <SkeletonCards v-if="!drafts" :count="2" :lines="1" />
-        <Empty v-else-if="!drafts.length" class="rounded-xl border border-dashed py-8">
-          <EmptyHeader>
-            <EmptyMedia variant="icon"><FileTextIcon /></EmptyMedia>
-            <EmptyTitle>No drafts yet</EmptyTitle>
-            <EmptyDescription>Drafts you write appear here with their rule check.</EmptyDescription>
-          </EmptyHeader>
-        </Empty>
+        <AppEmpty v-else-if="!drafts.length" title="No drafts yet" description="Drafts you write appear here with their rule check." />
         <NuxtLink
           v-for="d in drafts"
           :key="d.id"
           :to="`/app/${projectId}/drafts/${d.id}`"
-          class="flex flex-col gap-1.5 rounded-xl border bg-card p-3 shadow-xs/5 transition-colors hover:bg-accent/50"
+          class="flex items-start gap-3 rounded-2xl border bg-card p-3 shadow-xs/5 transition-[border-color,box-shadow] hover:border-brand/30 hover:shadow-sm"
         >
+          <SourceAvatar :channel="d.subreddit" />
+          <div class="flex min-w-0 flex-1 flex-col gap-1">
           <div class="truncate text-sm font-medium">{{ d.title || 'Untitled draft' }}</div>
           <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
             <span>r/{{ d.subreddit }}</span>
@@ -135,6 +134,7 @@ const level = {
             <span v-if="d.check" class="ms-auto inline-flex items-center gap-1 rounded-full px-1.5 leading-5 font-medium" :class="level[d.check.level].class">
               <span class="size-1.5 rounded-full" :class="level[d.check.level].dot" />{{ level[d.check.level].label }}
             </span>
+          </div>
           </div>
         </NuxtLink>
       </section>

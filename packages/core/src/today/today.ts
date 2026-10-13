@@ -33,6 +33,8 @@ export interface TodayPlan {
     replyAngle: string | null
   }[]
   newCount: number
+  /** Leads found (scored at or above the threshold) per day, oldest first, ending today (UTC). */
+  trend: number[]
   pendingScoring: number
   suggestion: PostSuggestion | null
   pacing: {
@@ -45,6 +47,8 @@ export interface TodayPlan {
 }
 
 /** The "10 minutes a day" plan (arch §4): top threads to answer, one post idea, pacing status. */
+const TREND_DAYS = 7
+
 export async function buildToday(db: Db, project: Project, now = new Date()): Promise<TodayPlan> {
   const s = schema.threadScores
   const t = schema.threads
@@ -55,7 +59,8 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
     and not (${t.platform} = 'hn' and ${t.createdUtc} < ${nowS - HN_REPLY_DAYS * 86_400})`
   const visible = and(eq(s.projectId, project.id), eq(s.status, 'new'), gte(s.intent, project.intentThreshold), replyable)
 
-  const [threads, [newCount], [pending], history, painPoints, drafted, map] = await Promise.all([
+  const trendStart = Math.floor(now.getTime() / 1000 / 86_400 - (TREND_DAYS - 1)) * 86_400
+  const [threads, [newCount], [pending], history, painPoints, drafted, map, found] = await Promise.all([
     db.select({
       id: t.id,
       platform: t.platform,
@@ -83,7 +88,12 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
       .orderBy(desc(schema.painPoints.createdAt), desc(schema.painPoints.severity)),
     db.select({ subreddit: schema.drafts.subreddit, title: schema.drafts.title }).from(schema.drafts).where(eq(schema.drafts.projectId, project.id)),
     subredditMap(db, project),
+    db.select({ day: sql<number>`cast(${s.scoredAt} / 86400 as integer)`, n: count() }).from(s)
+      .where(and(eq(s.projectId, project.id), gte(s.intent, project.intentThreshold), gte(s.scoredAt, new Date(trendStart * 1000))))
+      .groupBy(sql`1`),
   ])
+  const firstDay = trendStart / 86_400
+  const trend = Array.from({ length: TREND_DAYS }, (_, i) => Number(found.find(f => Number(f.day) === firstDay + i)?.n ?? 0))
 
   // Pacing
   const recent = history.filter(h => h.postedAt && now.getTime() - h.postedAt.getTime() < DAY_MS)
@@ -140,6 +150,7 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
   return {
     threads,
     newCount: newCount?.n ?? 0,
+    trend,
     pendingScoring: pending?.n ?? 0,
     suggestion,
     pacing: { promoToday, promoLimit: MAX_PROMO_POSTS_PER_DAY, nextPromoAt, cooldowns },

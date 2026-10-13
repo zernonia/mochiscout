@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExternalLinkIcon, LoaderCircleIcon, PencilIcon, RotateCcwIcon } from '@lucide/vue'
+import { ChevronRightIcon, ExternalLinkIcon, LoaderCircleIcon, PencilIcon, RotateCcwIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 type PromoPolicy = 'none' | 'weekly_thread_only' | 'flair_only' | 'allowed_with_value' | 'allowed'
@@ -88,18 +88,20 @@ function submit() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-1.5 text-sm">
-    <template v-if="rules">
+  <div class="flex flex-col gap-2 text-sm">
+    <div v-if="rules" class="flex flex-col gap-2 rounded-xl bg-muted/50 p-3">
       <div class="flex flex-wrap gap-1.5">
-        <span class="rounded-full border px-2 py-0.5 text-xs font-medium" :class="promo[rules.promo_policy]?.class">{{ promo[rules.promo_policy]?.label }}</span>
-        <Badge v-if="rules.cooldown_days" variant="outline">1 mention / {{ rules.cooldown_days }} days</Badge>
-        <Badge v-if="rules.min_karma != null" variant="outline">{{ rules.min_karma }}+ karma</Badge>
-        <Badge v-if="rules.min_account_age_days != null" variant="outline">{{ rules.min_account_age_days }}+ day account</Badge>
-        <Badge v-if="rules.self_promo_thread" variant="outline">{{ rules.self_promo_thread }}</Badge>
+        <span class="rounded-full border px-2.5 py-0.5 text-xs font-medium" :class="promo[rules.promo_policy]?.class">{{ promo[rules.promo_policy]?.label }}</span>
+        <Badge v-if="rules.cooldown_days" class="bg-background" variant="outline">1 mention / {{ rules.cooldown_days }} days</Badge>
+        <Badge v-if="rules.min_karma != null" class="bg-background" variant="outline">{{ rules.min_karma }}+ karma</Badge>
+        <Badge v-if="rules.min_account_age_days != null" class="bg-background" variant="outline">{{ rules.min_account_age_days }}+ day account</Badge>
+        <Badge v-if="rules.self_promo_thread" class="bg-background" variant="outline">{{ rules.self_promo_thread }}</Badge>
       </div>
       <p v-if="rules.notes" class="text-xs text-muted-foreground">{{ rules.notes }}</p>
-      <details v-if="rules.official.length" class="text-xs">
-        <summary class="cursor-pointer text-muted-foreground hover:text-foreground">Read all {{ rules.official.length }} rules</summary>
+      <details v-if="rules.official.length" class="group/s text-xs">
+        <summary class="inline-flex cursor-pointer list-none items-center gap-1 font-medium text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
+          <ChevronRightIcon class="size-3.5 transition-transform group-open/s:rotate-90" aria-hidden="true" /> Read all {{ rules.official.length }} rules
+        </summary>
         <ol class="mt-2 flex list-decimal flex-col gap-2 pl-4">
           <li v-for="r in rules.official" :key="r.title">
             <span class="font-medium">{{ r.title }}</span>
@@ -108,18 +110,18 @@ function submit() {
           </li>
         </ol>
       </details>
-    </template>
-    <p v-else-if="watching && !readAt" class="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+    </div>
+    <p v-else-if="watching && !readAt" class="inline-flex items-center gap-1.5 rounded-xl bg-muted/50 p-3 text-xs text-muted-foreground">
       <LoaderCircleIcon class="size-3 animate-spin" /> Reading r/{{ name }}'s official rules…
     </p>
-    <p v-else class="text-xs text-muted-foreground">
+    <p v-else class="rounded-xl bg-muted/50 p-3 text-xs text-muted-foreground">
       {{ readAt ? `r/${name} doesn't publish rules we can read.` : 'Not in the rules library yet.' }} Read its sidebar before posting, or add your own.
     </p>
 
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
       <span v-if="source === 'library'">From the rules library, checked {{ date(rules!.last_verified) }}</span>
       <span v-else-if="source === 'auto'">Read from r/{{ name }}'s official rules {{ date(rules!.last_verified) }}; joins the rules library at the next sync</span>
-      <span v-else-if="source === 'custom'" class="font-medium text-violet-700 dark:text-violet-400">Your rules for this project</span>
+      <span v-else-if="source === 'custom'" class="font-medium text-brand-foreground">Your rules for this project</span>
       <a :href="rulesUrl" target="_blank" rel="noopener" class="inline-flex items-center gap-0.5 underline">On Reddit <ExternalLinkIcon class="size-3" /></a>
       <button type="button" class="inline-flex items-center gap-1 underline" @click="startEdit">
         <PencilIcon class="size-3" /> {{ source === 'custom' ? 'Edit' : rules ? 'Edit for this project' : 'Add your own' }}

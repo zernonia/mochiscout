@@ -30,7 +30,7 @@ async function submit() {
 
 <template>
   <form class="flex flex-col gap-2" @submit.prevent="submit">
-    <Textarea v-model="text" rows="3" placeholder="r/SaaS, r/startups, r/indiehackers&#10;…or one per line, or links" aria-label="Subreddits to watch" class="text-sm" />
+    <Textarea v-model="text" rows="3" placeholder="r/SaaS, r/startups, r/indiehackers&#10;…or one per line, or links" aria-label="Subreddits to watch" class="rounded-xl text-sm" />
     <div class="flex items-center gap-2">
       <Button type="submit" size="sm" :loading="importing" :disabled="!text.trim()">Watch these</Button>
       <span class="text-xs text-muted-foreground">Coming from GummySearch? Paste the subreddits from your audiences.</span>

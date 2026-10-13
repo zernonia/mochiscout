@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SendIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -93,14 +94,15 @@ async function copy(text: string, what: string) {
     <AppPageHeader :title="draft.title || 'Untitled draft'">
       <template #meta>
         <div class="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <SourceAvatar :channel="draft.subreddit" size="sm" />
           <a :href="`https://www.reddit.com/r/${draft.subreddit}/`" target="_blank" rel="noopener" class="font-medium text-foreground hover:underline">r/{{ draft.subreddit }}</a>
-          <span>· {{ draft.angle }}</span>
+          <span class="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand-foreground capitalize">{{ draft.angle }}</span>
         </div>
       </template>
     </AppPageHeader>
 
     <div class="grid gap-5 lg:grid-cols-[1fr_320px]">
-      <form class="flex flex-col gap-4" @submit.prevent="save">
+      <form class="flex flex-col gap-4 rounded-2xl border bg-card p-4 shadow-xs/5 sm:p-5" @submit.prevent="save">
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <Label for="title">Title</Label>
@@ -110,7 +112,7 @@ async function copy(text: string, what: string) {
         </div>
         <div class="flex flex-col gap-2">
           <Label for="body">Body</Label>
-          <Textarea id="body" v-model="form.body" rows="16" class="font-mono text-sm" />
+          <Textarea id="body" v-model="form.body" rows="16" class="text-sm leading-relaxed" />
         </div>
         <label class="flex items-center gap-2 text-sm">
           <Switch :model-value="draft.angle === 'showcase' || form.promo" :disabled="draft.angle === 'showcase'" @update:model-value="(v: boolean) => (form.promo = v)" />
@@ -125,8 +127,8 @@ async function copy(text: string, what: string) {
 
       <div class="flex flex-col gap-4">
         <CheckReport :report="draft.check" />
-        <div class="flex flex-col gap-2 rounded-xl border p-4">
-          <div class="text-sm font-medium">Post it yourself</div>
+        <div class="flex flex-col gap-2 rounded-2xl border bg-gradient-to-br from-brand-soft/60 via-card to-card p-4 shadow-xs/5">
+          <div class="flex items-center gap-2 text-sm font-medium"><SendIcon class="size-4 text-brand" /> Post it yourself</div>
           <Button variant="outline" size="sm" @click="copy(form.title, 'Title')">Copy title</Button>
           <Button variant="outline" size="sm" @click="copy(form.body, 'Body')">Copy body</Button>
           <Button as-child size="sm">

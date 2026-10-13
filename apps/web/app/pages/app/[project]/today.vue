@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ClockIcon, InboxIcon, MegaphoneIcon, SparklesIcon, TimerIcon } from '@lucide/vue'
+import { ClockIcon, InboxIcon, LightbulbIcon, MegaphoneIcon, MessageCircleHeartIcon, TimerIcon } from '@lucide/vue'
 
 definePageMeta({ layout: 'app' })
 
@@ -22,6 +22,8 @@ const draftLink = computed(() => {
   return `/app/${projectId.value}/drafts?${query}`
 })
 
+const { user } = useUserSession()
+const firstName = computed(() => user.value?.name?.split(/\s+/)[0] ?? '')
 const greeting = computed(() => {
   const h = new Date().getHours()
   return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'
@@ -37,7 +39,19 @@ function time(d: string | Date) {
 
 <template>
   <div class="flex flex-col gap-8">
-    <AppPageHeader :title="greeting" :description="`Your plan for ${project?.name ?? 'today'}: answer the best threads, then post if you have a slot.`" />
+    <!-- Greeting -->
+    <section class="relative overflow-hidden rounded-3xl border border-brand/10 bg-gradient-to-br from-brand-soft via-background to-background px-5 py-6 sm:px-8 sm:py-8">
+      <div class="relative z-10 flex max-w-xl flex-col gap-2">
+        <p class="text-sm font-medium text-brand-foreground">{{ project?.name ?? 'Today' }}</p>
+        <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ greeting }}{{ firstName ? `, ${firstName}` : '' }}</h1>
+        <p class="text-sm text-pretty text-muted-foreground sm:text-base">
+          <template v-if="!today">Getting today's plan ready…</template>
+          <template v-else-if="today.newCount">{{ today.newCount }} thread{{ today.newCount === 1 ? '' : 's' }} worth answering{{ today.pacing.nextPromoAt ? '' : ', and a promo slot open' }}. Start with the ones below.</template>
+          <template v-else>Nothing new to answer yet. {{ today.pendingScoring ? `${today.pendingScoring} threads are being scored.` : 'New threads arrive every 15 minutes.' }}</template>
+        </p>
+      </div>
+      <LandingMochiMascot class="pointer-events-none absolute -right-2 -bottom-3 h-24 w-36 opacity-95 sm:right-6 sm:bottom-1 sm:h-32 sm:w-44" />
+    </section>
     <ClientOnly><GettingStarted :project-id="projectId" /></ClientOnly>
 
     <SkeletonStats v-if="!today" />
@@ -46,8 +60,9 @@ function time(d: string | Date) {
         label="New threads"
         :value="today.newCount"
         :icon="InboxIcon"
-        :tone="today.newCount ? 'good' : 'neutral'"
-        :hint="today.newCount ? 'Worth answering, in your inbox' : 'Nothing new yet'"
+        tone="brand"
+        :trend="today.trend"
+        :hint="today.trend.some(n => n) ? `${today.trend.reduce((a, n) => a + n, 0)} found this week` : 'Nothing new yet'"
         :to="`/app/${projectId}/inbox`"
       />
       <StatTile
@@ -79,25 +94,19 @@ function time(d: string | Date) {
 
     <section class="flex flex-col gap-3">
       <div class="flex items-baseline justify-between gap-3">
-        <h2 class="text-lg font-semibold tracking-tight">Answer these first</h2>
+        <h2 class="flex items-center gap-2 text-lg font-semibold tracking-tight"><MessageCircleHeartIcon class="size-5 text-brand" /> Answer these first</h2>
         <NuxtLink v-if="today && today.newCount > today.threads.length" :to="`/app/${projectId}/inbox`" class="text-sm text-muted-foreground hover:text-foreground">
           All {{ today.newCount }} in Inbox →
         </NuxtLink>
       </div>
       <SkeletonThreads v-if="!today" :count="2" />
-      <Empty v-else-if="!today.threads.length" class="rounded-xl border border-dashed">
-        <EmptyHeader>
-          <EmptyMedia variant="icon"><InboxIcon /></EmptyMedia>
-          <EmptyTitle>Nothing to answer right now</EmptyTitle>
-          <EmptyDescription>
-            <template v-if="today?.pendingScoring">{{ today.pendingScoring }} threads are waiting to be scored. Check back in a few minutes.</template>
-            <template v-else>Watch more subreddits to widen the net. New threads arrive every 15 minutes.</template>
-          </EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent v-if="!today?.pendingScoring">
-          <Button as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
-        </EmptyContent>
-      </Empty>
+      <AppEmpty
+        v-else-if="!today.threads.length"
+        title="Nothing to answer right now"
+        :description="today.pendingScoring ? `${today.pendingScoring} threads are waiting to be scored. Check back in a few minutes.` : 'Watch more subreddits to widen the net. New threads arrive every 15 minutes.'"
+      >
+        <Button v-if="!today.pendingScoring" as-child size="sm" variant="outline"><NuxtLink :to="`/app/${projectId}/subreddits`">Find subreddits</NuxtLink></Button>
+      </AppEmpty>
       <TransitionGroup
         tag="div"
         class="relative flex flex-col gap-3"
@@ -112,10 +121,10 @@ function time(d: string | Date) {
     </section>
 
     <section class="flex flex-col gap-3">
-      <h2 class="text-lg font-semibold tracking-tight">Post idea</h2>
-      <Skeleton v-if="!today" class="h-24 w-full rounded-xl" />
-      <div v-else-if="today.suggestion" class="flex flex-col gap-4 rounded-xl border bg-gradient-to-br from-amber-50 to-background p-5 shadow-xs/5 sm:flex-row sm:items-center dark:from-amber-500/5">
-        <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/14 text-amber-700 dark:text-amber-400"><SparklesIcon class="size-5" /></span>
+      <h2 class="flex items-center gap-2 text-lg font-semibold tracking-tight"><LightbulbIcon class="size-5 text-amber-500" /> Post idea</h2>
+      <Skeleton v-if="!today" class="h-24 w-full rounded-2xl" />
+      <div v-else-if="today.suggestion" class="flex flex-col gap-4 rounded-2xl border bg-gradient-to-br from-amber-50/80 via-card to-card p-5 shadow-xs/5 sm:flex-row sm:items-center">
+        <SourceAvatar :channel="today.suggestion.subreddit" size="lg" />
         <div class="flex min-w-0 flex-1 flex-col gap-1">
           <p>
             A <span class="font-medium">{{ today.suggestion.angle }}</span>
@@ -128,13 +137,7 @@ function time(d: string | Date) {
           <NuxtLink :to="draftLink">Draft it</NuxtLink>
         </Button>
       </div>
-      <Empty v-else class="rounded-xl border border-dashed">
-        <EmptyHeader>
-          <EmptyMedia variant="icon"><SparklesIcon /></EmptyMedia>
-          <EmptyTitle>No post idea yet</EmptyTitle>
-          <EmptyDescription>Watch a subreddit and we'll suggest what to post there, and when.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AppEmpty v-else title="No post idea yet" description="Watch a subreddit and we'll suggest what to post there, and when." />
     </section>
   </div>
 </template>

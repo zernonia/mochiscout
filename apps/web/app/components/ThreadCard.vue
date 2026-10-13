@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookmarkIcon, CheckIcon, ChevronDownIcon, CircleAlertIcon, CircleHelpIcon, CopyIcon, ExternalLinkIcon, FlameIcon, LinkIcon, LockIcon, MessageSquareIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TrendingUpIcon, XIcon } from '@lucide/vue'
+import { BookmarkIcon, CheckIcon, ChevronDownIcon, CircleAlertIcon, CircleHelpIcon, CopyIcon, ExternalLinkIcon, FlameIcon, LightbulbIcon, LinkIcon, LockIcon, MessageSquareIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TargetIcon, TrendingUpIcon, XIcon } from '@lucide/vue'
 import { useDebounceFn } from '@vueuse/core'
 import { toast } from '@/lib/toast'
 
@@ -64,12 +64,12 @@ const reasonLabel: Record<DismissReason, string> = {
   other: 'Other',
 }
 
-const kinds: Record<string, { label: string, dot: string }> = {
-  seeking_tool: { label: 'Looking for a tool', dot: 'bg-emerald-500' },
-  comparison: { label: 'Comparing options', dot: 'bg-sky-500' },
-  complaint: { label: 'Complaint', dot: 'bg-orange-500' },
-  pain: { label: 'Pain point', dot: 'bg-amber-500' },
-  other: { label: 'Other', dot: 'bg-neutral-400' },
+const kinds: Record<string, { label: string, dot: string, chip: string }> = {
+  seeking_tool: { label: 'Looking for a tool', dot: 'bg-brand', chip: 'bg-brand-soft text-brand-foreground' },
+  comparison: { label: 'Comparing options', dot: 'bg-sky-500', chip: 'bg-sky-500/10 text-sky-800 dark:text-sky-300' },
+  complaint: { label: 'Complaint', dot: 'bg-orange-500', chip: 'bg-orange-500/10 text-orange-800 dark:text-orange-300' },
+  pain: { label: 'Pain point', dot: 'bg-amber-500', chip: 'bg-amber-500/12 text-amber-800 dark:text-amber-300' },
+  other: { label: 'Other', dot: 'bg-neutral-400', chip: 'bg-muted text-muted-foreground' },
 }
 
 const platformLabel: Record<string, string> = { reddit: 'Reddit', hn: 'Hacker News', bluesky: 'Bluesky', x: 'X', web: 'Web' }
@@ -213,19 +213,25 @@ async function copyAndOpen() {
 </script>
 
 <template>
-  <article class="flex gap-4 rounded-xl border bg-card p-4 shadow-xs/5 transition-opacity sm:p-5" :class="closed && status === 'new' && 'opacity-70'">
+  <article
+    class="relative flex gap-4 overflow-hidden rounded-2xl border bg-card p-4 shadow-xs/5 transition-[opacity,box-shadow] hover:shadow-sm sm:p-5"
+    :class="[closed && status === 'new' && 'opacity-70', thread.hot && !closed && 'border-brand/25 bg-gradient-to-br from-brand-soft/70 via-card to-card']"
+  >
     <IntentScore :value="thread.intent" class="hidden sm:flex" />
     <div class="flex min-w-0 flex-1 flex-col gap-3">
       <div class="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground">
         <IntentScore :value="thread.intent" class="size-9 sm:hidden" />
-        <span class="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-medium text-foreground">
+        <span class="inline-flex items-center gap-1.5 font-medium text-foreground">
+          <SourceAvatar :channel="thread.channel" :platform="thread.platform" size="sm" />
+          {{ thread.channel ? `r/${thread.channel}` : platformLabel[thread.platform ?? ''] ?? '' }}
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-medium" :class="(kinds[thread.kind] ?? kinds.other!).chip">
           <span class="size-1.5 rounded-full" :class="(kinds[thread.kind] ?? kinds.other!).dot" />
           {{ (kinds[thread.kind] ?? kinds.other!).label }}
         </span>
-        <span class="font-medium text-foreground">{{ thread.channel ? `r/${thread.channel}` : platformLabel[thread.platform ?? ''] ?? '' }}</span>
         <span v-if="age(thread.createdUtc)">{{ age(thread.createdUtc) }}</span>
         <span v-if="thread.commentCount != null" class="inline-flex items-center gap-1"><MessageSquareIcon class="size-3" /> {{ thread.commentCount }}</span>
-        <span v-if="thread.hot && !closed" class="inline-flex items-center gap-1 rounded-full bg-orange-500/12 px-2 py-0.5 font-medium text-orange-700 dark:text-orange-400"><FlameIcon class="size-3" /> Hot · reply now</span>
+        <span v-if="thread.hot && !closed" class="inline-flex items-center gap-1 rounded-full bg-brand px-2 py-0.5 font-medium text-primary-foreground"><FlameIcon class="size-3" /> Hot · reply now</span>
         <span v-if="closed" class="inline-flex items-center gap-1 rounded-full bg-neutral-500/12 px-2 py-0.5 font-medium text-neutral-700 dark:text-neutral-300"><LockIcon class="size-3" /> {{ closedLabel[state] }}</span>
         <span v-if="status === 'dismissed' && thread.dismissReason" class="rounded-full border px-2 py-0.5">{{ reasonLabel[thread.dismissReason] }}</span>
         <span v-if="thread.searchRankFlag" class="inline-flex items-center gap-1 text-sky-700 dark:text-sky-400"><TrendingUpIcon class="size-3" /> Ranks in Google</span>
@@ -237,25 +243,31 @@ async function copyAndOpen() {
         Already suggested in the replies: <span class="font-medium text-foreground">{{ thread.competitorMentions.join(', ') }}</span>. Your draft will say how you differ.
       </p>
 
-      <div v-if="(thread.reason || thread.replyAngle) && !closed" class="grid gap-2 rounded-lg border border-dashed bg-muted/40 p-3 text-sm sm:grid-cols-2">
-        <div v-if="thread.reason">
-          <div class="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">Why it matters</div>
-          <p class="mt-0.5">{{ thread.reason }}</p>
+      <div v-if="(thread.reason || thread.replyAngle) && !closed" class="grid gap-2 text-sm sm:grid-cols-2">
+        <div v-if="thread.reason" class="flex gap-2.5 rounded-xl bg-muted/70 p-3">
+          <TargetIcon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+          <div>
+            <div class="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">Why it matters</div>
+            <p class="mt-0.5 text-pretty">{{ thread.reason }}</p>
+          </div>
         </div>
-        <div v-if="thread.replyAngle">
-          <div class="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">Reply angle</div>
-          <p class="mt-0.5">{{ thread.replyAngle }}</p>
+        <div v-if="thread.replyAngle" class="flex gap-2.5 rounded-xl bg-brand-soft/70 p-3">
+          <LightbulbIcon class="mt-0.5 size-4 shrink-0 text-brand" />
+          <div>
+            <div class="text-[11px] font-medium tracking-wide text-brand-foreground/80 uppercase">Reply angle</div>
+            <p class="mt-0.5 text-pretty">{{ thread.replyAngle }}</p>
+          </div>
         </div>
       </div>
 
       <!-- Reply -->
-      <div v-if="drafting" class="flex flex-col gap-2 rounded-lg border p-3" aria-live="polite">
-        <div class="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><SparklesIcon class="size-3.5 animate-pulse" /> Drafting a reply…</div>
+      <div v-if="drafting" class="flex flex-col gap-2 rounded-xl border border-brand/20 bg-brand-soft/30 p-3" aria-live="polite">
+        <div class="flex items-center gap-1.5 text-xs font-medium text-brand-foreground"><SparklesIcon class="size-3.5 animate-pulse" /> Drafting a reply…</div>
         <Skeleton class="h-3.5 w-full" /><Skeleton class="h-3.5 w-11/12" /><Skeleton class="h-3.5 w-3/5" />
       </div>
-      <div v-else-if="reply" class="flex flex-col gap-2 rounded-lg border border-violet-500/25 bg-violet-500/[0.03] p-3">
+      <div v-else-if="reply" class="flex flex-col gap-2 rounded-xl border border-brand/20 bg-brand-soft/40 p-3">
         <div class="flex items-center justify-between gap-2">
-          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-400"><SparklesIcon class="size-3.5" /> Your reply · AI draft, edit before posting</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-brand-foreground"><SparklesIcon class="size-3.5" /> Your reply · AI draft, edit before posting</span>
           <div class="flex items-center gap-1">
             <Button as-child size="xs" variant="ghost"><NuxtLink :to="`/app/${projectId}/profile#reply-instructions`">Instructions</NuxtLink></Button>
             <Button size="xs" variant="ghost" :disabled="drafting" :aria-expanded="directing" @click="directing ? (directing = false) : openDirection()"><RefreshCwIcon /> Redraft</Button>
@@ -265,7 +277,7 @@ async function copyAndOpen() {
       </div>
 
       <!-- Steer the (re)draft -->
-      <form v-if="directing && !drafting && !closed" class="flex flex-col gap-2 rounded-lg border border-violet-500/25 bg-violet-500/[0.03] p-3" @submit.prevent="draftReply" @keydown.esc="directing = false">
+      <form v-if="directing && !drafting && !closed" class="flex flex-col gap-2 rounded-xl border border-brand/20 bg-brand-soft/40 p-3" @submit.prevent="draftReply" @keydown.esc="directing = false">
         <Label :for="`direction-${thread.id}`" class="text-xs font-medium">{{ reply ? 'How should the redraft change?' : 'Anything the reply should do?' }} <span class="font-normal text-muted-foreground">Optional</span></Label>
         <Textarea
           :id="`direction-${thread.id}`"
@@ -284,7 +296,7 @@ async function copyAndOpen() {
             :key="chip"
             type="button"
             class="rounded-full border px-2.5 py-0.5 text-xs transition-colors"
-            :class="hasChip(chip) ? 'border-violet-500/50 bg-violet-500/12 text-violet-800 dark:text-violet-300' : 'text-muted-foreground hover:bg-muted hover:text-foreground'"
+            :class="hasChip(chip) ? 'border-brand/40 bg-brand text-primary-foreground' : 'bg-background text-muted-foreground hover:bg-muted hover:text-foreground'"
             :aria-pressed="hasChip(chip)"
             @click="toggleChip(chip)"
           >{{ chip }}</button>
@@ -297,7 +309,7 @@ async function copyAndOpen() {
       </form>
 
       <!-- Replied: track the posted reply -->
-      <form v-if="status === 'replied'" class="flex flex-col gap-2 rounded-lg border border-dashed p-3" @submit.prevent="saveReplyUrl">
+      <form v-if="status === 'replied'" class="flex flex-col gap-2 rounded-xl border border-dashed bg-muted/40 p-3" @submit.prevent="saveReplyUrl">
         <div v-if="savedReplyUrl" class="flex items-center gap-1.5 text-xs font-medium" :class="replyStatusInfo[thread.replyStatus ?? 'unknown'].class">
           <component :is="replyStatusInfo[thread.replyStatus ?? 'unknown'].icon" class="size-3.5" /> {{ replyStatusInfo[thread.replyStatus ?? 'unknown'].label }}
         </div>
