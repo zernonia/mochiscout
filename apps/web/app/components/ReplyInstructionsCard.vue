@@ -4,14 +4,14 @@ import { toast } from '@/lib/toast'
 
 const props = defineProps<{ projectId: string, productName: string }>()
 
-const { data } = await useFetch(() => `/api/projects/${props.projectId}/reply-instructions`)
+const { data } = useCachedFetch(() => `/api/projects/${props.projectId}/reply-instructions`)
 const text = ref(data.value?.instructions ?? '')
 const isDefault = ref(data.value?.isDefault ?? true)
 watch(data, (d) => {
   if (!d) return
   text.value = d.instructions
   isDefault.value = d.isDefault
-})
+}, { immediate: true })
 const MAX = 4000
 const dirty = computed(() => text.value !== data.value?.instructions)
 const saving = ref(false)

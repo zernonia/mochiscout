@@ -6,13 +6,20 @@ definePageMeta({ layout: 'app' })
 const route = useRoute()
 const projectId = computed(() => String(route.params.project))
 const draftId = String(route.params.draftId)
-const { data: draft, error } = await useFetch(() => `/api/projects/${projectId.value}/drafts/${draftId}`)
-if (error.value) throw createError({ statusCode: 404, statusMessage: 'Draft not found', fatal: true })
+// Lazy: the page renders at once with a skeleton; the form fills when the draft arrives.
+const { data: draft, error } = useCachedFetch(() => `/api/projects/${projectId.value}/drafts/${draftId}`)
+watch(error, (e) => { if (e) showError({ statusCode: 404, statusMessage: 'Draft not found', fatal: true }) })
 useHead({ title: () => `${draft.value?.title || 'Draft'} · Mochiscout` })
 type Draft = NonNullable<typeof draft.value>
 const url: string = `/api/projects/${projectId.value}/drafts/${draftId}`
 
-const form = reactive({ title: draft.value?.title ?? '', body: draft.value?.body ?? '', promo: draft.value?.promo ?? false })
+const form = reactive({ title: '', body: '', promo: false })
+let formFilled = false
+watch(draft, (d) => {
+  if (!d || formFilled) return
+  formFilled = true
+  Object.assign(form, { title: d.title ?? '', body: d.body ?? '', promo: d.promo ?? false })
+}, { immediate: true })
 const dirty = computed(() => form.title !== draft.value?.title || form.body !== draft.value?.body || form.promo !== draft.value?.promo)
 const busy = ref<'save' | 'check' | 'delete' | null>(null)
 
@@ -80,7 +87,8 @@ async function copy(text: string, what: string) {
 </script>
 
 <template>
-  <div v-if="draft" class="flex flex-col gap-5">
+  <SkeletonCards v-if="!draft" :count="2" :lines="4" />
+  <div v-else class="flex flex-col gap-5">
     <NuxtLink :to="`/app/${projectId}/drafts`" class="text-sm text-muted-foreground hover:text-foreground">← All drafts</NuxtLink>
     <AppPageHeader :title="draft.title || 'Untitled draft'">
       <template #meta>

@@ -6,24 +6,30 @@ definePageMeta({ layout: 'app' })
 
 const route = useRoute()
 const projectId = String(route.params.project)
-const { data: project, error } = await useFetch(() => `/api/projects/${projectId}`)
-if (error.value) throw createError({ statusCode: 404, statusMessage: 'Project not found', fatal: true })
+// Lazy: the page renders at once with a skeleton; the form fills when the project arrives.
+const { data: project, error } = useCachedFetch(() => `/api/projects/${projectId}`)
+watch(error, (e) => { if (e) showError({ statusCode: 404, statusMessage: 'Project not found', fatal: true }) })
 useHead({ title: () => `${project.value?.name ?? 'Project'} · Mochiscout` })
 
-const form = ref<ProjectProfile>({
-  url: project.value!.url,
-  name: project.value!.name,
-  category: project.value!.category ?? '',
-  icp: project.value!.icp ?? '',
-  problems: [...project.value!.problems],
-  keywords: [...project.value!.keywords],
-  competitors: [...project.value!.competitors],
-  searchTerms: [...project.value!.searchTerms],
-  sources: [...project.value!.sources],
-})
+const form = ref<ProjectProfile | null>(null)
+watch(project, (p) => {
+  if (!p || form.value) return
+  form.value = {
+    url: p.url,
+    name: p.name,
+    category: p.category ?? '',
+    icp: p.icp ?? '',
+    problems: [...p.problems],
+    keywords: [...p.keywords],
+    competitors: [...p.competitors],
+    searchTerms: [...p.searchTerms],
+    sources: [...p.sources],
+  }
+}, { immediate: true })
 const saving = ref(false)
 
 async function save() {
+  if (!form.value) return
   saving.value = true
   try {
     await $fetch<unknown>(`/api/projects/${projectId}` as string, { method: 'PATCH', body: form.value })
@@ -39,8 +45,10 @@ async function save() {
 </script>
 
 <template>
-  <div v-if="project" class="flex flex-col gap-5">
+  <div class="flex flex-col gap-5">
     <AppPageHeader title="Project profile" description="What we know about your product. Keywords and search terms decide which threads match, so keep them in your buyers' words." />
+    <SkeletonCards v-if="!project || !form" :count="3" :lines="3" />
+    <template v-else>
     <form class="flex flex-col gap-5" @submit.prevent="save">
       <Card>
         <CardContent>
@@ -54,5 +62,6 @@ async function save() {
     <!-- Separate form: nested forms break hydration. -->
     <ReplyInstructionsCard :project-id="projectId" :product-name="project.name" />
     <AlertWebhookCard :project-id="projectId" :initial-url="project.alertWebhookUrl" />
+    </template>
   </div>
 </template>

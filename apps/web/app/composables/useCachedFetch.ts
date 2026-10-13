@@ -11,6 +11,11 @@ export function swrCachedData(key: string, nuxtApp: NuxtApp, ctx: { cause: strin
   return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
 }
 
-/** useLazyFetch with the cache above. Same signature and typing as useLazyFetch. */
+/**
+ * useLazyFetch with the cache above. Same signature and typing as useLazyFetch.
+ * Fetched in the browser only (`server: false`): app pages render their shell
+ * and skeletons at once, even on a full page load, and fill in as data
+ * arrives. Pass `server: true` for data the first paint can't do without.
+ */
 export const useCachedFetch = ((url: Parameters<typeof useLazyFetch>[0], opts?: Record<string, unknown>) =>
-  useLazyFetch(url, { getCachedData: swrCachedData, ...opts })) as typeof useLazyFetch
+  useLazyFetch(url, { getCachedData: swrCachedData, server: false, ...opts })) as typeof useLazyFetch

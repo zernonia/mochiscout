@@ -4,11 +4,11 @@ import { toast } from '@/lib/toast'
 definePageMeta({ layout: 'app' })
 useHead({ title: 'Settings · Mochiscout' })
 
-const { data: settings, refresh } = await useFetch('/api/settings')
-const { data: team, refresh: refreshTeam } = await useFetch('/api/org')
-const { data: myInvites, refresh: refreshMyInvites } = await useFetch('/api/org/invites/mine')
-
-const { data: apiKeys, refresh: refreshKeys } = await useFetch('/api/api-keys')
+// Lazy: the page renders at once and each card fills in as its data arrives.
+const { data: settings, refresh } = useCachedFetch('/api/settings')
+const { data: team, refresh: refreshTeam } = useCachedFetch('/api/org')
+const { data: myInvites, refresh: refreshMyInvites } = useCachedFetch('/api/org/invites/mine')
+const { data: apiKeys, refresh: refreshKeys } = useCachedFetch('/api/api-keys')
 const keyLabel = ref('Browser extension')
 const newKey = ref<string | null>(null)
 const mcpUrl = computed(() => (import.meta.client ? `${location.origin}/mcp` : '/mcp'))
@@ -71,13 +71,20 @@ async function acceptInvites() {
 const timezones = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : ['UTC']
 const hours = Array.from({ length: 24 }, (_, h) => h)
 
-const form = reactive({
-  timezone: settings.value?.timezone ?? 'UTC',
-  digestHour: settings.value?.digestHour ?? 8,
-  redditUsername: settings.value?.redditUsername ?? '',
-  redditKarma: settings.value?.redditKarma != null ? String(settings.value.redditKarma) : '',
-  redditAccountCreatedAt: settings.value?.redditAccountCreatedAt ?? '',
-})
+const form = reactive({ timezone: 'UTC', digestHour: 8, redditUsername: '', redditKarma: '', redditAccountCreatedAt: '' })
+// Fill the form once, when the settings first arrive (later refreshes don't overwrite typing).
+let formFilled = false
+watch(settings, (s) => {
+  if (!s || formFilled) return
+  formFilled = true
+  Object.assign(form, {
+    timezone: s.timezone ?? 'UTC',
+    digestHour: s.digestHour ?? 8,
+    redditUsername: s.redditUsername ?? '',
+    redditKarma: s.redditKarma != null ? String(s.redditKarma) : '',
+    redditAccountCreatedAt: s.redditAccountCreatedAt ?? '',
+  })
+}, { immediate: true })
 const saving = ref(false)
 
 function useBrowserTimezone() {
@@ -134,7 +141,8 @@ const keyRows = computed(() => settings.value
     </Alert>
 
     <!-- Team and API key cards hold their own forms, so this form ends before them. -->
-    <form class="flex flex-col gap-6" @submit.prevent="save">
+    <SkeletonCards v-if="!settings" :count="2" :lines="2" />
+    <form v-else class="flex flex-col gap-6" @submit.prevent="save">
       <Card>
         <CardHeader>
           <CardTitle>Daily digest</CardTitle>
