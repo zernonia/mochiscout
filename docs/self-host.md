@@ -6,8 +6,8 @@ one cron trigger. You need a Cloudflare account, Node 22+ and pnpm.
 ## 1. Install
 
 ```sh
-git clone https://github.com/zernonia/social-radar.git
-cd social-radar
+git clone https://github.com/zernonia/mochiscout.git
+cd mochiscout
 pnpm install
 cd apps/web
 pnpm exec wrangler login
@@ -26,6 +26,15 @@ Copy the two ids they print into `wrangler.jsonc`:
 
 - `d1_databases[0].database_id`
 - `kv_namespaces[0].id`
+
+The ids already in `wrangler.jsonc` belong to mochiscout.com; they're not secrets,
+but deploys from a fork fail until you replace them. While you're there:
+
+- `placement` pins the Worker near the Anthropic API and the D1 primary (US East).
+  Keep it if your D1 database is in North America, or remove it.
+- `send_email` needs Cloudflare Email Service; remove it if you send email through
+  Resend or not at all (see step 3).
+- `keep_vars` keeps variables you set in the dashboard across deploys.
 
 Then create the tables:
 
@@ -59,6 +68,9 @@ pnpm exec wrangler secret put APP_URL
 | `TINYFISH_API_KEY` | Thread and subreddit discovery, research searches, and reading each subreddit's official rules (free key) | Only watched subreddits are read; rules come from pinned posts and the curated files |
 | `BRAVE_API_KEY` | Search fallback when TinyFish fails or rate-limits | No fallback |
 | `EMAIL_FROM` + email provider | Daily digest, team invites | Emails are skipped |
+| `X_BEARER_TOKEN` | X (Twitter) as a feed source, through the official paid API | X stays off |
+| `CONTACT_URL` | Contact link in the User-Agent sent to reddit.com | `APP_URL`, then this repository's URL |
+| `READ_MODE` | `server` (default), `extension` or `search_only`; see Things to know | Server-side RSS reads |
 
 Optional: `SEARCH_PROVIDER=brave` (use Brave first), `LLM_FAST_MODEL` / `LLM_BALANCED_MODEL` / `LLM_QUALITY_MODEL`
 (defaults `claude-haiku-5-5` for scoring, `claude-sonnet-5-5` for auto-drafts, `claude-opus-5-5` for drafts you ask for), `ANTHROPIC_BASE_URL` (route through
@@ -83,8 +95,11 @@ With both set, Cloudflare is tried first and Resend is the fallback if a send fa
 pnpm run deploy
 ```
 
-Open the URL and sign in. **The first account to sign up owns the instance**; later
-sign-ups are refused unless their email is in `ALLOWED_EMAILS` (comma-separated).
+Open the URL and sign up straight away: **the first account to sign up owns the
+instance.** Later sign-ups are refused unless the email is in `ALLOWED_EMAILS`
+(comma-separated) or was invited from **Settings → Team** and signs in with GitHub
+or Google. Password accounts aren't email-verified, so anyone who knows an address
+in `ALLOWED_EMAILS` could claim it; prefer invites with GitHub/Google sign-in.
 
 ## 5. Check the scheduled jobs
 
@@ -125,9 +140,11 @@ pnpm run deploy
 - **Workers plan.** The free plan allows 10 ms of CPU per invocation, which large
   feeds and scoring batches can exceed. The Workers Paid plan ($5/month) is the
   safe choice for reliable scheduled jobs.
-- **Subreddit rules.** The rules database in `packages/rules` starts empty. Add a
-  YAML file per subreddit you post in (see `packages/rules/README.md`), run
-  `pnpm rules:build` from the repo root, and redeploy.
+- **Subreddit rules.** `packages/rules` ships rules for popular SaaS, indie and app
+  subreddits. Subreddits that aren't in it get their official rules read
+  automatically when watched (needs `TINYFISH_API_KEY` and `ANTHROPIC_API_KEY`). To
+  add or fix one, edit or add a YAML file (see `packages/rules/README.md`), run
+  `pnpm rules:build` from the repo root and redeploy, or send a pull request.
 
 ## Running the hosted edition
 
@@ -141,5 +158,4 @@ PostHog (US cloud), proxied through `/ingest` on your own domain; self-hosted in
 
 ## Local development
 
-See the README: `pnpm dev` runs the app against local D1/KV with secrets from
-`apps/web/.dev.vars`.
+See [CONTRIBUTING.md](../CONTRIBUTING.md#development-setup).

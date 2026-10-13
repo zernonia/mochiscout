@@ -5,6 +5,6 @@ export const site = {
   /** Legal entity operating the hosted service. */
   operator: 'J146 LLC',
   supportEmail: 'support@mochiscout.com',
-  repo: 'https://github.com/zernonia/social-radar',
+  repo: 'https://github.com/zernonia/mochiscout',
   legalUpdated: 'October 10, 2026',
 }

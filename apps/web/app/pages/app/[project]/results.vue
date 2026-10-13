@@ -11,7 +11,8 @@ const { data: project } = useCachedFetch(() => `/api/projects/${projectId.value}
 const { data: results } = useCachedFetch(() => `/api/projects/${projectId.value}/results`, { query: { days } })
 useHead({ title: () => `Results · ${project.value?.name ?? 'Project'}` })
 
-const origin = computed(() => (import.meta.client ? location.origin : 'https://mochiscout.com'))
+const requestOrigin = useRequestURL().origin
+const origin = computed(() => (import.meta.client ? location.origin : requestOrigin))
 const snippet = computed(() => `<script defer src="${origin.value}/t.js" data-project="${projectId.value}"><\/script>`)
 const signupCall = `window.mochiscout?.('signup')`
 

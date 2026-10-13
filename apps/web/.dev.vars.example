@@ -16,8 +16,14 @@ NUXT_SESSION_PASSWORD=change-me-to-a-long-random-string-of-32-plus-chars
 # RESEND_API_KEY=
 # EMAIL_FROM="Mochiscout <hello@example.com>"
 
-# Self-host: extra emails allowed to sign up after the first user
-# ALLOWED_EMAILS=
+# Self-host: extra emails allowed to sign up after the first user (comma-separated).
+# Anyone who knows one of these addresses can claim it with the password form,
+# so prefer GitHub/Google sign-in plus team invites for teammates.
+# ALLOWED_EMAILS=alice@example.com,bob@example.com
+
+# How Reddit is read: server (default, RSS from the Worker), extension (posts
+# arrive from the browser extension), or search_only. See docs/arch.md §5.
+# READ_MODE=server
 
 # Contact URL in the User-Agent sent to reddit.com (use your fork / site)
 # CONTACT_URL=https://github.com/you/your-fork
@@ -32,6 +38,7 @@ NUXT_SESSION_PASSWORD=change-me-to-a-long-random-string-of-32-plus-chars
 # ANTHROPIC_API_KEY=
 # ANTHROPIC_BASE_URL=https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic
 # LLM_FAST_MODEL=
+# LLM_BALANCED_MODEL=
 # LLM_QUALITY_MODEL=
 
 # Public URL of the app: links in emails, Polar checkout redirects
@@ -44,8 +51,16 @@ NUXT_SESSION_PASSWORD=change-me-to-a-long-random-string-of-32-plus-chars
 # POLAR_PRODUCT_SOLO=
 # POLAR_PRODUCT_PRO=
 
-# Hosted edition: NUXT_PUBLIC_EDITION=cloud. Before launch, NUXT_PUBLIC_WAITLIST=true
-# shows a waitlist on the landing page and closes open sign-ups.
+# Edition: selfhost (default) or cloud (the hosted service: landing page, billing,
+# public tools, analytics). Before launch, NUXT_PUBLIC_WAITLIST=true shows a
+# waitlist on the landing page and closes open sign-ups.
+# NUXT_PUBLIC_EDITION=selfhost
+# NUXT_PUBLIC_WAITLIST=false
+
+# Cloud edition only: PostHog product analytics and error tracking (project key),
+# and the project whose tracking script runs on the site itself ('' turns it off).
+# NUXT_PUBLIC_POSTHOG_KEY=
+# NUXT_PUBLIC_TRACKING_PROJECT=
 
 # X as a feed source (official API, paid; Pro plan on the hosted edition)
 # X_BEARER_TOKEN=

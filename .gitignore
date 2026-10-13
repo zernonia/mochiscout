@@ -13,3 +13,9 @@ dist
 *.log
 .DS_Store
 .wxt
+
+# Scoring eval exports contain production data (apps/web/scripts/export-scoring-labels.sh)
+labels*.json
+
+# Personal Claude Code notes
+CLAUDE.local.md

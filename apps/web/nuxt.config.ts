@@ -54,8 +54,11 @@ export default defineNuxtConfig({
       edition: 'selfhost' as 'selfhost' | 'cloud',
       /** Hosted edition before launch: landing collects emails and open sign-ups are closed. */
       waitlist: false,
-      /** GitHub repo that receives subreddit rule suggestions (owner/name). */
-      /** Mochiscout's own project, so its tracking links count visits and sign-ups to this site (cloud edition only). */
+      /**
+       * mochiscout.com's own project, so its tracking links count visits and sign-ups
+       * (cloud edition only). A fork running the cloud edition sets its own with
+       * NUXT_PUBLIC_TRACKING_PROJECT, or '' to turn it off.
+       */
       trackingProject: '9b1f6c2e-4d3a-4e8b-a7c5-2f6d8e1b3c90',
       /** PostHog project key (NUXT_PUBLIC_POSTHOG_KEY). Empty = no analytics; only used on the cloud edition. */
       posthogKey: '',

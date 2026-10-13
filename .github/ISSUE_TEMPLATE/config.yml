@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/zernonia/mochiscout/security/advisories/new
+    about: Please report security issues privately, not as a public issue.
+  - name: Self-hosting guide
+    url: https://github.com/zernonia/mochiscout/blob/main/docs/self-host.md
+    about: Deploying Mochiscout on your own Cloudflare account.

@@ -11,7 +11,7 @@ export default defineNuxtPlugin(() => {
 
   useHead({ script: [{ src: '/t.js', defer: true, 'data-project': trackingProject }] })
 
-  // Sign-ups finish on the server (password, magic link, GitHub, Google), so
+  // Sign-ups finish on the server (password, GitHub, Google), so
   // report one the first time a brand-new account loads the app.
   const { user } = useUserSession()
   watch(() => user.value?.id, (id) => {

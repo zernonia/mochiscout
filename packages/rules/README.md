@@ -4,9 +4,15 @@ One YAML file per subreddit in `subreddits/`, bundled into the app as
 `rules.json`. Licensed CC BY-SA 4.0. This is the only place rules come from:
 nothing is read from Reddit at request time.
 
+## Contributing a subreddit
+
+Open a pull request adding or editing `subreddits/<name>.yaml` (format below; run
+`pnpm rules:build`), or open a [subreddit rules issue](../../.github/ISSUE_TEMPLATE/subreddit-rules.md).
+Quote the subreddit's own rules under `official` and link its rules page as `source`.
+
 ## How files are made
 
-A monthly Claude routine ("Sync subreddit rules") follows
+The maintainers run a monthly Claude Code routine ("Sync subreddit rules") that follows
 `.claude/skills/sync-subreddit-rules/SKILL.md`: it fetches each subreddit's
 **official rules** (`reddit.com/r/<sub>/about/rules.json`, through the TinyFish
 connector, since Reddit blocks cloud IPs), keeps them verbatim under `official`,

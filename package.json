@@ -1,7 +1,14 @@
 {
   "name": "mochiscout",
+  "description": "Find people asking for your product on Reddit, Hacker News, Bluesky and X, and reply helpfully without getting banned.",
   "private": true,
   "license": "AGPL-3.0-only",
+  "homepage": "https://mochiscout.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zernonia/mochiscout.git"
+  },
+  "bugs": "https://github.com/zernonia/mochiscout/issues",
   "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=22"

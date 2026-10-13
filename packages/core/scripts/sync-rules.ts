@@ -38,7 +38,7 @@ const wanted = existsSync(wantedFile)
 const args = process.argv.slice(2)
 const names = [...new Set((args.length ? args : [...existing, ...wanted]).map(n => normalizeSubreddit(n.replace(/^\/?r\//i, ''))).filter(n => /^\w{2,21}$/.test(n)))]
 
-const http = createHttp({ userAgent: userAgent('https://mochiscout.com'), minDelayMs: 1500 })
+const http = createHttp({ userAgent: userAgent(process.env.CONTACT_URL ?? 'https://github.com/zernonia/mochiscout'), minDelayMs: 1500 })
 const llm = createLlm({ anthropicApiKey: anthropicKey })
 const pages = tinyfishFetcher(tinyfishKey, { ttlSeconds: 0 })
 const today = new Date().toISOString().slice(0, 10)

@@ -18,7 +18,8 @@ export function getTaskEnv(context?: { cloudflare?: { env?: unknown } }): Env {
 }
 
 export function sourcesUserAgent(env: Env) {
-  return userAgent(env.CONTACT_URL ?? 'https://mochiscout.com')
+  // Identify this instance to reddit.com: its own contact URL, else its public URL, else the project repo.
+  return userAgent(env.CONTACT_URL ?? env.APP_URL ?? 'https://github.com/zernonia/mochiscout')
 }
 
 export function createJobContext(env: Env, opts: { budgetMs?: number } = {}): JobContext {
