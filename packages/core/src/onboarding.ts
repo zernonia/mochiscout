@@ -1,5 +1,5 @@
 import type { Llm } from '@mochiscout/llm'
-import type { Http } from '@mochiscout/sources'
+import type { Http, PageFetcher } from '@mochiscout/sources'
 import { z } from '@mochiscout/llm'
 import { decodeEntities, htmlToText, stripElements, truncate } from '@mochiscout/sources'
 
@@ -70,6 +70,17 @@ export async function fetchProductPage(http: Http, input: string): Promise<Produ
     description: meta('description') || meta('og:description'),
     text: truncate(text, PAGE_TEXT_MAX),
   }
+}
+
+/**
+ * The same page read through the page-fetch service (a real browser), for
+ * sites whose bot protection refuses requests from Cloudflare Workers.
+ */
+export async function fetchProductPageVia(pages: PageFetcher, input: string): Promise<ProductPage> {
+  const url = assertPublicUrl(input).toString()
+  const res = (await pages.fetch([url])).get(url)
+  if (!res || 'error' in res) throw new Error(`page fetch failed (${res && 'error' in res ? res.error : 'no result'})`)
+  return { url, title: res.title?.trim() ?? '', description: res.description?.trim() ?? '', text: truncate(res.text.replace(/\s+\n/g, '\n').trim(), PAGE_TEXT_MAX) }
 }
 
 const SYSTEM = `You help founders find their buyers on Reddit. Given the text of a product's landing page, describe the product the way its buyers would: plain words, no marketing language. Only name competitors you are confident exist; return an empty list rather than guessing.`

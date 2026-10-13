@@ -6,14 +6,14 @@
  */
 
 export interface PageFetcher {
-  /** Up to 10 URLs. Each URL maps to its text, or to an error code ('page_not_found', 'login_required', ...). */
-  fetch: (urls: string[]) => Promise<Map<string, { text: string } | { error: string }>>
+  /** Up to 10 URLs. Each URL maps to its text (plus page title and description), or to an error code ('page_not_found', 'login_required', ...). */
+  fetch: (urls: string[]) => Promise<Map<string, { text: string, title?: string | null, description?: string | null } | { error: string }>>
 }
 
 const FETCH_ENDPOINT = 'https://api.fetch.tinyfish.ai'
 
 interface FetchResponse {
-  results?: { url: string, text?: string | null }[]
+  results?: { url: string, text?: string | null, title?: string | null, description?: string | null }[]
   errors?: { url: string, error: string }[]
 }
 
@@ -32,8 +32,8 @@ export function tinyfishFetcher(apiKey: string, opts: { fetch?: typeof fetch, tt
         throw new Error(`TinyFish fetch failed with ${res.status}`)
       }
       const data = await res.json() as FetchResponse
-      const out = new Map<string, { text: string } | { error: string }>()
-      for (const r of data.results ?? []) out.set(r.url, r.text ? { text: r.text } : { error: 'empty_content' })
+      const out = new Map<string, { text: string, title?: string | null, description?: string | null } | { error: string }>()
+      for (const r of data.results ?? []) out.set(r.url, r.text ? { text: r.text, title: r.title ?? null, description: r.description ?? null } : { error: 'empty_content' })
       for (const e of data.errors ?? []) out.set(e.url, { error: e.error })
       return out
     },

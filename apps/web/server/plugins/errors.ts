@@ -1,9 +1,11 @@
-// Send unexpected server errors (5xx, uncaught) to PostHog error tracking.
-// 4xx are expected (validation, auth, quota) and stay out.
+// Send unexpected server errors to PostHog error tracking: every 5xx, and any
+// error our code didn't throw on purpose (h3 marks those `unhandled`), whatever
+// its status: an upstream API error carrying `status: 403` is still a bug to see.
+// Deliberate 4xx (validation, auth, quota) stay out.
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('error', (error, { event }) => {
     const status = (error as { statusCode?: number }).statusCode ?? 500
-    if (status < 500) return
+    if (status < 500 && !(error as { unhandled?: boolean }).unhandled) return
     const key = useRuntimeConfig(event).public.posthogKey
     if (!key) return
     const session = event?.context.mochiscoutUserId as string | undefined
