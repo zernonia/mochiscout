@@ -83,7 +83,7 @@ async function createUser(event: RequestEvent, db: Db, input: { email: string, n
 
 export async function startSession(event: RequestEvent, user: User) {
   await replaceUserSession(event, {
-    user: { id: user.id, email: user.email, name: user.name, image: user.image },
+    user: { id: user.id, email: user.email, name: user.name, image: user.image, createdAt: user.createdAt.getTime() },
     loggedInAt: Date.now(),
   })
 }
@@ -185,5 +185,7 @@ declare module '#auth-utils' {
     email: string
     name: string
     image: string | null
+    /** Account creation (ms); absent on sessions started before it was added. */
+    createdAt?: number
   }
 }
