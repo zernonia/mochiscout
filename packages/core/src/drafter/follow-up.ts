@@ -97,3 +97,58 @@ export async function draftFollowUpForResponse(db: Db, llm: Llm, project: typeof
   ])
   return { followUp }
 }
+
+/** Direction used when the founder answers a "can you DM me?" privately. */
+export const DM_DIRECTION = 'They asked to be messaged, so write this as a short private message (DM) to them, not a public comment: 2 to 4 sentences, personal, picking up exactly what they asked.'
+
+/**
+ * Draft a private message to a post's author who invited DMs ("feel free to
+ * DM me"). Same guardrails as replies; short, personal, honest about who the
+ * founder is. Not stored: the founder copies it and sends it themselves.
+ */
+export async function generateDm(llm: Llm, opts: {
+  project: DraftProject & { replyFacts?: string | null }
+  thread: { platform: string, channel: string | null, title: string, body?: string | null, snippet?: string | null, author?: string | null }
+  tier: Tier
+  voice?: string[]
+}) {
+  const { project, thread } = opts
+  const facts = project.replyFacts?.trim()
+  const system = [
+    'You write a short private message (DM) for a founder to send from their own account to someone who publicly asked for messages about what they need. The founder edits and sends it themselves. Write as the founder, in the first person.',
+    `Always:
+- Never invent facts: no made-up numbers, customers, features, prices, discounts or stories. Use only the post, the product details and the founder's facts.
+- Be honest about who they are: "I built ${project.name}" or "I'm building ${project.name}".`,
+    `The founder's product: ${project.name}${project.category ? ` (${project.category})` : ''}.${project.icp ? `\nWho it is for: ${project.icp}` : ''}${project.problems.length ? `\nProblems it solves: ${project.problems.join('; ')}` : ''}`,
+    facts ? `True things the founder can say:\n<founder_facts>\n${clip(facts, 3000)}\n</founder_facts>` : '',
+    `Style: 2 to 4 sentences. Open with their specific situation from the post, then say plainly how ${project.name} would help their case, then one easy next step (a link with ${LINK_PLACEHOLDER}, or offering to answer questions). No greeting fluff, no "Hope you're well", no hype words, no em dashes.`,
+    opts.voice?.length ? `Messages the founder wrote before. Match their voice; never reuse content:\n${opts.voice.map(v => `<example>\n${v}\n</example>`).join('\n')}` : '',
+  ].filter(Boolean).join('\n\n')
+  const text = thread.body ?? thread.snippet
+  const prompt = [
+    `Post${thread.channel ? ` in r/${thread.channel}` : ` on ${thread.platform}`}${thread.author ? ` by ${thread.author}` : ''}:`,
+    '<post>',
+    `Title: ${thread.title}`,
+    text ? `\n${clip(text, 3000)}` : '',
+    '</post>',
+  ].filter(Boolean).join('\n')
+  return llm.generate({ tier: opts.tier, effort: 'low', system, prompt, schema: ReplyDraft, maxTokens: 1000, cacheSystem: true })
+}
+
+/** Draft a DM for one thread whose author invited messages. Counts as one AI draft. */
+export async function draftDmForThread(db: Db, llm: Llm, project: typeof schema.projects.$inferSelect, threadId: string, opts: { now?: Date } = {}) {
+  const now = opts.now ?? new Date()
+  const org = await db.select({ id: schema.orgs.id, plan: schema.orgs.plan, planStatus: schema.orgs.planStatus, polarSubscriptionId: schema.orgs.polarSubscriptionId }).from(schema.orgs).where(eq(schema.orgs.id, project.orgId)).get()
+  if (org) await assertCanDraft(db, org, now)
+  const row = await db.select({ thread: schema.threads }).from(schema.threadScores)
+    .innerJoin(schema.threads, eq(schema.threads.id, schema.threadScores.threadId))
+    .where(and(eq(schema.threadScores.projectId, project.id), eq(schema.threadScores.threadId, threadId)))
+    .get()
+  if (!row) return null
+  const { data, usage } = await generateDm(llm, { project, thread: row.thread, tier: DRAFT_TIER, voice: await voiceExamples(db, project.id) })
+  // A DM goes to one person who asked for it, so the tracked link is always fine here.
+  const code = data.reply.includes(LINK_PLACEHOLDER) ? await ensureRefCode(db, project.id, threadId) : null
+  const dm = fillLink(data.reply.trim(), code ? refLink(project.url, code) : null)
+  await recordUsage(db, project.orgId, { llmInputTokens: usage.inputTokens, llmOutputTokens: usage.outputTokens, drafts: 1 })
+  return { dm }
+}

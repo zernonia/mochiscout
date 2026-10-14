@@ -6,6 +6,9 @@ import { HN_REPLY_DAYS, REDDIT_ARCHIVE_DAYS } from '@mochiscout/sources'
 import type { PostingTime } from '../subreddits/insights'
 import { bestPostingTime } from '../subreddits/insights'
 import { subredditMap } from '../subreddits/map'
+import type { ThreadComment } from '@mochiscout/sources'
+import { getRules } from '@mochiscout/rules'
+import { alsoAsking, openToDms } from '../leads/signals'
 
 const DAY_MS = 86_400_000
 const TOP_THREADS = 5
@@ -35,6 +38,9 @@ export interface TodayPlan {
     kind: string
     reason: string | null
     replyAngle: string | null
+    author: string | null
+    alsoAsking: ThreadComment[]
+    openToDms: boolean
   }[]
   newCount: number
   /** Leads found (scored at or above the threshold) per day, oldest first, ending today (UTC). */
@@ -77,6 +83,9 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
       kind: s.kind,
       reason: s.reason,
       replyAngle: s.replyAngle,
+      author: t.author,
+      body: t.body,
+      comments: t.comments,
     }).from(s).innerJoin(t, eq(t.id, s.threadId)).where(visible)
       // Fresh threads first among similar scores: replies to new threads get seen.
       .orderBy(desc(sql`${s.intent} - min(20, (unixepoch() - coalesce(${t.createdUtc}, ${t.ingestedAt})) / 21600)`))
@@ -154,7 +163,11 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
   }
 
   return {
-    threads,
+    threads: threads.map(({ body, comments, ...th }) => ({
+      ...th,
+      alsoAsking: alsoAsking(comments, th.author),
+      openToDms: openToDms({ ...th, body }, th.platform === 'reddit' && th.channel ? getRules(th.channel) : null),
+    })),
     newCount: newCount?.n ?? 0,
     trend,
     pendingScoring: pending?.n ?? 0,

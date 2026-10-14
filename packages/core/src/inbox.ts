@@ -1,7 +1,9 @@
 import type { Db } from '@mochiscout/db'
 import type { DismissReason } from './leads/learning'
 import { and, count, desc, eq, gte, schema, sql } from '@mochiscout/db'
+import { getRules } from '@mochiscout/rules'
 import { assessLead, isClosed } from './leads/assess'
+import { alsoAsking, openToDms } from './leads/signals'
 
 export type ThreadStatus = 'new' | 'saved' | 'replied' | 'dismissed'
 export type InboxSort = 'opportunity' | 'intent' | 'newest'
@@ -37,6 +39,7 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
       url: t.url,
       author: t.author,
       snippet: t.snippet,
+      body: t.body,
       createdUtc: t.createdUtc,
       source: t.source,
       searchRankFlag: t.searchRankFlag,
@@ -68,10 +71,12 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
     .orderBy(opts.sort === 'newest' ? desc(sql`coalesce(${t.createdUtc}, ${t.ingestedAt})`) : desc(s.intent), desc(sql`coalesce(${t.createdUtc}, ${t.ingestedAt})`))
     .limit(opts.sort && opts.sort !== 'opportunity' ? limit : RANK_POOL)
 
-  const ranked = rows.map(({ comments, engagement, ...row }) => ({
+  const ranked = rows.map(({ comments, engagement, body, ...row }) => ({
     ...row,
     dismissReason: row.dismissReason as DismissReason | null,
     ...assessLead({ ...row, comments, engagement }, project.competitors ?? [], now),
+    alsoAsking: alsoAsking(comments, row.author),
+    openToDms: openToDms({ ...row, body }, row.platform === 'reddit' && row.channel ? getRules(row.channel) : null),
   }))
   if (!opts.sort || opts.sort === 'opportunity') {
     ranked.sort((a, b) => Number(isClosed(a.state)) - Number(isClosed(b.state)) || b.opportunity - a.opportunity || b.intent - a.intent)

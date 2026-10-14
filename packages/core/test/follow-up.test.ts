@@ -1,6 +1,6 @@
 import type { Llm } from '@mochiscout/llm'
 import { describe, expect, it } from 'vitest'
-import { generateFollowUp } from '../src/drafter/follow-up'
+import { generateDm, generateFollowUp } from '../src/drafter/follow-up'
 
 function fake() {
   const calls: { system: string, prompt: string }[] = []
@@ -41,5 +41,16 @@ describe('generateFollowUp', () => {
     await generateFollowUp(llm, { ...base, thread: { platform: 'reddit', channel: 'SaaS', title: 't' }, rules: { name: 'SaaS', promo_policy: 'allowed_with_value', self_promo_thread: null, min_karma: null, min_account_age_days: null, links_allowed: 'none', post_formats: [], cooldown_days: null, tags: [], notes: '', last_verified: '2026-10-01', official: [], keep: [], source: 'https://www.reddit.com/r/SaaS/about/rules' } })
     expect(calls[0]!.prompt).toContain('{link}')
     expect(calls[1]!.prompt).toContain('Links: not allowed here.')
+  })
+})
+
+describe('generateDm', () => {
+  it('writes to the person who asked, with disclosure and the post in the prompt', async () => {
+    const { llm, calls } = fake()
+    await generateDm(llm, { project, thread: { platform: 'reddit', channel: 'SaaS', title: 'Need a changelog tool', body: 'Feel free to DM me', author: 'op_user' }, tier: 'balanced' })
+    expect(calls[0]!.system).toContain('I built Shipnote')
+    expect(calls[0]!.system).toContain('Never invent facts')
+    expect(calls[0]!.prompt).toContain('by op_user')
+    expect(calls[0]!.prompt).toContain('Feel free to DM me')
   })
 })

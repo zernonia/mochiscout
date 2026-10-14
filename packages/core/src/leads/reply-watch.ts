@@ -3,6 +3,7 @@ import type { Db } from '@mochiscout/db'
 import { and, asc, count, desc, eq, gte, isNotNull, isNull, ne, or, schema, sql } from '@mochiscout/db'
 import { HttpDeferredError, parseReplyUrl, readReplyThread } from '@mochiscout/sources'
 import { alertWebhookKind, postAlertWebhook } from './alerts'
+import { asksForDm } from './signals'
 
 /** Replies are watched for this long after the founder marks them posted. */
 export const REPLY_WATCH_DAYS = 14
@@ -82,7 +83,7 @@ export async function pendingResponses(db: Db, projectId: string, opts: { limit?
       gte(s.statusChangedAt, new Date(now.getTime() - REPLY_WATCH_DAYS * DAY_MS)),
     )),
   ])
-  return { responses, watching: watching?.n ?? 0 }
+  return { responses: responses.map(r => ({ ...r, asksForDm: asksForDm(r.body) })), watching: watching?.n ?? 0 }
 }
 
 /**
