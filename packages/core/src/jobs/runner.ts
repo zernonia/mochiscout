@@ -5,6 +5,7 @@ import { HttpDeferredError } from '@mochiscout/sources'
 import { dueJobs } from '../schedule'
 import { runAutoReplies } from '../drafter/reply'
 import { runHotAlerts } from '../leads/alerts'
+import { runReplyWatch } from '../leads/reply-watch'
 import { runLeadChecks } from '../leads/context'
 import { runWeeklyResearch } from '../research/research'
 import { runScoring } from '../scoring/score'
@@ -76,6 +77,7 @@ const handlers: Partial<Record<JobName, (ctx: JobContext) => Promise<unknown>>> 
   'retention': runRetention,
   'insights': runSubredditInsights,
   'trials': runTrials,
+  'reply-watch': runReplyWatch,
 }
 
 /** Cron dispatcher: run every job due at this tick. */

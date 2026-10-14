@@ -1,4 +1,4 @@
-export type JobName = 'plan-fetch' | 'search-discovery' | 'feeds' | 'score' | 'digest' | 'tracker' | 'research' | 'retention' | 'lead-checks' | 'auto-replies' | 'hot-alerts' | 'insights' | 'trials'
+export type JobName = 'plan-fetch' | 'search-discovery' | 'feeds' | 'score' | 'digest' | 'tracker' | 'research' | 'retention' | 'lead-checks' | 'auto-replies' | 'hot-alerts' | 'insights' | 'trials' | 'reply-watch'
 
 /**
  * One Cloudflare cron trigger fires every 15 minutes; this decides which jobs
@@ -18,6 +18,7 @@ export type JobName = 'plan-fetch' | 'search-discovery' | 'feeds' | 'score' | 'd
  *   03:00        retention
  *   05:00        insights (pooled subreddit stats, rules from pinned posts)
  *   :15 hourly   trials (end expired Pro trials, "ending soon" emails)
+ *   :45 hourly   reply-watch (responses under replies founders posted)
  */
 export function dueJobs(at: Date): JobName[] {
   const hour = at.getUTCHours()
@@ -33,5 +34,6 @@ export function dueJobs(at: Date): JobName[] {
   if (slot === 0 && hour === 3) jobs.push('retention')
   if (slot === 0 && hour === 5) jobs.push('insights')
   if (slot === 15) jobs.push('trials')
+  if (slot === 45) jobs.push('reply-watch')
   return jobs
 }

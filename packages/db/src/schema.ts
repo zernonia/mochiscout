@@ -199,6 +199,8 @@ export const threadScores = sqliteTable(
     /** The founder's posted reply, for survival tracking. */
     replyUrl: text('reply_url'),
     replyStatus: text('reply_status', { enum: ['live', 'removed', 'unknown'] }),
+    /** The founder's reply as it reads on the site, captured by the reply watch. */
+    replyText: text('reply_text'),
     replyCheckedAt: integer('reply_checked_at', { mode: 'timestamp' }),
     /** Short code in the tracking link (?ref=ms_<code>) for this thread. */
     refCode: text('ref_code'),
@@ -251,6 +253,35 @@ export const drafts = sqliteTable('drafts', {
   check: text('check_json', { mode: 'json' }),
   createdAt: createdAt(),
 })
+
+/**
+ * Comments people wrote under a founder's posted reply, found by the reply
+ * watch, so the founder can answer while the conversation is warm.
+ */
+export const replyResponses = sqliteTable(
+  'reply_responses',
+  {
+    projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+    threadId: text('thread_id').notNull().references(() => threads.id, { onDelete: 'cascade' }),
+    /** Reddit comment fullname (t1_…), HN item id or Bluesky at:// URI. */
+    id: text('id').notNull(),
+    author: text('author'),
+    body: text('body').notNull(),
+    /** Rebuilt from parsed parts, safe to render. */
+    url: text('url').notNull(),
+    postedAt: integer('posted_at', { mode: 'timestamp' }),
+    foundAt: integer('found_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+    status: text('status', { enum: ['new', 'done'] }).notNull().default('new'),
+    /** When an email or Slack/Discord message went out about it. */
+    notifiedAt: integer('notified_at', { mode: 'timestamp' }),
+    /** AI-drafted answer the founder can edit and post. */
+    followUp: text('follow_up'),
+  },
+  t => [
+    primaryKey({ columns: [t.projectId, t.id] }),
+    index('reply_responses_project_status_idx').on(t.projectId, t.status, t.foundAt),
+  ],
+)
 
 export const trackedPosts = sqliteTable('tracked_posts', {
   id: text('id').primaryKey(),
