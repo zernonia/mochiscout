@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckIcon, CodeIcon, GaugeIcon, HandIcon, MessageSquareTextIcon, ScaleIcon, ShieldCheckIcon, SproutIcon } from '@lucide/vue'
+import { BellRingIcon, CheckIcon, ClockIcon, CodeIcon, HandIcon, RadarIcon, ScaleIcon, SendIcon, SproutIcon, TrendingUpIcon } from '@lucide/vue'
 
 const { edition } = useRuntimeConfig().public
 
@@ -11,7 +11,7 @@ if (edition !== 'cloud') {
 
 const { data: catalogue } = await useFetch('/api/billing/plans', { immediate: edition === 'cloud' })
 
-const seoDescription = 'Find customers on Reddit, Hacker News, Bluesky and X. Mochiscout scores every post for buying intent, flags archived threads, drafts a reply that fits the thread and the subreddit rules, and leaves posting to you. Free plan, open source.'
+const seoDescription = 'Find customers on Reddit, Hacker News, Bluesky and X. Mochiscout watches the communities your buyers use, scores every new post for buying intent, alerts you to hot leads and drafts replies that fit the subreddit rules, for you to post from your own account. Free plan, open source.'
 useMarketingSeo({
   title: 'Mochiscout: find customers on Reddit, Hacker News, Bluesky and X',
   description: seoDescription,
@@ -22,10 +22,12 @@ const sources = ['reddit', 'hn', 'bluesky', 'x'] as const
 const heroFacts = ['No card needed', 'Free plan after the trial', 'You always post yourself']
 
 const differentiators = [
-  { icon: GaugeIcon, title: 'Leads, not mentions', body: 'Every post gets a buying-intent score and a reason. Fresh, uncrowded threads rise to the top; archived, locked and removed ones are flagged so you never draft for a dead thread.' },
-  { icon: MessageSquareTextIcon, title: 'Replies that fit the thread', body: 'Drafts read the full post and the replies so far, say fairly how you differ from a competitor someone already suggested, and learn your voice from what you post.' },
-  { icon: SproutIcon, title: 'Gets better as you use it', body: 'Reply, save or dismiss with a reason, and scoring learns what fits your product. Hot leads can email you within the hour.' },
-  { icon: ShieldCheckIcon, title: 'Won\'t disappear on you', body: 'No Reddit Data API to lose, and the code is open source. If the hosted service ever changed, you could run your own copy.' },
+  { icon: RadarIcon, title: 'Watching while you work', body: 'Busy subreddits are checked every 15 minutes, quieter ones every few hours, plus Hacker News, Bluesky and X. Every new post is scored for buying intent, with the reason.' },
+  { icon: BellRingIcon, title: 'Hot leads, within the hour', body: 'When someone is clearly looking for what you sell, you hear about it by email, Slack or Discord, while the thread is still fresh and uncrowded.' },
+  { icon: TrendingUpIcon, title: 'Threads that rank on Google', body: 'Threads that show up in Google searches are flagged. A helpful reply there keeps sending visitors long after the thread goes quiet.' },
+  { icon: SendIcon, title: 'Replies ready before you are', body: 'Hot leads get a reply drafted automatically, from the whole thread and your product facts, checked against the subreddit\'s rules. They wait in one queue: read, tweak, post.' },
+  { icon: ClockIcon, title: 'Know when to post', body: 'See when each subreddit is most active, in your time zone, before you publish a post of your own.' },
+  { icon: SproutIcon, title: 'Learns what you want', body: 'Reply, save or dismiss with a reason, and scoring learns what fits your product. Drafts learn your voice from the replies you actually post.' },
 ]
 
 const pains = [
@@ -44,11 +46,11 @@ const asks = [
 const steps = [
   { title: 'Paste your URL', body: 'We read your page to learn what it does and who it\'s for, then suggest keywords, competitors and the communities your buyers use.' },
   { title: 'Open your feed', body: 'New posts from Reddit, Hacker News, Bluesky and X are scored for buying intent. Fresh, uncrowded ones rise to the top, archived ones are flagged, and hot leads can email you.' },
-  { title: 'Reply in a click', body: 'Get an AI-drafted reply that has read the whole thread, edit it, then copy it in and post it yourself. It learns your voice and what you care about from what you reply to and dismiss.' },
+  { title: 'Post in a minute', body: 'Open Today: the best threads already have a reply drafted and checked against the subreddit\'s rules. Tweak it, copy it, and post it from your own account.' },
 ]
 
 const principles = [
-  { icon: HandIcon, title: 'You post. Always.', body: 'No auto-posting, auto-commenting, votes or DMs. Mochiscout finds the thread and drafts a reply; you edit it and post it from your own account.' },
+  { icon: HandIcon, title: 'Your account, your voice', body: 'No auto-posting, no borrowed accounts, no DMs. Replies come from you, so they stay up and the reputation you build is yours.' },
   { icon: ScaleIcon, title: 'Rules first', body: 'Each subreddit\'s promotion rules, karma and account-age limits are checked before you post, with per-sub cooldowns and a daily promo cap.' },
   { icon: CodeIcon, title: 'Open source', body: 'AGPL-licensed. Run it free on your own Cloudflare account, or let us host it for you.' },
 ]
@@ -61,7 +63,9 @@ const openSource = [
 
 const faqs = [
   { q: 'Will this get my account banned?', a: 'It is built to prevent that. Every draft is checked against the subreddit\'s rules, promotional posts are rate-limited per community and per day, and nothing is ever posted for you.' },
-  { q: 'Does Mochiscout post for me?', a: 'No. It never posts, comments, votes or sends messages. You copy the reply and post it yourself, so it stays in your voice.' },
+  { q: 'Does Mochiscout post for me?', a: 'No. It never posts, comments, votes or sends messages. It does everything up to that point: finds the thread, drafts the reply, checks the rules and tells you when a subreddit is busiest. Posting it yourself takes about a minute.' },
+  { q: 'Why not post for me?', a: 'Comments from bots or from accounts that aren\'t yours get removed and can get you banned, and when readers notice, they remember the brand. A reply from your own account, in your words, stays up and keeps working for you.' },
+  { q: 'How quickly will I see new threads?', a: 'Busy subreddits are checked every 15 minutes and quieter ones every few hours; new posts are scored as they arrive. On Solo and Pro, hot leads are emailed (or sent to Slack or Discord) and get a reply drafted automatically.' },
   { q: 'Which sites are covered?', a: 'Reddit on every plan. Hacker News and Bluesky on Solo and Pro, and X on Pro.' },
   { q: 'Is there a free plan?', a: 'Yes. Every new account gets 14 days of Pro free, no card. After that you keep a free plan with one project, three watched subreddits and a weekly digest, or pick Solo or Pro. Self-hosting is free with no limits.' },
   { q: 'I used GummySearch. Is this a replacement?', a: 'For finding customers, yes. GummySearch shuts down on December 1, 2026. Mochiscout finds the threads where people ask for what you sell, on Reddit and three other sites, without the Reddit Data API that GummySearch lost.' },
@@ -115,7 +119,7 @@ useJsonLd([
             for your product.
           </h1>
           <p class="max-w-2xl text-balance text-lg text-muted-foreground sm:text-xl">
-            Mochiscout watches Reddit, Hacker News, Bluesky and X for people who need what you built, scores how ready they are to buy, and drafts a reply you post yourself.
+            Mochiscout watches Reddit, Hacker News, Bluesky and X around the clock, flags the people ready to buy, and drafts the reply. You read it and post it from your own account.
           </p>
           <LandingCta source="hero" secondary="how" />
           <ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
@@ -196,10 +200,10 @@ useJsonLd([
       <section class="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-24">
         <div class="flex max-w-2xl flex-col gap-3">
           <p class="text-sm font-medium text-brand-foreground">Why Mochiscout</p>
-          <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">More than keyword alerts.</h2>
-          <p class="text-muted-foreground">Alert tools tell you a word appeared. Mochiscout tells you who is ready to buy, whether you can still reply, and what to say.</p>
+          <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">It does the legwork. You keep the voice.</h2>
+          <p class="text-muted-foreground">Mochiscout watches, scores and drafts around the clock. What's left for you is the part that should be yours: reading the thread and pressing Post.</p>
         </div>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div v-for="d in differentiators" :key="d.title" class="flex flex-col gap-2 rounded-2xl border p-5">
             <span class="mb-1 flex size-9 items-center justify-center rounded-xl bg-brand-soft text-brand-foreground"><component :is="d.icon" class="size-4.5" /></span>
             <h3 class="font-semibold">{{ d.title }}</h3>

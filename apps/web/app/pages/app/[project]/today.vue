@@ -29,7 +29,7 @@ async function enableAutoDrafts() {
   try {
     await $fetch(`/api/projects/${projectId.value}/auto-reply`, { method: 'PUT', body: { enabled: true } })
     if (today.value) today.value.autoDrafts.on = true
-    toast.success('New threads will get a drafted reply within 15 minutes.')
+    toast.success('Hot threads will get a drafted reply within 15 minutes.')
   }
   catch (error) {
     if (!isPlanLimit(error)) toast.error(apiErrorMessage(error, 'Could not turn on automatic drafts'))
@@ -130,8 +130,8 @@ function time(d: string | Date) {
       <div v-if="!today.ready.length" class="flex flex-col gap-3 rounded-2xl border border-dashed border-brand/25 bg-brand-soft/40 p-4 text-sm sm:flex-row sm:items-center">
         <SparklesIcon class="size-5 shrink-0 text-brand" />
         <p class="flex-1 text-pretty text-muted-foreground">
-          <template v-if="today.autoDrafts.on">New threads get a reply drafted within 15 minutes of being found, and wait here for you to post.</template>
-          <template v-else>Turn on automatic drafts and new threads will wait here with a reply already written. You still read and post each one yourself.</template>
+          <template v-if="today.autoDrafts.on">Hot threads get a reply drafted within 15 minutes of being found, and wait here for you to post.</template>
+          <template v-else>Turn on automatic drafts and hot threads will wait here with a reply already written. You still read and post each one yourself.</template>
         </p>
         <Button v-if="!today.autoDrafts.on" size="sm" class="shrink-0" :loading="enablingDrafts" @click="enableAutoDrafts">Turn on</Button>
       </div>

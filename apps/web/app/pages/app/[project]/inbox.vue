@@ -70,7 +70,7 @@ async function setAutoReply(enabled: boolean) {
   try {
     await $fetch(`/api/projects/${projectId.value}/auto-reply`, { method: 'PUT', body: { enabled } })
     if (project.value) project.value.autoReply = enabled
-    toast.success(enabled ? 'New threads will get a drafted reply within 15 minutes.' : 'Auto-drafting is off.')
+    toast.success(enabled ? 'Hot threads will get a drafted reply within 15 minutes.' : 'Auto-drafting is off.')
   }
   catch (error) {
     autoReply.value = !enabled
