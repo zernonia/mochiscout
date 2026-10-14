@@ -1,8 +1,12 @@
-import { draftFollowUpForResponse, QuotaError, REPLY_DIRECTION_MAX } from '@mochiscout/core'
+import { DM_DIRECTION, draftFollowUpForResponse, QuotaError, REPLY_DIRECTION_MAX } from '@mochiscout/core'
 import { LlmParseError, LlmRefusalError } from '@mochiscout/llm'
 import { z } from 'zod'
 
-const Body = z.object({ direction: z.string().max(REPLY_DIRECTION_MAX).optional() }).optional()
+const Body = z.object({
+  direction: z.string().max(REPLY_DIRECTION_MAX).optional(),
+  /** They asked to be messaged: write a private message instead of a public reply. */
+  dm: z.boolean().optional(),
+}).optional()
 
 /** Draft the founder's answer to someone who replied to them. Counts as one AI draft. */
 export default defineEventHandler(async (event) => {
@@ -12,7 +16,7 @@ export default defineEventHandler(async (event) => {
   const llm = getLlm(getEnv(event))
   if (!llm) throw createError({ statusCode: 503, statusMessage: 'No LLM key configured. Set ANTHROPIC_API_KEY to draft replies.' })
   try {
-    const draft = await draftFollowUpForResponse(getDb(event), llm, project, responseId, { direction: body?.direction?.trim() || null })
+    const draft = await draftFollowUpForResponse(getDb(event), llm, project, responseId, { direction: body?.dm ? DM_DIRECTION : body?.direction?.trim() || null })
     if (!draft) throw createError({ statusCode: 404, statusMessage: 'Response not found' })
     track(event, user.id, 'follow_up_drafted', { project_id: project.id })
     return draft

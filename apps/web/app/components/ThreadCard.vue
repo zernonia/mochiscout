@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookmarkIcon, CheckIcon, ChevronDownIcon, CircleAlertIcon, CircleHelpIcon, CopyIcon, ExternalLinkIcon, FlameIcon, LightbulbIcon, LinkIcon, LockIcon, MessageSquareIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TargetIcon, TrendingUpIcon, XIcon } from '@lucide/vue'
+import { BookmarkIcon, CheckIcon, ChevronDownIcon, CircleAlertIcon, CircleHelpIcon, CopyIcon, ExternalLinkIcon, FlameIcon, LightbulbIcon, LinkIcon, LockIcon, MailIcon, MessageSquareIcon, RefreshCwIcon, RotateCcwIcon, SparklesIcon, TargetIcon, TrendingUpIcon, UsersIcon, XIcon } from '@lucide/vue'
 import { useDebounceFn } from '@vueuse/core'
 import { toast } from '@/lib/toast'
 
@@ -31,6 +31,11 @@ const props = defineProps<{
     dismissReason?: DismissReason | null
     replyUrl?: string | null
     replyStatus?: 'live' | 'removed' | 'unknown' | null
+    author?: string | null
+    /** Commenters who want the same thing. */
+    alsoAsking?: { author: string | null, text: string, url?: string }[]
+    /** The author invited private messages, and the community doesn't discourage them. */
+    openToDms?: boolean
   }
   status?: Status
 }>()
@@ -119,6 +124,44 @@ function openDirection() {
     const box = el instanceof HTMLTextAreaElement ? el : el?.querySelector?.('textarea')
     box?.focus()
   })
+}
+
+// --- A private message, only when the author invited one. Not stored: copied and sent by the founder.
+const dm = ref('')
+const draftingDm = ref(false)
+const dmCopied = ref(false)
+async function draftDm() {
+  draftingDm.value = true
+  try {
+    const res = await $fetch<{ dm: string }>(`${threadPath.value}/dm`, { method: 'POST' })
+    dm.value = res.dm
+  }
+  catch (error) {
+    if (!isPlanLimit(error)) toast.error(apiErrorMessage(error, 'Could not draft a message'))
+  }
+  finally {
+    draftingDm.value = false
+  }
+}
+const handle = (name: string | null) => !name ? 'Someone' : props.thread.platform === 'reddit' ? `u/${name}` : props.thread.platform === 'hn' ? name : `@${name}`
+// Where to send it: Reddit's compose page for the author; their profile elsewhere.
+const dmLink = computed(() => {
+  const a = props.thread.author
+  if (!a) return props.thread.url
+  if (props.thread.platform === 'reddit') return /^[\w-]{3,20}$/.test(a) ? `https://www.reddit.com/message/compose/?to=${a}` : props.thread.url
+  if (props.thread.platform === 'bluesky') return /^[\w.:-]+$/.test(a) ? `https://bsky.app/profile/${a}` : props.thread.url
+  if (props.thread.platform === 'x') return /^\w{1,15}$/.test(a) ? `https://x.com/${a}` : props.thread.url
+  return props.thread.url
+})
+async function copyDmAndOpen() {
+  try {
+    await navigator.clipboard.writeText(dm.value)
+    dmCopied.value = true
+  }
+  catch {
+    toast.error('Could not copy. Select the text and copy it yourself.')
+  }
+  window.open(dmLink.value, '_blank', 'noopener')
 }
 
 async function draftReply() {
@@ -235,6 +278,7 @@ async function copyAndOpen() {
         <span v-if="closed" class="inline-flex items-center gap-1 rounded-full bg-neutral-500/12 px-2 py-0.5 font-medium text-neutral-700 dark:text-neutral-300"><LockIcon class="size-3" /> {{ closedLabel[state] }}</span>
         <span v-if="status === 'dismissed' && thread.dismissReason" class="rounded-full border px-2 py-0.5">{{ reasonLabel[thread.dismissReason] }}</span>
         <span v-if="thread.searchRankFlag" class="inline-flex items-center gap-1 text-sky-700 dark:text-sky-400"><TrendingUpIcon class="size-3" /> Ranks in Google</span>
+        <span v-if="thread.openToDms && !closed" class="inline-flex items-center gap-1 rounded-full bg-emerald-500/12 px-2 py-0.5 font-medium text-emerald-700 dark:text-emerald-400" title="The author asked people to message them"><MailIcon class="size-3" /> Open to DMs</span>
       </div>
 
       <a :href="thread.url" target="_blank" rel="noopener" class="text-[15px] leading-snug font-medium text-pretty hover:underline">{{ thread.title }}</a>
@@ -242,6 +286,17 @@ async function copyAndOpen() {
       <p v-if="thread.competitorMentions?.length && !closed" class="text-xs text-muted-foreground">
         Already suggested in the replies: <span class="font-medium text-foreground">{{ thread.competitorMentions.join(', ') }}</span>. Your draft will say how you differ.
       </p>
+
+      <div v-if="thread.alsoAsking?.length && !closed" class="flex flex-col gap-2 rounded-xl border border-dashed p-3 text-sm">
+        <p class="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <UsersIcon class="size-3.5" /> {{ thread.alsoAsking.length }} {{ thread.alsoAsking.length === 1 ? 'other person wants' : 'others want' }} this too. Reply to them as well.
+        </p>
+        <div v-for="c in thread.alsoAsking" :key="`${c.author}-${c.text}`" class="flex min-w-0 items-baseline gap-2">
+          <span class="shrink-0 font-medium">{{ handle(c.author) }}</span>
+          <span class="min-w-0 flex-1 truncate text-muted-foreground">{{ c.text }}</span>
+          <a :href="c.url ?? thread.url" target="_blank" rel="noopener" class="shrink-0 text-xs font-medium text-brand-foreground hover:underline">Reply</a>
+        </div>
+      </div>
 
       <div v-if="(thread.reason || thread.replyAngle) && !closed" class="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
         <div v-if="thread.reason" class="flex gap-2.5 rounded-xl bg-muted/70 p-3">
@@ -274,6 +329,16 @@ async function copyAndOpen() {
           </div>
         </div>
         <Textarea :model-value="reply" rows="5" class="bg-background text-sm" aria-label="Reply draft" @update:model-value="(v: string | number) => onEdit(String(v))" />
+      </div>
+
+      <!-- Private message, when the author invited one -->
+      <div v-if="dm && !closed" class="flex flex-col gap-2 rounded-xl border border-emerald-500/25 bg-emerald-50/60 p-3 dark:bg-emerald-500/5">
+        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-800 dark:text-emerald-300"><MailIcon class="size-3.5" /> Message to {{ handle(thread.author ?? null) }} · they asked for DMs, edit before sending</span>
+        <Textarea v-model="dm" rows="4" class="bg-background text-sm" aria-label="Private message draft" />
+        <div class="flex flex-wrap gap-2">
+          <Button size="sm" variant="outline" @click="copyDmAndOpen"><CheckIcon v-if="dmCopied" /><CopyIcon v-else /> {{ dmCopied ? 'Copied, opening' : 'Copy & open messages' }}</Button>
+          <Button size="sm" variant="ghost" :loading="draftingDm" @click="draftDm"><RefreshCwIcon /> Redraft</Button>
+        </div>
       </div>
 
       <!-- Steer the (re)draft -->
@@ -332,10 +397,12 @@ async function copyAndOpen() {
             <CheckIcon v-if="copied" /><CopyIcon v-else /> {{ copied ? 'Copied, opening thread' : 'Copy & open thread' }}
           </Button>
           <Button size="sm" variant="outline" :loading="copyingLink" @click="copyTrackingLink"><LinkIcon /> Copy tracking link</Button>
+          <Button v-if="thread.openToDms && !dm" size="sm" variant="outline" :loading="draftingDm" @click="draftDm"><MailIcon /> Draft a DM</Button>
         </template>
         <template v-else>
           <Button v-if="status !== 'replied'" size="sm" :loading="drafting" @click="draftReply"><SparklesIcon /> Draft reply</Button>
           <Button v-if="status !== 'replied' && !drafting && !directing" size="sm" variant="ghost" @click="openDirection">With direction…</Button>
+          <Button v-if="thread.openToDms && !dm" size="sm" variant="outline" :loading="draftingDm" @click="draftDm"><MailIcon /> Draft a DM</Button>
           <Button as-child size="sm" variant="outline">
             <a :href="thread.url" target="_blank" rel="noopener"><ExternalLinkIcon /> Open thread</a>
           </Button>
