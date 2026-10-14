@@ -37,7 +37,7 @@ const icons = { 'reddit-lead-finder': RadarIcon, 'subreddit-rules': ShieldCheckI
       </div>
       <section class="flex flex-col items-center gap-5 rounded-3xl bg-neutral-100 px-6 py-12 text-center dark:bg-neutral-900">
         <h2 class="text-balance text-2xl font-semibold tracking-tight">Want this every 15 minutes, scored, with replies drafted?</h2>
-        <p class="max-w-xl text-muted-foreground">Mochiscout watches Reddit, Hacker News, Bluesky and X for people asking for what you sell, checks each community's rules and drafts a reply you post yourself.</p>
+        <p class="max-w-xl text-muted-foreground">Mochiscout watches Reddit, Hacker News and Bluesky for people asking for what you sell, checks each community's rules and drafts a reply you post yourself.</p>
         <LandingCta source="tools" />
       </section>
     </main>

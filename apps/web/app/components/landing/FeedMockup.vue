@@ -84,7 +84,7 @@ const nav = [
             <div class="text-sm font-semibold">Today</div>
             <div class="text-xs text-muted-foreground">3 threads worth answering · 1 post idea</div>
           </div>
-          <span class="hidden rounded-full border px-2.5 py-1 text-[11px] text-muted-foreground sm:inline">Reddit · HN · Bluesky · X</span>
+          <span class="hidden rounded-full border px-2.5 py-1 text-[11px] text-muted-foreground sm:inline">Reddit · HN · Bluesky</span>
         </div>
         <ul class="divide-y">
           <li v-for="p in posts" :key="p.who" class="flex gap-3 px-4 py-4 sm:px-5">

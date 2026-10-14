@@ -27,7 +27,7 @@ export const FEATURES = [
 export type FeatureKey = typeof FEATURES[number]['key']
 
 export const MOCHISCOUT: Record<FeatureKey, Cell> = {
-  platforms: { mark: 'yes', note: 'Reddit, Hacker News, Bluesky, X' },
+  platforms: { mark: 'yes', note: 'Reddit, Hacker News, Bluesky (X coming soon)' },
   finding: { mark: 'yes', note: 'AI buying-intent score on every post, from your product URL' },
   drafts: { mark: 'yes', note: 'Reads the whole thread; learns your voice' },
   postsForYou: { mark: 'no', note: 'Never. You post from your own account' },
@@ -81,7 +81,7 @@ export const COMPETITORS: Competitor[] = [
     verified: '2026-10-14',
     notice: 'GummySearch stopped taking new sign-ups and renewals on November 30, 2025. It shuts down entirely on December 1, 2026, and all user data is deleted then. Download anything you need before that date.',
     title: 'Best GummySearch alternative (2026): Mochiscout',
-    description: 'GummySearch shuts down on December 1, 2026. Mochiscout finds the Reddit threads where people ask for what you sell, plus Hacker News, Bluesky and X, without the Reddit Data API. Free plan, open source.',
+    description: 'GummySearch shuts down on December 1, 2026. Mochiscout finds the Reddit threads where people ask for what you sell, plus Hacker News and Bluesky, without the Reddit Data API. Free plan, open source.',
     h1: 'The GummySearch alternative for finding customers on Reddit',
     intro: 'GummySearch helped more than 135,000 founders and marketers understand their audience on Reddit. It closed to new customers because it could not reach a commercial agreement under Reddit\'s Data API policies, and it shuts down on December 1, 2026. Mochiscout covers the part of that workflow that turns into customers: finding the threads where people ask for what you built, and helping you answer them well.',
     theirPitch: 'Reddit audience research: subreddit audiences, themes like Pain Points and Solution Requests, and keyword tracking.',
@@ -101,7 +101,7 @@ export const COMPETITORS: Competitor[] = [
     differences: [
       { title: 'It doesn\'t depend on the Reddit Data API', body: 'GummySearch closed because its API access couldn\'t be licensed. Mochiscout reads public feeds politely and uses web search for discovery, so there is no API license to lose. Self-hosters run it on their own account and IP.' },
       { title: 'From research to replies', body: 'Instead of a search box, you get an inbox of posts scored for buying intent, a drafted reply that has read the whole thread, and a check against the subreddit\'s rules before you post.' },
-      { title: 'More than Reddit', body: 'The same feed covers Hacker News, Bluesky and X, where many of the same buyers ask the same questions.' },
+      { title: 'More than Reddit', body: 'The same feed covers Hacker News and Bluesky, where many of the same buyers ask the same questions.' },
       { title: 'Open source, so it can\'t disappear on you', body: 'Mochiscout is AGPL-licensed. If the hosted service ever changed, you could keep running it yourself.' },
     ],
     mapping: [
@@ -166,7 +166,7 @@ export const COMPETITORS: Competitor[] = [
       { title: 'Your account, your words', body: 'A recommendation from an account with no history in your niche, boosted with upvotes, is the kind of activity Reddit\'s content policy prohibits as content and vote manipulation. Mochiscout never posts, votes or DMs. You reply from your own account, which builds a reputation that keeps working for you.' },
       { title: 'Readers trust it', body: 'Replies that say "I built this" and actually answer the question convert, and they don\'t disappear in the next spam sweep. Drafts lead with a useful answer and disclose that you made the product.' },
       { title: 'A tenth of the price', body: 'Bazzly is $199 a month per product, with 170 credits (a comment through its accounts costs 10). Mochiscout Solo is $19 a month, and there is a free plan.' },
-      { title: 'Beyond Reddit', body: 'Hacker News, Bluesky and X in the same inbox, with subreddit rule checks and removal tracking on everything you post.' },
+      { title: 'Beyond Reddit', body: 'Hacker News and Bluesky in the same inbox, with subreddit rule checks and removal tracking on everything you post.' },
     ],
     theyHave: [
       { title: 'Done for you', body: 'It can post comments for you through its own warmed-up Reddit accounts, so you never open Reddit.' },
@@ -199,7 +199,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://f5bot.com',
     verified: '2026-10-14',
     title: 'F5Bot alternative with AI buying-intent scoring: Mochiscout',
-    description: 'F5Bot emails you every keyword mention on Reddit and Hacker News. Mochiscout scores each post for buying intent, adds Bluesky and X, and drafts a reply you post yourself. Free plan available.',
+    description: 'F5Bot emails you every keyword mention on Reddit and Hacker News. Mochiscout scores each post for buying intent, adds Bluesky, and drafts a reply you post yourself. Free plan available.',
     h1: 'An F5Bot alternative that only shows posts worth answering',
     intro: 'F5Bot is the free tool most founders start with: pick keywords, get an email whenever they appear on Reddit, Hacker News or Lobsters. It is great at what it does. The catch is volume: a keyword match is not a buyer, and the inbox fills up with noise.',
     theirPitch: 'Free keyword alerts for Reddit, Hacker News and Lobsters, by email.',
@@ -219,7 +219,7 @@ export const COMPETITORS: Competitor[] = [
     differences: [
       { title: 'Intent, not keyword matches', body: 'Mochiscout reads every matching post and scores whether the person is actually looking for something like your product, with a reason. You see the 5% worth answering, not every mention.' },
       { title: 'No keyword list to maintain', body: 'Paste your URL and Mochiscout suggests keywords, competitors and around 30 phrases your buyers use.' },
-      { title: 'Bluesky and X too', body: 'The same buyers ask on Bluesky and X; Mochiscout covers both alongside Reddit and Hacker News.' },
+      { title: 'Bluesky too', body: 'The same buyers ask on Bluesky; Mochiscout covers it alongside Reddit and Hacker News.' },
       { title: 'Help with the reply', body: 'Draft a reply that has read the thread, checked against the subreddit\'s rules, then post it yourself.' },
     ],
     theyHave: [
@@ -250,7 +250,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://syften.com',
     verified: '2026-10-14',
     title: 'Syften alternative with AI intent scoring and reply drafts: Mochiscout',
-    description: 'Syften monitors keywords across dozens of communities. Mochiscout scores Reddit, Hacker News, Bluesky and X posts for buying intent, includes X at no extra cost and drafts replies, from $19/month.',
+    description: 'Syften monitors keywords across dozens of communities. Mochiscout scores Reddit, Hacker News and Bluesky posts for buying intent and drafts replies, from $19/month.',
     h1: 'A Syften alternative for finding buyers, not mentions',
     intro: 'Syften is a mature keyword monitor that covers more communities than almost anyone, from Reddit and Hacker News to Slack groups, GitHub and newsletters. You write the filters and it alerts you. Mochiscout is narrower and goes further on the part that turns into customers.',
     theirPitch: 'Keyword monitoring and alerts across many online communities.',
@@ -299,7 +299,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://replyguy.com',
     verified: '2026-10-14',
     title: 'ReplyGuy alternative that never posts for you: Mochiscout',
-    description: 'ReplyGuy can auto-reply on your behalf. Mochiscout finds the same buying-intent threads on Reddit and X, drafts a reply that fits the thread and the subreddit rules, and leaves posting to you.',
+    description: 'ReplyGuy can auto-reply on your behalf. Mochiscout finds the same buying-intent threads on Reddit, drafts a reply that fits the thread and the subreddit rules, and leaves posting to you.',
     h1: 'A ReplyGuy alternative that keeps your accounts safe',
     intro: 'ReplyGuy finds places to mention your product on Reddit and X and, on its reply plans, can post replies on Reddit for you through purchased accounts. Automated promotional replies are exactly what Reddit\'s moderators and spam filters look for. Mochiscout takes the opposite approach.',
     theirPitch: 'AI that finds places to mention your product online, with optional auto-replies.',
@@ -345,7 +345,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://www.subredditsignals.com',
     verified: '2026-10-14',
     title: 'Mochiscout vs Subreddit Signals: Reddit lead tools compared',
-    description: 'Subreddit Signals and Mochiscout both rank Reddit posts by buyer intent and draft replies. Mochiscout adds Hacker News, Bluesky and X, subreddit rule checks, a free plan and open source, from $19/month.',
+    description: 'Subreddit Signals and Mochiscout both rank Reddit posts by buyer intent and draft replies. Mochiscout adds Hacker News and Bluesky, subreddit rule checks, a free plan and open source, from $19/month.',
     h1: 'Mochiscout vs Subreddit Signals',
     intro: 'Both tools find Reddit posts from likely buyers, rank them by intent and draft a reply in your voice that you post yourself. Here is where they differ.',
     theirPitch: 'Reddit-only customer discovery with intent ranking and voice-profile drafts.',
@@ -363,7 +363,7 @@ export const COMPETITORS: Competitor[] = [
       api: { mark: 'unknown' },
     },
     differences: [
-      { title: 'Four platforms', body: 'Hacker News, Bluesky and X alongside Reddit, in one ranked inbox.' },
+      { title: 'Three platforms', body: 'Hacker News and Bluesky alongside Reddit, in one ranked inbox.' },
       { title: 'Rules and removal tracking', body: 'Promotion rules, cooldowns and a daily cap are checked before you post; the tracker tells you if a post was removed.' },
       { title: 'No lead tokens', body: 'Plans limit projects and subreddits, not how many leads you may look at.' },
       { title: 'Free plan, lower price, open source', body: 'Start free, Solo is $19/month, and you can self-host the AGPL code.' },
@@ -391,7 +391,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://redship.io',
     verified: '2026-10-14',
     title: 'Mochiscout vs RedShip: a RedShip alternative beyond Reddit',
-    description: 'RedShip and Mochiscout both score Reddit threads and suggest replies you post yourself. Mochiscout adds Hacker News, Bluesky and X, rule checks before you post, removal tracking and a free plan, from $19/month.',
+    description: 'RedShip and Mochiscout both score Reddit threads and suggest replies you post yourself. Mochiscout adds Hacker News and Bluesky, rule checks before you post, removal tracking and a free plan, from $19/month.',
     h1: 'Mochiscout vs RedShip',
     intro: 'RedShip is a polished Reddit monitor: it scores threads for relevance, suggests replies and adds an SEO angle, with weekly reports on Reddit threads that rank in Google and on AI-search citations. Mochiscout overlaps on the core loop and differs on reach, safety and price.',
     theirPitch: 'Reddit monitoring with AI relevance scoring, reply suggestions, SEO and AI-visibility reports.',
@@ -409,7 +409,7 @@ export const COMPETITORS: Competitor[] = [
       api: { mark: 'yes', note: 'REST API and MCP; webhooks on Company' },
     },
     differences: [
-      { title: 'Four platforms, not one', body: 'The same buyers ask on Hacker News, Bluesky and X. Mochiscout puts all four in one ranked inbox.' },
+      { title: 'Three platforms, not one', body: 'The same buyers ask on Hacker News and Bluesky. Mochiscout puts all three in one ranked inbox.' },
       { title: 'Rules checked inside the workflow', body: 'Promotion rules, cooldowns and a daily cap are checked on every draft before you post, and the tracker tells you if a post or reply was removed.' },
       { title: 'No keyword list to babysit', body: 'Mochiscout builds its search from your landing page and suggests around 30 buyer phrases. RedShip plans cap tracked keywords at 10 or 30.' },
       { title: 'Free to start, $19 monthly', body: 'A free plan, and Solo at $19 billed monthly, against RedShip\'s $29 billed yearly.' },
@@ -440,7 +440,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://redreach.ai',
     verified: '2026-10-14',
     title: 'Redreach alternative without DM automation: Mochiscout',
-    description: 'Redreach finds high-intent Reddit threads and automates bulk DMs to Reddit users. Mochiscout finds buyers on Reddit, Hacker News, Bluesky and X, drafts replies you post yourself, and never DMs anyone.',
+    description: 'Redreach finds high-intent Reddit threads and automates bulk DMs to Reddit users. Mochiscout finds buyers on Reddit, Hacker News and Bluesky, drafts replies you post yourself, and never DMs anyone.',
     h1: 'A Redreach alternative that never DMs on your behalf',
     intro: 'Redreach finds Reddit threads with purchase intent, especially ones that rank on Google, and suggests replies you post from your own account. Its plans also send automated bulk DMs to Reddit users, through a Chrome extension. Mochiscout shares the first half of that philosophy and stops there.',
     theirPitch: 'Reddit lead generation focused on Google-ranking threads, with AI-guided replies and automated bulk DMs.',
@@ -460,7 +460,7 @@ export const COMPETITORS: Competitor[] = [
     differences: [
       { title: 'No DMs, ever', body: 'Unsolicited DMs are one of the fastest ways to get a Reddit account suspended, and they annoy the people you want as customers. Mochiscout only helps you reply in public.' },
       { title: 'Rules and removal tracking', body: 'Every draft is checked against the subreddit\'s promotion rules, cooldowns and a daily cap, and the tracker tells you if your post or reply was removed.' },
-      { title: 'Beyond Reddit', body: 'Hacker News, Bluesky and X in the same inbox.' },
+      { title: 'Beyond Reddit', body: 'Hacker News and Bluesky in the same inbox.' },
       { title: 'A free plan', body: 'Start free with one project and three subreddits, then $19 or $49 a month. Self-hosting is free. Redreach starts with a $12 three-day pass, then $19 a month.' },
     ],
     theyHave: [
@@ -489,7 +489,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://www.replyagent.ai',
     verified: '2026-10-14',
     title: 'ReplyAgent alternative where you post the reply yourself: Mochiscout',
-    description: 'ReplyAgent can post Reddit comments for you from aged accounts it manages, at $4 a comment on top of a $79/month plan. Mochiscout finds buyers on Reddit, Hacker News, Bluesky and X and drafts replies you post from your own account.',
+    description: 'ReplyAgent can post Reddit comments for you from aged accounts it manages, at $4 a comment on top of a $79/month plan. Mochiscout finds buyers on Reddit, Hacker News and Bluesky and drafts replies you post from your own account.',
     h1: 'A ReplyAgent alternative where you post the reply yourself',
     intro: 'ReplyAgent finds Reddit posts that rank on Google, writes comments with AI, and sells a service that posts them for you from aged Reddit accounts it manages. Mochiscout does the finding and the drafting, and leaves the posting to you, from your own account.',
     theirPitch: 'Reddit marketing aimed at Google-ranking threads, with AI-written comments and a paid service that posts them from managed, aged accounts.',
@@ -509,7 +509,7 @@ export const COMPETITORS: Competitor[] = [
     differences: [
       { title: 'Your account, your words', body: 'ReplyAgent\'s posting service comments from aged accounts it manages and advertises "undetectable AI". If readers or moderators connect those comments to your product, it is your brand they remember. Mochiscout drafts a reply you post from your own account, and the draft says so when you built the product.' },
       { title: 'Rules checked before you post', body: 'ReplyAgent refunds 70% when a moderator removes a paid comment. Mochiscout checks every draft against the subreddit\'s promotion rules, cooldowns and a daily cap first, then tracks whether what you posted stayed up.' },
-      { title: 'Fresh questions on four sites', body: 'New posts on Reddit, Hacker News, Bluesky and X, scored for buying intent, not only Reddit threads that already rank on Google.' },
+      { title: 'Fresh questions on three sites', body: 'New posts on Reddit, Hacker News and Bluesky, scored for buying intent, not only Reddit threads that already rank on Google.' },
       { title: 'No per-comment fees', body: 'Free, $19 or $49 a month, however much you reply. Self-hosting is free.' },
     ],
     theyHave: [
@@ -541,7 +541,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://usepulse.ai',
     verified: '2026-10-14',
     title: 'Mochiscout vs Pulse for Reddit: lead tools compared',
-    description: 'Pulse and Mochiscout both score Reddit posts and draft replies. Mochiscout covers Hacker News, Bluesky and X too, checks subreddit rules, tracks removals and has no lead quotas, from $19/month.',
+    description: 'Pulse and Mochiscout both score Reddit posts and draft replies. Mochiscout covers Hacker News and Bluesky too, checks subreddit rules, tracks removals and has no lead quotas, from $19/month.',
     h1: 'Mochiscout vs Pulse for Reddit',
     intro: 'Pulse scores Reddit posts for intent, fit and timing, drafts replies and tracks how AI assistants mention your brand. Plans are built around monthly quotas of scored and qualified leads. Here is how it compares.',
     theirPitch: 'AI-scored Reddit lead generation with reply drafting and AI-visibility tracking, priced by lead quota.',
@@ -560,7 +560,7 @@ export const COMPETITORS: Competitor[] = [
     },
     differences: [
       { title: 'No lead quotas', body: 'Pulse Starter caps qualified leads at about 150 a month. Mochiscout plans limit projects and subreddits, not how many leads you may look at.' },
-      { title: 'Four platforms', body: 'Hacker News, Bluesky and X alongside Reddit.' },
+      { title: 'Three platforms', body: 'Hacker News and Bluesky alongside Reddit.' },
       { title: 'Rules and removals', body: 'Promotion rules checked before you post, and a tracker for removed posts and replies.' },
       { title: 'Open source', body: 'Run your own copy free on Cloudflare, or use the hosted plans.' },
     ],
@@ -589,7 +589,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://octolens.com',
     verified: '2026-10-14',
     title: 'Octolens alternative for founders: Mochiscout from $19/month',
-    description: 'Octolens is brand monitoring for B2B and developer tools from $159/month. Mochiscout finds buying-intent posts on Reddit, Hacker News, Bluesky and X and drafts replies, with a free plan and $19 Solo plan.',
+    description: 'Octolens is brand monitoring for B2B and developer tools from $159/month. Mochiscout finds buying-intent posts on Reddit, Hacker News and Bluesky and drafts replies, with a free plan and $19 Solo plan.',
     h1: 'An Octolens alternative built for solo founders',
     intro: 'Octolens monitors mentions of your brand and keywords across a long list of sources, from Reddit and Hacker News to LinkedIn, GitHub and podcasts, and rates each for relevance with tags such as buy intent. It is priced for teams. Mochiscout is narrower and priced for founders.',
     theirPitch: 'Brand and keyword monitoring for B2B and developer tools across many sources, with AI relevance and sentiment.',
@@ -655,7 +655,7 @@ export const COMPETITORS: Competitor[] = [
     },
     differences: [
       { title: 'Intent instead of keywords', body: 'Each post gets a buying-intent score and a reason, so "looking for" phrasing in a hundred variations isn\'t on you.' },
-      { title: 'Bluesky included', body: 'Many indie founders\' buyers moved to Bluesky. Mochiscout covers it alongside Reddit, HN and X.' },
+      { title: 'Bluesky included', body: 'Many indie founders\' buyers moved to Bluesky. Mochiscout covers it alongside Reddit and HN.' },
       { title: 'Replies and rules', body: 'Drafted replies, subreddit rule checks and removal tracking at the same $19.' },
     ],
     theyHave: [
@@ -684,7 +684,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://brand24.com',
     verified: '2026-10-14',
     title: 'Brand24 alternative for finding customers on Reddit: Mochiscout',
-    description: 'Brand24 is an enterprise social listening suite from $199/month. If you want buyers on Reddit, Hacker News, Bluesky and X rather than brand analytics, Mochiscout does that from $19/month.',
+    description: 'Brand24 is an enterprise social listening suite from $199/month. If you want buyers on Reddit, Hacker News and Bluesky rather than brand analytics, Mochiscout does that from $19/month.',
     h1: 'A Brand24 alternative for founders who want customers, not reports',
     intro: 'Brand24 is a full social listening suite: mentions across the web, sentiment, reach and AI insights for marketing teams. Reddit is one source of many. If what you need is people asking for a product like yours, you are paying for a lot you won\'t use.',
     theirPitch: 'Enterprise social listening: mentions, sentiment, reach and AI insights across the web.',
@@ -732,7 +732,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://painonsocial.com',
     verified: '2026-10-14',
     title: 'PainOnSocial alternative: pain points and the people who have them',
-    description: 'PainOnSocial turns subreddits into scored pain points and startup ideas. Mochiscout groups pain points from real threads too, then finds the people posting about them on Reddit, Hacker News, Bluesky and X and drafts a reply. Free plan.',
+    description: 'PainOnSocial turns subreddits into scored pain points and startup ideas. Mochiscout groups pain points from real threads too, then finds the people posting about them on Reddit, Hacker News and Bluesky and drafts a reply. Free plan.',
     h1: 'Mochiscout vs PainOnSocial',
     intro: 'PainOnSocial scans subreddits for recurring problems, scores them by frequency and intensity with quotes and links, and suggests solution ideas. It is built for deciding what to build. Mochiscout is built for the step after: finding the people who have that problem today and answering them.',
     theirPitch: 'Reddit pain-point research for founders validating ideas, with AI solution ideas and weekly topic watches.',
@@ -752,7 +752,7 @@ export const COMPETITORS: Competitor[] = [
     differences: [
       { title: 'Pain points, then the people who have them', body: 'Research groups the problems your buyers describe, with the threads behind each one. The inbox then brings you new posts from people with those problems, scored for buying intent.' },
       { title: 'A reply, not a report', body: 'Drafts that read the whole thread and fit the subreddit\'s rules, for you to post yourself.' },
-      { title: 'Four sites', body: 'Hacker News, Bluesky and X as well as Reddit.' },
+      { title: 'Three sites', body: 'Hacker News and Bluesky as well as Reddit.' },
       { title: 'Free plan, open source', body: 'Pain-point research is on every plan, including free. The code is public and you can self-host it.' },
     ],
     theyHave: [
@@ -781,7 +781,7 @@ export const COMPETITORS: Competitor[] = [
     url: 'https://www.ideafast.pro',
     verified: '2026-10-14',
     title: 'IdeaFast alternative for finding the customers behind the pain points',
-    description: 'IdeaFast clusters Reddit pain points into startup ideas, paid per scan. Mochiscout groups pain points too, then finds the people posting about them on Reddit, Hacker News, Bluesky and X and drafts a reply you post yourself.',
+    description: 'IdeaFast clusters Reddit pain points into startup ideas, paid per scan. Mochiscout groups pain points too, then finds the people posting about them on Reddit, Hacker News and Bluesky and drafts a reply you post yourself.',
     h1: 'Mochiscout vs IdeaFast',
     intro: 'IdeaFast mines subreddits for recurring pain points, scores them from 0 to 100 with the original posts as evidence, and turns them into startup ideas. You buy scans once instead of subscribing. It answers "what should I build?"; Mochiscout answers "who wants it right now?"',
     theirPitch: 'Pay-per-scan Reddit pain-point mining that turns recurring problems into startup ideas.',
@@ -801,7 +801,7 @@ export const COMPETITORS: Competitor[] = [
     differences: [
       { title: 'Ongoing, not one-off', body: 'Mochiscout keeps watching your subreddits and three other sites, and brings new posts from people with those problems to your inbox every day.' },
       { title: 'From pain point to reply', body: 'Research groups the pain points; the inbox finds the people who have them; the drafter helps you answer within the subreddit\'s rules.' },
-      { title: 'Four sites', body: 'Hacker News, Bluesky and X as well as Reddit.' },
+      { title: 'Three sites', body: 'Hacker News and Bluesky as well as Reddit.' },
       { title: 'Open source', body: 'The code is public, and you can run your own copy for free.' },
     ],
     theyHave: [

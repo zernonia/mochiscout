@@ -4,6 +4,8 @@ import { PLANS } from '@mochiscout/core'
 export default defineEventHandler((event) => {
   const env = getEnv(event)
   const finite = (n: number) => (Number.isFinite(n) ? n : null)
+  // A source in the plan that this server can't read yet (X without an API key) is listed as coming soon.
+  const readable = new Set<string>(['reddit', 'web', ...availableSources(env)])
   return {
     billingConfigured: polarConfigured(env),
     plans: (['free', 'solo', 'pro'] as const).map(id => ({
@@ -20,7 +22,8 @@ export default defineEventHandler((event) => {
       autoReplies: PLANS[id].autoReplies,
       hotAlerts: PLANS[id].hotAlerts,
       draftsPerMonth: finite(PLANS[id].draftsPerMonth),
-      sources: PLANS[id].sources,
+      sources: PLANS[id].sources.filter(s => readable.has(s)),
+      comingSoon: PLANS[id].sources.filter(s => !readable.has(s)),
     })),
   }
 })

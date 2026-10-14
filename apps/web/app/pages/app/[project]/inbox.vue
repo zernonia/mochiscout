@@ -193,7 +193,7 @@ function setStatus(thread: NonNullable<typeof inbox.value>['threads'][number], n
       </div>
       <div class="flex items-center gap-2">
         <select v-model="platform" class="h-8 rounded-lg border bg-card px-2 text-sm" aria-label="Source">
-          <option v-for="p in platforms" :key="p.label" :value="p.value">{{ p.label }}</option>
+          <option v-for="p in platforms.filter(p => p.value !== 'x' || me?.limits.sourcesAvailable.includes('x'))" :key="p.label" :value="p.value">{{ p.label }}</option>
         </select>
         <select v-model="sort" class="h-8 rounded-lg border bg-card px-2 text-sm" aria-label="Sort threads">
           <option v-for="o in sorts" :key="o.value" :value="o.value">{{ o.label }}</option>

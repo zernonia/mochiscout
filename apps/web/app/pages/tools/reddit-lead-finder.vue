@@ -12,7 +12,7 @@ useMarketingSeo({ title: 'Free Reddit lead finder: find people asking for your p
 const faq = [
   { q: 'How do I find customers on Reddit?', a: 'Look for threads where people ask for a recommendation, compare tools or want an alternative to something they use. Answer the question first; mention your product only where the subreddit allows it, and say you built it.' },
   { q: 'Where do the results come from?', a: 'Recent Reddit threads from web search and Hacker News posts and comments from the last 60 days, ranked by how closely they match what you sell and whether the person is asking for something.' },
-  { q: 'Is this a GummySearch alternative?', a: 'This free tool is a one-off search. Mochiscout, the app behind it, watches Reddit, Hacker News, Bluesky and X for you every 15 minutes, scores each post for buying intent, checks the subreddit\'s rules and drafts a reply you post yourself.' },
+  { q: 'Is this a GummySearch alternative?', a: 'This free tool is a one-off search. Mochiscout, the app behind it, watches Reddit, Hacker News and Bluesky for you every 15 minutes, scores each post for buying intent, checks the subreddit\'s rules and drafts a reply you post yourself.' },
   { q: 'Can I reply with a link to my product?', a: 'It depends on the subreddit. Check its rules with the free subreddit rules checker before you post.' },
 ]
 useJsonLd([

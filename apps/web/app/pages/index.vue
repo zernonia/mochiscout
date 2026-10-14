@@ -11,18 +11,18 @@ if (edition !== 'cloud') {
 
 const { data: catalogue } = await useFetch('/api/billing/plans', { immediate: edition === 'cloud' })
 
-const seoDescription = 'Find customers on Reddit, Hacker News, Bluesky and X. Mochiscout watches the communities your buyers use, scores every new post for buying intent, alerts you to hot leads and drafts replies that fit the subreddit rules, for you to post from your own account. Free plan, open source.'
+const seoDescription = 'Find customers on Reddit, Hacker News and Bluesky. Mochiscout watches the communities your buyers use, scores every new post for buying intent, alerts you to hot leads and drafts replies that fit the subreddit rules, for you to post from your own account. Free plan, open source.'
 useMarketingSeo({
-  title: 'Mochiscout: find customers on Reddit, Hacker News, Bluesky and X',
+  title: 'Mochiscout: find customers on Reddit, Hacker News and Bluesky',
   description: seoDescription,
   path: '/',
 })
 
-const sources = ['reddit', 'hn', 'bluesky', 'x'] as const
+const sources = ['reddit', 'hn', 'bluesky'] as const
 const heroFacts = ['No card needed', 'Free plan after the trial', 'You always post yourself']
 
 const differentiators = [
-  { icon: RadarIcon, title: 'Watching while you work', body: 'Busy subreddits are checked every 15 minutes, quieter ones every few hours, plus Hacker News, Bluesky and X. Every new post is scored for buying intent, with the reason.' },
+  { icon: RadarIcon, title: 'Watching while you work', body: 'Busy subreddits are checked every 15 minutes, quieter ones every few hours, plus Hacker News and Bluesky. Every new post is scored for buying intent, with the reason.' },
   { icon: BellRingIcon, title: 'Hot leads, within the hour', body: 'When someone is clearly looking for what you sell, you hear about it by email, Slack or Discord, while the thread is still fresh and uncrowded.' },
   { icon: TrendingUpIcon, title: 'Threads that rank on Google', body: 'Threads that show up in Google searches are flagged. A helpful reply there keeps sending visitors long after the thread goes quiet.' },
   { icon: SendIcon, title: 'Replies ready before you are', body: 'Hot leads get a reply drafted automatically, from the whole thread and your product facts, checked against the subreddit\'s rules. They wait in one queue: read, tweak, post.' },
@@ -32,7 +32,7 @@ const differentiators = [
 
 const pains = [
   { title: 'Your launch post got removed.', body: 'Every subreddit has its own promo rules, and one wrong link costs you the post.' },
-  { title: 'Searching eats your whole day.', body: 'Dozens of communities, four sites, and the good threads are buried under everything else.' },
+  { title: 'Searching eats your whole day.', body: 'Dozens of communities, several sites, and the good threads are buried under everything else.' },
   { title: 'You find the thread a week late.', body: 'By the time you see "anyone know a tool for this?", ten people have already answered.' },
 ]
 
@@ -40,12 +40,12 @@ const asks = [
   { source: 'reddit' as const, where: 'r/smallbusiness', text: 'Is there an invoicing app that chases late payments for me? I hate sending the "just following up" email.' },
   { source: 'hn' as const, where: 'Ask HN', text: 'What do you use to collect customer feedback without paying for a whole CX suite?' },
   { source: 'bluesky' as const, where: 'Bluesky', text: 'Looking for a calendar booking tool that doesn\'t cost $15 a seat. Small team, simple needs.' },
-  { source: 'x' as const, where: 'X', text: 'Spent my whole Sunday stitching together a status page. Surely someone has built this properly?' },
+  { source: 'reddit' as const, where: 'r/SaaS', text: 'Spent my whole Sunday stitching together a status page. Surely someone has built this properly?' },
 ]
 
 const steps = [
   { title: 'Paste your URL', body: 'We read your page to learn what it does and who it\'s for, then suggest keywords, competitors and the communities your buyers use.' },
-  { title: 'Open your feed', body: 'New posts from Reddit, Hacker News, Bluesky and X are scored for buying intent. Fresh, uncrowded ones rise to the top, archived ones are flagged, and hot leads can email you.' },
+  { title: 'Open your feed', body: 'New posts from Reddit, Hacker News and Bluesky are scored for buying intent. Fresh, uncrowded ones rise to the top, archived ones are flagged, and hot leads can email you.' },
   { title: 'Post in a minute', body: 'Open Today: the best threads already have a reply drafted and checked against the subreddit\'s rules. Tweak it, copy it, and post it from your own account.' },
 ]
 
@@ -66,7 +66,7 @@ const faqs = [
   { q: 'Does Mochiscout post for me?', a: 'No. It never posts, comments, votes or sends messages. It does everything up to that point: finds the thread, drafts the reply, checks the rules and tells you when a subreddit is busiest. Posting it yourself takes about a minute.' },
   { q: 'Why not post for me?', a: 'Comments from bots or from accounts that aren\'t yours get removed and can get you banned, and when readers notice, they remember the brand. A reply from your own account, in your words, stays up and keeps working for you.' },
   { q: 'How quickly will I see new threads?', a: 'Busy subreddits are checked every 15 minutes and quieter ones every few hours; new posts are scored as they arrive. On Solo and Pro, hot leads are emailed (or sent to Slack or Discord) and get a reply drafted automatically.' },
-  { q: 'Which sites are covered?', a: 'Reddit on every plan. Hacker News and Bluesky on Solo and Pro, and X on Pro.' },
+  { q: 'Which sites are covered?', a: 'Reddit on every plan. Hacker News and Bluesky on Solo and Pro. X is coming soon.' },
   { q: 'Is there a free plan?', a: 'Yes. Every new account gets 14 days of Pro free, no card. After that you keep a free plan with one project, three watched subreddits and a weekly digest, or pick Solo or Pro. Self-hosting is free with no limits.' },
   { q: 'I used GummySearch. Is this a replacement?', a: 'For finding customers, yes. GummySearch shuts down on December 1, 2026. Mochiscout finds the threads where people ask for what you sell, on Reddit and three other sites, without the Reddit Data API that GummySearch lost.' },
   { q: 'Is Mochiscout open source?', a: 'Yes. The whole app is on GitHub under the AGPL-3.0 license, and the subreddit rules library under CC BY-SA 4.0. You can read the code, run it free on your own Cloudflare account with your own API keys, or let us host it.' },
@@ -119,7 +119,7 @@ useJsonLd([
             for your product.
           </h1>
           <p class="max-w-2xl text-balance text-lg text-muted-foreground sm:text-xl">
-            Mochiscout watches Reddit, Hacker News, Bluesky and X around the clock, flags the people ready to buy, and drafts the reply. You read it and post it from your own account.
+            Mochiscout watches Reddit, Hacker News and Bluesky around the clock, flags the people ready to buy, and drafts the reply. You read it and post it from your own account.
           </p>
           <LandingCta source="hero" secondary="how" />
           <ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
@@ -142,6 +142,7 @@ useJsonLd([
             <span class="flex -space-x-1.5">
               <LandingSourceBadge v-for="src in sources" :key="src" :source="src" size="sm" />
             </span>
+            <span class="rounded-full border bg-background/70 px-2 py-px text-[11px]">X coming soon</span>
           </div>
           <div class="mx-auto max-w-4xl pb-3 sm:pb-10">
             <LandingFeedMockup />

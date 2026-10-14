@@ -16,6 +16,7 @@ defineProps<{
     hotAlerts?: boolean
     draftsPerMonth?: number | null
     sources: string[]
+    comingSoon?: string[]
   }[]
   current?: string
   highlight?: string
@@ -23,7 +24,7 @@ defineProps<{
 
 const sourceLabel: Record<string, string> = { reddit: 'Reddit', hn: 'Hacker News', bluesky: 'Bluesky', x: 'X', web: 'Web' }
 
-function features(p: { projects: number | null, watchedSubreddits: number | null, seats: number | null, digest: string, researchEveryDays: number | null, mcp: boolean, autoReplies?: boolean, hotAlerts?: boolean, draftsPerMonth?: number | null, sources: string[] }) {
+function features(p: { projects: number | null, watchedSubreddits: number | null, seats: number | null, digest: string, researchEveryDays: number | null, mcp: boolean, autoReplies?: boolean, hotAlerts?: boolean, draftsPerMonth?: number | null, sources: string[], comingSoon?: string[] }) {
   return [
     `${p.projects} project${p.projects === 1 ? '' : 's'}`,
     `${p.watchedSubreddits} watched subreddits`,
@@ -32,7 +33,7 @@ function features(p: { projects: number | null, watchedSubreddits: number | null
     `${p.draftsPerMonth ? p.draftsPerMonth.toLocaleString('en-US') : 'Unlimited'} AI drafts a month${p.autoReplies ? ', automatic for hot leads' : ''}`,
     ...(p.hotAlerts ? ['Hot lead email alerts'] : []),
     p.researchEveryDays ? `Pain-point research every ${p.researchEveryDays === 7 ? 'week' : 'month'}` : 'Pain-point research on demand',
-    p.sources.map(s => sourceLabel[s] ?? s).join(', '),
+    p.sources.map(s => sourceLabel[s] ?? s).join(', ') + (p.comingSoon?.length ? ` (${p.comingSoon.map(s => sourceLabel[s] ?? s).join(', ')} coming soon)` : ''),
     ...(p.mcp ? ['MCP server for AI agents'] : []),
   ]
 }
