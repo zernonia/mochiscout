@@ -1,4 +1,4 @@
-import { assertCanCreateProject, assertSources } from '@mochiscout/core'
+import { assertCanCreateProject, assertSources, limitsFor } from '@mochiscout/core'
 import { schema } from '@mochiscout/db'
 
 export default defineEventHandler(async (event) => {
@@ -11,7 +11,8 @@ export default defineEventHandler(async (event) => {
   await quota(() => assertSources(org, input.sources))
   const [project] = await getDb(event)
     .insert(schema.projects)
-    .values({ id: crypto.randomUUID(), orgId: org.id, ...input })
+    // Hot threads get a drafted reply from the start where the plan includes it; the job skips plans that don't.
+    .values({ id: crypto.randomUUID(), orgId: org.id, ...input, autoReply: limitsFor(org.plan).autoReplies })
     .returning()
 
   // The first feed is built by /kickstart while the user watches (the inbox calls it); scheduled jobs take over after.

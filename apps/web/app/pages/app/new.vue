@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { ProjectProfile } from '~/components/ProjectProfileForm.vue'
-import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, LoaderIcon, PencilIcon, SparklesIcon } from '@lucide/vue'
+import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, CopyIcon, LoaderIcon, PencilIcon, SparklesIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 /**
  * Onboarding as one distraction-free modal: the product URL, a short check
- * of what we read, then the first feed built while the user watches. It
- * ends in the inbox. A first project can't be skipped; later ones can close.
+ * of what we read, then the first feed built while the user watches, with a
+ * reply already drafted for the best lead. It ends on Today. A first project can't be skipped; later ones can close.
  */
 definePageMeta({ layout: 'app' })
 useHead({ title: 'Set up · Mochiscout' })
@@ -22,8 +22,8 @@ const STEP_LABELS = ['Your product', 'Check it', 'First leads']
 
 const open = ref(true)
 function close() {
-  // Mid-build the project exists: closing goes to its inbox, where the feed keeps filling.
-  if (projectId.value) return navigateTo(`/app/${projectId.value}/inbox`)
+  // Mid-build the project exists: closing goes to its Today page, where the feed keeps filling.
+  if (projectId.value) return navigateTo(`/app/${projectId.value}/today`)
   return navigateTo('/app')
 }
 watch(open, (v) => {
@@ -123,7 +123,7 @@ async function create() {
 }
 
 // ---- Step 3: first feed ----------------------------------------------------
-type Lead = { id: string, title: string, channel: string | null, platform: string, intent: number }
+type Lead = { id: string, title: string, url: string, channel: string | null, platform: string, intent: number }
 const found = ref(0)
 const scored = ref(0)
 const pending = ref(0)
@@ -131,7 +131,12 @@ const leadCount = ref(0)
 const watched = ref<string[]>([])
 const topLeads = ref<Lead[]>([])
 const note = ref('')
-const buildPhase = ref<'searching' | 'scoring' | 'watching'>('searching')
+const buildPhase = ref<'searching' | 'scoring' | 'watching' | 'drafting'>('searching')
+/** A reply drafted for the best lead, so setup ends on something ready to post. */
+const firstDraft = ref<{ lead: Lead, reply: string } | null>(null)
+/** With no clear leads yet, the closest threads, labelled as such. */
+const nearMisses = ref<Lead[]>([])
+const copied = ref(false)
 const MAX_SCORE_CALLS = 4
 
 async function build() {
@@ -161,7 +166,12 @@ async function build() {
     catch {}
     if (leadCount.value) {
       const inbox = await $fetch<{ threads: Lead[] }>(`/api/projects/${projectId.value}/inbox`).catch(() => null)
-      topLeads.value = inbox?.threads.slice(0, 3) ?? []
+      topLeads.value = inbox?.threads.slice(0, 4) ?? []
+      await draftFirst()
+    }
+    else if (scored.value) {
+      const near = await $fetch<{ threads: Lead[] }>(`/api/projects/${projectId.value}/inbox`, { query: { minIntent: 35 } }).catch(() => null)
+      nearMisses.value = near?.threads.slice(0, 3) ?? []
     }
   }
   catch (error) {
@@ -171,14 +181,45 @@ async function build() {
   step.value = 'result'
 }
 
+/** Draft the best open lead; a thread that can't be answered any more (409) moves on to the next. */
+async function draftFirst() {
+  buildPhase.value = 'drafting'
+  for (const lead of topLeads.value.slice(0, 2)) {
+    try {
+      const res = await $fetch<{ replyDraft: string }>(`/api/projects/${projectId.value}/threads/${encodeURIComponent(lead.id)}/reply`, { method: 'POST' })
+      firstDraft.value = { lead, reply: res.replyDraft }
+      return
+    }
+    catch (error) {
+      if ((error as { statusCode?: number }).statusCode !== 409) return
+    }
+  }
+}
+
+async function copyAndOpen() {
+  if (!firstDraft.value) return
+  try {
+    await navigator.clipboard.writeText(firstDraft.value.reply)
+    copied.value = true
+  }
+  catch {
+    toast.error('Could not copy. Select the text and copy it yourself.')
+  }
+  trackClient('reply_copied', { project_id: projectId.value, onboarding: true })
+  window.open(firstDraft.value.lead.url, '_blank', 'noopener')
+}
+
+const otherLeads = computed(() => topLeads.value.filter(t => t.id !== firstDraft.value?.lead.id).slice(0, 3))
+
 const buildSteps = computed(() => [
   { label: 'Searching for recent posts', active: buildPhase.value === 'searching', done: buildPhase.value !== 'searching', detail: found.value ? `${found.value} found` : '' },
   { label: `Scoring who needs ${profile.value?.name || 'your product'}`, active: buildPhase.value === 'scoring', done: buildPhase.value === 'watching', detail: scored.value ? `${scored.value} scored` : '' },
-  { label: 'Picking subreddits to watch', active: buildPhase.value === 'watching', done: false, detail: '' },
+  { label: 'Picking subreddits to watch', active: buildPhase.value === 'watching', done: buildPhase.value === 'drafting', detail: '' },
+  { label: 'Writing a reply to the best one', active: buildPhase.value === 'drafting', done: false, detail: '' },
 ])
 
 function finish() {
-  navigateTo(`/app/${projectId.value}/inbox`)
+  navigateTo(`/app/${projectId.value}/today`)
 }
 onBeforeUnmount(() => clearInterval(stageTimer))
 </script>
@@ -283,7 +324,7 @@ onBeforeUnmount(() => clearInterval(stageTimer))
         <section v-else-if="step === 'building'" class="flex flex-col gap-5" aria-live="polite">
           <div class="flex flex-col gap-2">
             <DialogTitle class="text-2xl font-semibold tracking-tight">Finding people who need {{ profile?.name || 'your product' }}…</DialogTitle>
-            <DialogDescription class="text-muted-foreground">This takes about a minute. We're reading the last week of posts.</DialogDescription>
+            <DialogDescription class="text-muted-foreground">This takes a minute or two. We're reading the last week of posts.</DialogDescription>
           </div>
           <ol class="flex flex-col gap-3 text-sm">
             <li v-for="s in buildSteps" :key="s.label" class="flex items-center gap-2.5" :class="!s.done && !s.active && 'text-muted-foreground'">
@@ -303,25 +344,60 @@ onBeforeUnmount(() => clearInterval(stageTimer))
               {{ leadCount ? `${leadCount} ${leadCount === 1 ? 'person' : 'people'} may need ${profile?.name || 'your product'}` : 'Your feed is set up' }}
             </DialogTitle>
             <DialogDescription class="text-muted-foreground">
-              {{ leadCount ? 'Open one, press Draft reply, edit it in your own words and post it yourself.' : 'No strong matches in the last week yet. New posts are checked every 15 minutes, and we\'ll email you when a hot one appears.' }}
+              <template v-if="firstDraft">Here's a reply to the best one, written for that thread and its subreddit's rules. Edit it, then post it from your own account.</template>
+              <template v-else-if="leadCount">Open one, press Draft reply, edit it in your own words and post it yourself.</template>
+              <template v-else>No clear buyers in the last week yet. The first scheduled check runs within 15 minutes, and we'll email you when a hot one appears.</template>
             </DialogDescription>
           </div>
-          <ol v-if="topLeads.length" class="flex flex-col divide-y rounded-xl border text-sm">
-            <li v-for="t in topLeads" :key="t.id" class="flex items-start gap-3 p-3">
-              <span class="mt-0.5 rounded-md bg-emerald-500/12 px-1.5 text-xs font-semibold text-emerald-800 tabular-nums dark:text-emerald-300">{{ t.intent }}</span>
+
+          <div v-if="firstDraft" class="flex flex-col gap-3 rounded-2xl border border-brand/25 bg-brand-soft/30 p-4">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 rounded-md bg-emerald-500/12 px-1.5 text-xs font-semibold text-emerald-800 tabular-nums">{{ firstDraft.lead.intent }}</span>
               <div class="min-w-0">
-                <div class="line-clamp-2 font-medium">{{ t.title }}</div>
-                <div class="text-xs text-muted-foreground">{{ t.channel ? `r/${t.channel}` : sourceNames[t.platform] ?? t.platform }}</div>
+                <div class="line-clamp-2 text-sm font-medium">{{ firstDraft.lead.title }}</div>
+                <div class="text-xs text-muted-foreground">{{ firstDraft.lead.channel ? `r/${firstDraft.lead.channel}` : sourceNames[firstDraft.lead.platform] ?? firstDraft.lead.platform }}</div>
               </div>
-            </li>
-          </ol>
+            </div>
+            <label for="first-draft" class="flex items-center gap-1.5 text-xs font-medium text-brand-foreground"><SparklesIcon class="size-3.5" /> Your reply · edit before posting</label>
+            <Textarea id="first-draft" v-model="firstDraft.reply" rows="6" class="bg-background text-sm" />
+            <Button class="bg-brand text-white hover:bg-brand/90" @click="copyAndOpen">
+              <CheckIcon v-if="copied" /><CopyIcon v-else /> {{ copied ? 'Copied. Paste it in the thread' : 'Copy & open the thread' }}
+            </Button>
+          </div>
+
+          <div v-if="otherLeads.length" class="flex flex-col gap-2">
+            <p v-if="firstDraft" class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Also worth a look</p>
+            <ol class="flex flex-col divide-y rounded-xl border text-sm">
+              <li v-for="t in otherLeads" :key="t.id" class="flex items-start gap-3 p-3">
+                <span class="mt-0.5 rounded-md bg-emerald-500/12 px-1.5 text-xs font-semibold text-emerald-800 tabular-nums">{{ t.intent }}</span>
+                <div class="min-w-0">
+                  <div class="line-clamp-2 font-medium">{{ t.title }}</div>
+                  <div class="text-xs text-muted-foreground">{{ t.channel ? `r/${t.channel}` : sourceNames[t.platform] ?? t.platform }}</div>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div v-if="nearMisses.length" class="flex flex-col gap-2">
+            <p class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Close, but not clear buyers</p>
+            <ol class="flex flex-col divide-y rounded-xl border text-sm">
+              <li v-for="t in nearMisses" :key="t.id" class="flex items-start gap-3 p-3">
+                <span class="mt-0.5 rounded-md bg-muted px-1.5 text-xs font-semibold text-muted-foreground tabular-nums">{{ t.intent }}</span>
+                <div class="min-w-0">
+                  <a :href="t.url" target="_blank" rel="noopener" class="line-clamp-2 font-medium hover:underline">{{ t.title }}</a>
+                  <div class="text-xs text-muted-foreground">{{ t.channel ? `r/${t.channel}` : sourceNames[t.platform] ?? t.platform }}</div>
+                </div>
+              </li>
+            </ol>
+          </div>
+
           <p v-if="watched.length" class="text-sm text-muted-foreground">Watching {{ watched.map(w => `r/${w}`).join(', ') }} for new posts every 15 minutes.</p>
           <p v-if="note" class="text-sm text-muted-foreground">{{ note }}</p>
-          <details v-if="!leadCount" class="rounded-lg border p-3">
+          <details v-if="!leadCount" class="rounded-lg border p-3" :open="!watched.length">
             <summary class="cursor-pointer text-sm font-medium">Add subreddits you already know</summary>
             <div class="mt-3"><SubredditImport :project-id="projectId!" /></div>
           </details>
-          <Button size="lg" class="h-11" @click="finish">{{ leadCount ? `See ${leadCount === 1 ? 'it' : `all ${leadCount}`} in your inbox` : 'Go to your inbox' }} <ArrowRightIcon /></Button>
+          <Button size="lg" class="h-11" :variant="firstDraft ? 'outline' : 'default'" @click="finish">{{ leadCount ? 'Go to Today' : 'Open my feed' }} <ArrowRightIcon /></Button>
         </section>
       </div>
     </DialogPopup>

@@ -101,8 +101,8 @@ function time(d: string | Date) {
     </section>
     <ClientOnly><GettingStarted :project-id="projectId" /></ClientOnly>
 
-    <SkeletonStats v-if="!today" />
-    <section v-else class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <!-- Pacing and cooldowns mean little until the first reply is posted. -->
+    <section v-if="today?.hasReplied" class="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <StatTile
         label="New threads"
         :value="today.newCount"

@@ -236,6 +236,25 @@ async function saveReplyUrl() {
     savingReplyUrl.value = false
   }
 }
+// Right after copying, ask for the posted link and mark it replied in one step, so reply-watch starts.
+const markingPosted = ref(false)
+async function markPosted() {
+  markingPosted.value = true
+  try {
+    if (replyUrl.value.trim()) {
+      await $fetch(threadPath.value, { method: 'PATCH', body: { replyUrl: replyUrl.value.trim() } })
+      savedReplyUrl.value = replyUrl.value.trim()
+      toast.success('We\'ll tell you when someone answers, and check that your reply stays up.')
+    }
+    emit('status', 'replied')
+  }
+  catch (error) {
+    toast.error(apiErrorMessage(error, 'Could not save the link'))
+  }
+  finally {
+    markingPosted.value = false
+  }
+}
 const replyStatusInfo = {
   live: { label: 'Your reply is live', class: 'text-emerald-700 dark:text-emerald-400', icon: CheckIcon },
   removed: { label: 'Your reply was removed', class: 'text-red-700 dark:text-red-400', icon: CircleAlertIcon },
@@ -382,6 +401,15 @@ async function copyAndOpen() {
         <div class="flex gap-2">
           <Input :id="`reply-url-${thread.id}`" v-model="replyUrl" placeholder="https://www.reddit.com/r/…/comments/…/…/abc123/" class="h-8 flex-1 text-sm" />
           <Button type="submit" size="sm" variant="outline" :loading="savingReplyUrl" :disabled="replyUrl.trim() === savedReplyUrl">Save</Button>
+        </div>
+      </form>
+
+      <!-- Just copied: the posted link turns on reply-watch. -->
+      <form v-if="copied && reply && status !== 'replied' && !closed" class="flex flex-col gap-2 rounded-xl border border-dashed border-sky-500/30 bg-sky-50/60 p-3" @submit.prevent="markPosted">
+        <Label :for="`posted-url-${thread.id}`" class="text-xs font-normal text-muted-foreground">Posted it? Paste the link to your reply and we'll tell you when someone answers.</Label>
+        <div class="flex gap-2">
+          <Input :id="`posted-url-${thread.id}`" v-model="replyUrl" placeholder="Link to your reply (optional)" class="h-8 flex-1 bg-background text-sm" />
+          <Button type="submit" size="sm" :loading="markingPosted"><CheckIcon /> Mark replied</Button>
         </div>
       </form>
 
