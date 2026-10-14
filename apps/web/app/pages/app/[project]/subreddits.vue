@@ -32,13 +32,35 @@ function errorMessage(error: unknown) {
   return e.data?.statusMessage ?? 'Something went wrong'
 }
 
+// Toggling is optimistic: the card flips and moves at once (watched first, then by fit,
+// as the server sorts), and goes back if the request fails.
+let inFlight = 0
+function applyWatching(name: string, watching: boolean) {
+  if (!map.value) return
+  const subreddits = map.value.subreddits
+    .map(s => (s.name === name ? { ...s, watching } : s))
+    .sort((a, b) => Number(b.watching) - Number(a.watching) || b.fit - a.fit)
+  map.value = { ...map.value, subreddits }
+}
+
 async function setWatching(name: string, watching: boolean) {
+  const known = map.value?.subreddits.some(s => s.name === name)
+  if (known) applyWatching(name, watching)
+  inFlight++
   try {
     await $fetch(`/api/projects/${projectId.value}/subreddits`, { method: 'PUT', body: { name, watching } })
-    await Promise.all([refresh(), refreshNuxtData('project-nav')])
   }
   catch (error) {
+    if (known) applyWatching(name, !watching)
     if (!isPlanLimit(error)) toast.error(errorMessage(error))
+  }
+  finally {
+    inFlight--
+  }
+  // Sync with the server once quick toggles settle, so a stale answer can't undo a newer flip.
+  if (!inFlight) {
+    refresh()
+    refreshNuxtData('project-nav')
   }
 }
 
@@ -97,7 +119,7 @@ async function discover() {
     <SkeletonCards v-if="!map" :count="4" :lines="3" :cols="2" />
     <AppEmpty v-else-if="!map.subreddits.length" title="No subreddits yet" description="Watch one above, or run a search to find where your buyers talk." />
 
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <TransitionGroup tag="div" class="grid grid-cols-1 gap-3 md:grid-cols-2" move-class="transition-transform duration-300 ease-out">
       <div
         v-for="s in map?.subreddits"
         :key="s.name"
@@ -158,6 +180,6 @@ async function discover() {
           </div>
         </div>
       </div>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
