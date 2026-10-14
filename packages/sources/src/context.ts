@@ -4,6 +4,7 @@ import { XMLParser } from 'fast-xml-parser'
 import { HttpError } from './http'
 import { postFeedUrl } from './reddit/status'
 import { decodeEntities, htmlToText, truncate } from './text'
+import { parseReplyUrl } from './reply-status'
 
 /**
  * Whether a thread can still be answered, plus the full post and top comments
@@ -15,6 +16,8 @@ export interface ThreadComment {
   author: string | null
   text: string
   score?: number
+  /** Link to the comment itself, rebuilt from parsed parts (older rows have none). */
+  url?: string
 }
 
 export interface ThreadContext {
@@ -29,7 +32,7 @@ export interface ThreadContext {
 
 export const BODY_MAX = 4000
 export const COMMENT_MAX = 500
-export const COMMENTS_KEPT = 8
+export const COMMENTS_KEPT = 12
 
 /** Reddit archives posts after ~6 months by default; HN stops replies after 2 weeks. */
 export const REDDIT_ARCHIVE_DAYS = 180
@@ -82,7 +85,10 @@ export function parseRedditThread(xml: string, postId: string): Omit<ThreadConte
 
   const comments = entries
     .filter(e => e !== post)
-    .map(e => ({ author: entryAuthor(e), text: entryText(e, false) }))
+    .map((e) => {
+      const link = parseReplyUrl(String((Array.isArray(e.link) ? e.link[0] : e.link)?.href ?? ''))
+      return { author: entryAuthor(e), text: entryText(e, false), ...(link ? { url: link.url } : {}) }
+    })
     .filter(c => c.text && c.text !== '[removed]' && c.text !== '[deleted]')
 
   return {
@@ -118,6 +124,7 @@ export function parseHnItem(item: HnItem): Omit<ThreadContext, 'state'> & { dele
       author: c.author ?? null,
       text: truncate(htmlToText(c.text!), COMMENT_MAX),
       ...(typeof c.points === 'number' ? { score: c.points } : {}),
+      url: `https://news.ycombinator.com/item?id=${c.id}`,
     })),
     commentCount: countHn(item.children),
   }
@@ -126,6 +133,7 @@ export function parseHnItem(item: HnItem): Omit<ThreadContext, 'state'> & { dele
 interface BskyThreadView {
   $type?: string
   post?: {
+    uri?: string
     author?: { handle?: string }
     record?: { text?: string, createdAt?: string }
     likeCount?: number
@@ -133,6 +141,11 @@ interface BskyThreadView {
     threadgate?: { record?: { allow?: unknown[] } }
   }
   replies?: BskyThreadView[]
+}
+
+function bskyLink(uri: string | undefined, handle: string | undefined) {
+  const rkey = uri?.match(/^at:\/\/[^/]+\/app\.bsky\.feed\.post\/([a-z0-9]+)$/i)?.[1]
+  return rkey && handle && /^[\w.:-]+$/.test(handle) ? { url: `https://bsky.app/profile/${handle}/post/${rkey}` } : {}
 }
 
 export function parseBskyThread(thread: BskyThreadView | undefined): ThreadContext {
@@ -155,6 +168,7 @@ export function parseBskyThread(thread: BskyThreadView | undefined): ThreadConte
         author: r.post?.author?.handle ?? null,
         text: truncate(r.post!.record!.text!, COMMENT_MAX),
         ...(typeof r.post?.likeCount === 'number' ? { score: r.post.likeCount } : {}),
+        ...bskyLink(r.post?.uri, r.post?.author?.handle),
       })),
     commentCount: post.replyCount ?? replies.length,
   }

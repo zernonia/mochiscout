@@ -80,3 +80,12 @@ describe('parseBskyThread', () => {
     expect(parseBskyThread({ ...thread, post: { ...thread.post, threadgate: undefined } }).state).toBe('open')
   })
 })
+
+describe('comment links', () => {
+  it('keeps a rebuilt link to each comment', () => {
+    const xml = `<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>t3_1abcdef</id><author><name>/u/op</name></author><content type="html">x</content></entry><entry><id>t1_c111</id><author><name>/u/jane</name></author><link href="https://www.reddit.com/r/SaaS/comments/1abcdef/title/c111/?utm=x" /><content type="html">Same here</content></entry><entry><id>t1_c222</id><author><name>/u/sam</name></author><link href="javascript:alert(1)" /><content type="html">Following</content></entry></feed>`
+    const t = parseRedditThread(xml, '1abcdef')!
+    expect(t.comments.map(c => c.url)).toEqual(['https://www.reddit.com/r/SaaS/comments/1abcdef/_/c111/', undefined])
+    expect(parseHnItem({ id: 1, author: 'a', text: 'q', children: [{ id: 7, author: 'b', text: 'me too' }] }).comments[0]!.url).toBe('https://news.ycombinator.com/item?id=7')
+  })
+})
