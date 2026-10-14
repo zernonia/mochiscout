@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ClockIcon, InboxIcon, LightbulbIcon, MegaphoneIcon, MessageCircleHeartIcon, SendIcon, SparklesIcon, TimerIcon } from '@lucide/vue'
+import { ClockIcon, InboxIcon, LightbulbIcon, MegaphoneIcon, MessageCircleHeartIcon, MessagesSquareIcon, SendIcon, SparklesIcon, TimerIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -21,6 +21,26 @@ function setReadyStatus(thread: NonNullable<typeof today.value>['ready'][number]
 
 /** New threads beyond the ones already in the queue. */
 const moreNew = computed(() => Math.max(0, (today.value?.newCount ?? 0) - (today.value?.ready.filter(t => t.status === 'new').length ?? 0)))
+
+// Replies to the founder's comments: "Done" takes one off the list at once, with Undo.
+type Conversation = NonNullable<typeof today.value>['conversations']['responses'][number]
+function finishConversation(r: Conversation) {
+  const list = today.value?.conversations.responses
+  if (!list) return
+  const at = list.findIndex(x => x.id === r.id)
+  if (at < 0) return
+  list.splice(at, 1)
+  const url = `/api/projects/${projectId.value}/responses/${encodeURIComponent(r.id)}`
+  const saving = $fetch(url, { method: 'PATCH', body: { status: 'done' } }).catch(() => {
+    list.splice(Math.min(at, list.length), 0, r)
+    toast.error('Could not save. Try again.')
+  })
+  toast.undoable('Marked as done', async () => {
+    await saving
+    if (!list.some(x => x.id === r.id)) list.splice(Math.min(at, list.length), 0, r)
+    $fetch(url, { method: 'PATCH', body: { status: 'new' } }).catch(() => {})
+  })
+}
 
 // Auto-drafts fill the ready-to-post queue; they can be switched on from here.
 const enablingDrafts = ref(false)
@@ -117,6 +137,30 @@ function time(d: string | Date) {
         </template>
         <template v-else>All watched subs are open</template>
       </StatTile>
+    </section>
+
+    <section v-if="today && (today.conversations.responses.length || today.conversations.watching)" class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h2 class="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <MessagesSquareIcon class="size-5 text-sky-600" /> Replies to you
+          <span v-if="today.conversations.responses.length" class="rounded-full bg-sky-600 px-2 text-xs leading-5 font-medium text-white tabular-nums">{{ today.conversations.responses.length }}</span>
+        </h2>
+        <p class="text-sm text-muted-foreground">Watching {{ today.conversations.watching }} of your replies for answers.</p>
+      </div>
+      <p v-if="!today.conversations.responses.length" class="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
+        No one has answered yet. When someone replies to one of your comments, it shows up here and we email you, so you can follow up while it's warm.
+      </p>
+      <TransitionGroup
+        tag="div"
+        class="relative flex flex-col gap-3"
+        move-class="transition-transform duration-300 ease-out"
+        leave-active-class="absolute inset-x-0 transition duration-200 ease-in"
+        leave-to-class="translate-x-8 opacity-0"
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="-translate-y-2 opacity-0"
+      >
+        <ResponseCard v-for="r in today.conversations.responses" :key="r.id" :project-id="projectId" :response="r" @done="finishConversation(r)" />
+      </TransitionGroup>
     </section>
 
     <section v-if="today && (today.ready.length || today.autoDrafts.available)" class="flex flex-col gap-3">

@@ -184,7 +184,7 @@ async function saveReplyUrl() {
   try {
     await $fetch(threadPath.value, { method: 'PATCH', body: { replyUrl: replyUrl.value.trim() || null } })
     savedReplyUrl.value = replyUrl.value.trim()
-    toast.success(savedReplyUrl.value ? 'We\'ll check every 12 hours that your reply stays up.' : 'Reply link removed.')
+    toast.success(savedReplyUrl.value ? 'We\'ll tell you when someone replies, and check that your reply stays up.' : 'Reply link removed.')
   }
   catch (error) {
     toast.error(apiErrorMessage(error, 'Could not save the link'))
@@ -313,7 +313,7 @@ async function copyAndOpen() {
         <div v-if="savedReplyUrl" class="flex items-center gap-1.5 text-xs font-medium" :class="replyStatusInfo[thread.replyStatus ?? 'unknown'].class">
           <component :is="replyStatusInfo[thread.replyStatus ?? 'unknown'].icon" class="size-3.5" /> {{ replyStatusInfo[thread.replyStatus ?? 'unknown'].label }}
         </div>
-        <Label v-else :for="`reply-url-${thread.id}`" class="text-xs font-normal text-muted-foreground">Paste the link to your reply and we'll check it stays up</Label>
+        <Label v-else :for="`reply-url-${thread.id}`" class="text-xs font-normal text-muted-foreground">Paste the link to your reply: we'll tell you when someone answers, and check it stays up</Label>
         <div class="flex gap-2">
           <Input :id="`reply-url-${thread.id}`" v-model="replyUrl" placeholder="https://www.reddit.com/r/…/comments/…/…/abc123/" class="h-8 flex-1 text-sm" />
           <Button type="submit" size="sm" variant="outline" :loading="savingReplyUrl" :disabled="replyUrl.trim() === savedReplyUrl">Save</Button>
