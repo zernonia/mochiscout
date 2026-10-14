@@ -20,6 +20,8 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
   limit?: number
   platform?: 'reddit' | 'hn' | 'bluesky' | 'x' | 'web'
   sort?: InboxSort
+  /** Only threads that already have a reply draft. */
+  drafted?: boolean
   now?: Date
 } = {}) {
   const s = schema.threadScores
@@ -61,6 +63,7 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
       eq(s.status, opts.status ?? 'new'),
       gte(s.intent, opts.minIntent ?? project.intentThreshold),
       opts.platform ? eq(t.platform, opts.platform) : undefined,
+      opts.drafted ? sql`${s.replyDraft} is not null and ${s.replyDraft} != ''` : undefined,
     ))
     .orderBy(opts.sort === 'newest' ? desc(sql`coalesce(${t.createdUtc}, ${t.ingestedAt})`) : desc(s.intent), desc(sql`coalesce(${t.createdUtc}, ${t.ingestedAt})`))
     .limit(opts.sort && opts.sort !== 'opportunity' ? limit : RANK_POOL)
@@ -74,6 +77,22 @@ export async function listThreads(db: Db, project: { id: string, intentThreshold
     ranked.sort((a, b) => Number(isClosed(a.state)) - Number(isClosed(b.state)) || b.opportunity - a.opportunity || b.intent - a.intent)
   }
   return ranked.slice(0, limit)
+}
+
+/**
+ * The ready-to-post queue: new and saved threads that already have a reply
+ * draft (written by the auto-draft job or by the user) and can still be
+ * answered, best opportunity first.
+ */
+export async function readyToPost(db: Db, project: { id: string, intentThreshold: number, competitors?: string[] }, limit = 10) {
+  const [fresh, saved] = await Promise.all([
+    listThreads(db, project, { status: 'new', drafted: true, limit }),
+    listThreads(db, project, { status: 'saved', drafted: true, limit }),
+  ])
+  return [...fresh, ...saved]
+    .filter(t => !isClosed(t.state))
+    .sort((a, b) => b.opportunity - a.opportunity || b.intent - a.intent)
+    .slice(0, limit)
 }
 
 export async function inboxCounts(db: Db, project: { id: string, intentThreshold: number }) {

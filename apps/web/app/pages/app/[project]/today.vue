@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ClockIcon, InboxIcon, LightbulbIcon, MegaphoneIcon, MessageCircleHeartIcon, TimerIcon } from '@lucide/vue'
+import { ClockIcon, InboxIcon, LightbulbIcon, MegaphoneIcon, MessageCircleHeartIcon, SendIcon, SparklesIcon, TimerIcon } from '@lucide/vue'
+import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
 
@@ -13,6 +14,29 @@ useHead({ title: () => `Today · ${project.value?.name ?? 'Project'}` })
 const changeStatus = useThreadStatus(projectId)
 function setStatus(thread: NonNullable<typeof today.value>['threads'][number], next: ThreadStatus, dismissReason?: string) {
   if (today.value) changeStatus({ list: today.value.threads, thread, from: 'new', to: next, reason: dismissReason })
+}
+function setReadyStatus(thread: NonNullable<typeof today.value>['ready'][number], next: ThreadStatus, dismissReason?: string) {
+  if (today.value) changeStatus({ list: today.value.ready, thread, from: thread.status, to: next, reason: dismissReason })
+}
+
+/** New threads beyond the ones already in the queue. */
+const moreNew = computed(() => Math.max(0, (today.value?.newCount ?? 0) - (today.value?.ready.filter(t => t.status === 'new').length ?? 0)))
+
+// Auto-drafts fill the ready-to-post queue; they can be switched on from here.
+const enablingDrafts = ref(false)
+async function enableAutoDrafts() {
+  enablingDrafts.value = true
+  try {
+    await $fetch(`/api/projects/${projectId.value}/auto-reply`, { method: 'PUT', body: { enabled: true } })
+    if (today.value) today.value.autoDrafts.on = true
+    toast.success('New threads will get a drafted reply within 15 minutes.')
+  }
+  catch (error) {
+    if (!isPlanLimit(error)) toast.error(apiErrorMessage(error, 'Could not turn on automatic drafts'))
+  }
+  finally {
+    enablingDrafts.value = false
+  }
 }
 
 const draftLink = computed(() => {
@@ -46,6 +70,7 @@ function time(d: string | Date) {
         <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ greeting }}{{ firstName ? `, ${firstName}` : '' }}</h1>
         <p class="text-sm text-pretty text-muted-foreground sm:text-base">
           <template v-if="!today">Getting today's plan ready…</template>
+          <template v-else-if="today.ready.length">{{ today.ready.length }} {{ today.ready.length === 1 ? 'reply is' : 'replies are' }} written and ready to post{{ moreNew ? `, and ${moreNew} more ${moreNew === 1 ? 'thread' : 'threads'} to look at` : '' }}.</template>
           <template v-else-if="today.newCount">{{ today.newCount }} thread{{ today.newCount === 1 ? '' : 's' }} worth answering{{ today.pacing.nextPromoAt ? '' : ', and a promo slot open' }}. Start with the ones below.</template>
           <template v-else>Nothing new to answer yet. {{ today.pendingScoring ? `${today.pendingScoring} threads are being scored.` : 'New threads arrive every 15 minutes.' }}</template>
         </p>
@@ -92,7 +117,37 @@ function time(d: string | Date) {
       </StatTile>
     </section>
 
-    <section class="flex flex-col gap-3">
+    <section v-if="today && (today.ready.length || today.autoDrafts.available)" class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h2 class="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <SendIcon class="size-5 text-brand" /> Ready to post
+          <span v-if="today.ready.length" class="rounded-full bg-brand px-2 text-xs leading-5 font-medium text-primary-foreground tabular-nums">{{ today.ready.length }}</span>
+        </h2>
+        <p v-if="today.ready.length" class="text-sm text-muted-foreground">Replies already written. Read, tweak, post from your account.</p>
+      </div>
+      <div v-if="!today.ready.length" class="flex flex-col gap-3 rounded-2xl border border-dashed border-brand/25 bg-brand-soft/40 p-4 text-sm sm:flex-row sm:items-center">
+        <SparklesIcon class="size-5 shrink-0 text-brand" />
+        <p class="flex-1 text-pretty text-muted-foreground">
+          <template v-if="today.autoDrafts.on">New threads get a reply drafted within 15 minutes of being found, and wait here for you to post.</template>
+          <template v-else>Turn on automatic drafts and new threads will wait here with a reply already written. You still read and post each one yourself.</template>
+        </p>
+        <Button v-if="!today.autoDrafts.on" size="sm" class="shrink-0" :loading="enablingDrafts" @click="enableAutoDrafts">Turn on</Button>
+      </div>
+      <TransitionGroup
+        tag="div"
+        class="relative flex flex-col gap-3"
+        move-class="transition-transform duration-300 ease-out"
+        leave-active-class="absolute inset-x-0 transition duration-200 ease-in"
+        leave-to-class="translate-x-8 opacity-0"
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="-translate-y-2 opacity-0"
+      >
+        <ThreadCard v-for="t in today.ready" :key="t.id" :project-id="projectId" :thread="t" :status="t.status" @status="(next, reason) => setReadyStatus(t, next, reason)" />
+      </TransitionGroup>
+    </section>
+
+    <!-- With replies ready to post, an empty "answer these first" adds nothing. -->
+    <section v-if="!today?.ready.length || today.threads.length" class="flex flex-col gap-3">
       <div class="flex items-baseline justify-between gap-3">
         <h2 class="flex items-center gap-2 text-lg font-semibold tracking-tight"><MessageCircleHeartIcon class="size-5 text-brand" /> Answer these first</h2>
         <NuxtLink v-if="today && today.newCount > today.threads.length" :to="`/app/${projectId}/inbox`" class="text-sm text-muted-foreground hover:text-foreground">
