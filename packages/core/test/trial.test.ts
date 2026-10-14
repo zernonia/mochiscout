@@ -38,4 +38,11 @@ describe('Pro trial', () => {
     expect(ended.subject).toBe('Your Mochiscout Pro trial has ended')
     expect(ended.html).not.toContain('<script')
   })
+
+  it('says what the trial did when replies were posted', () => {
+    const email = renderTrialEmail('ending', 'https://mochiscout.com', { name: null, leads: 12, daysLeft: 3, replied: 4, answers: 1 })
+    expect(email.text).toContain('You replied to 4 of them, and 1 person answered you.')
+    const quiet = renderTrialEmail('ending', 'https://mochiscout.com', { name: null, leads: 12, daysLeft: 3, replied: 0, answers: 0 })
+    expect(quiet.text).not.toContain('You replied')
+  })
 })

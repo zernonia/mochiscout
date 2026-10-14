@@ -38,12 +38,18 @@ const steps = computed(() => data.value
 const doneCount = computed(() => steps.value.filter(s => s.done).length)
 const next = computed(() => steps.value.find(s => !s.done))
 
-let tracked = false
+// Once per project per browser: the checklist mounts on every Today visit.
 watch(doneCount, (n) => {
-  if (n === 4 && !tracked) {
-    tracked = true
-    trackClient('onboarding_completed', { project_id: props.projectId })
+  if (n !== steps.value.length) return
+  const done = `ms:onboarding-completed:${props.projectId}`
+  try {
+    if (localStorage.getItem(done)) return
+    localStorage.setItem(done, '1')
   }
+  catch {
+    return
+  }
+  trackClient('onboarding_completed', { project_id: props.projectId })
 })
 </script>
 

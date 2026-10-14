@@ -36,21 +36,26 @@ export interface TrialEmail { subject: string, html: string, text: string }
 
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!)
 
-export function renderTrialEmail(kind: 'ending' | 'ended', appUrl: string, info: { name: string | null, leads: number, daysLeft: number }): TrialEmail {
+export function renderTrialEmail(kind: 'ending' | 'ended', appUrl: string, info: { name: string | null, leads: number, daysLeft: number, replied?: number, answers?: number }): TrialEmail {
   const billing = `${appUrl}/app/billing`
   const hi = info.name ? `Hi ${info.name.split(' ')[0]},` : 'Hi,'
   const found = info.leads
     ? `So far Mochiscout has found ${info.leads} thread${info.leads === 1 ? '' : 's'} where people ask for what you sell.`
     : 'Mochiscout keeps checking for people asking for what you sell.'
+  const replied = info.replied ?? 0
+  const answers = info.answers ?? 0
+  const posted = replied
+    ? ` You replied to ${replied} of them${answers ? `, and ${answers} ${answers === 1 ? 'person' : 'people'} answered you` : ''}.`
+    : ''
   const lines = kind === 'ending'
     ? [
         hi,
-        `Your Pro trial ends in ${info.daysLeft} day${info.daysLeft === 1 ? '' : 's'}. ${found}`,
+        `Your Pro trial ends in ${info.daysLeft} day${info.daysLeft === 1 ? '' : 's'}. ${found}${posted}`,
         'After the trial you move to the Free plan: 1 project, 3 subreddits, Reddit only, a weekly digest and no automatic drafts or hot lead alerts. Pick Solo or Pro to keep them.',
       ]
     : [
         hi,
-        `Your Pro trial has ended and your account is on the Free plan now. ${found}`,
+        `Your Pro trial has ended and your account is on the Free plan now. ${found}${posted}`,
         'We kept your top 3 subreddits running. Upgrade any time to bring back the rest, Hacker News and Bluesky, daily digests, hot lead alerts and automatic drafts.',
       ]
   const cta = kind === 'ending' ? 'Choose a plan' : 'See plans'
@@ -61,12 +66,21 @@ export function renderTrialEmail(kind: 'ending' | 'ended', appUrl: string, info:
   }
 }
 
-/** Threads at or above each project's intent threshold, for the org's projects. */
-async function leadsFound(ctx: JobContext, orgId: string) {
-  const [row] = await ctx.db.select({ n: sql<number>`count(*)` }).from(schema.threadScores)
-    .innerJoin(schema.projects, eq(schema.projects.id, schema.threadScores.projectId))
-    .where(and(eq(schema.projects.orgId, orgId), gte(schema.threadScores.intent, schema.projects.intentThreshold)))
-  return Number(row?.n ?? 0)
+/** What the trial did for the org: leads found, replies posted, and answers to those replies. */
+async function trialStats(ctx: JobContext, orgId: string) {
+  const ts = schema.threadScores
+  const [[leads], [replied], [answers]] = await Promise.all([
+    ctx.db.select({ n: sql<number>`count(*)` }).from(ts)
+      .innerJoin(schema.projects, eq(schema.projects.id, ts.projectId))
+      .where(and(eq(schema.projects.orgId, orgId), gte(ts.intent, schema.projects.intentThreshold))),
+    ctx.db.select({ n: sql<number>`count(*)` }).from(ts)
+      .innerJoin(schema.projects, eq(schema.projects.id, ts.projectId))
+      .where(and(eq(schema.projects.orgId, orgId), eq(ts.status, 'replied'))),
+    ctx.db.select({ n: sql<number>`count(*)` }).from(schema.replyResponses)
+      .innerJoin(schema.projects, eq(schema.projects.id, schema.replyResponses.projectId))
+      .where(eq(schema.projects.orgId, orgId)),
+  ])
+  return { leads: Number(leads?.n ?? 0), replied: Number(replied?.n ?? 0), answers: Number(answers?.n ?? 0) }
 }
 
 /**
@@ -114,7 +128,7 @@ export async function runTrials(ctx: JobContext) {
     if (!user) continue
     await ctx.track?.(user.id, 'trial_expired', { org_id: org.id })
     if (ctx.sendEmail && ctx.appUrl && org.trialEmails < 2) {
-      const email = renderTrialEmail('ended', ctx.appUrl, { name: user.name, leads: await leadsFound(ctx, org.id), daysLeft: 0 })
+      const email = renderTrialEmail('ended', ctx.appUrl, { name: user.name, ...await trialStats(ctx, org.id), daysLeft: 0 })
       await ctx.sendEmail({ to: user.email, ...email })
       await ctx.db.update(o).set({ trialEmails: 2 }).where(eq(o.id, org.id))
     }
@@ -126,7 +140,7 @@ export async function runTrials(ctx: JobContext) {
     for (const org of soon) {
       const user = await owner(org.id)
       if (!user) continue
-      const email = renderTrialEmail('ending', ctx.appUrl, { name: user.name, leads: await leadsFound(ctx, org.id), daysLeft: trialDaysLeft(org.endsAt, now) })
+      const email = renderTrialEmail('ending', ctx.appUrl, { name: user.name, ...await trialStats(ctx, org.id), daysLeft: trialDaysLeft(org.endsAt, now) })
       await ctx.sendEmail({ to: user.email, ...email })
       await ctx.db.update(o).set({ trialEmails: 1 }).where(eq(o.id, org.id))
       result.reminded++
