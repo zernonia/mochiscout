@@ -3,6 +3,8 @@ import type { Angle } from '../drafter/generate'
 import { and, count, desc, eq, gte, schema, sql } from '@mochiscout/db'
 import { DEFAULT_COOLDOWN_DAYS, MAX_PROMO_POSTS_PER_DAY } from '../drafter/checks'
 import { HN_REPLY_DAYS, REDDIT_ARCHIVE_DAYS } from '@mochiscout/sources'
+import type { PostingTime } from '../subreddits/insights'
+import { bestPostingTime } from '../subreddits/insights'
 import { subredditMap } from '../subreddits/map'
 
 const DAY_MS = 86_400_000
@@ -16,6 +18,8 @@ export interface PostSuggestion {
   promo: boolean
   topic: string | null
   why: string
+  /** When the subreddit is most active, if there is enough data. */
+  timing: PostingTime | null
 }
 
 export interface TodayPlan {
@@ -132,6 +136,7 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
       angle: 'story',
       promo: true,
       topic,
+      timing: bestPostingTime(promoSub.stats, now),
       why: `r/${promoSub.name} fits best${promoSub.rules ? '' : ' (check its rules: not in the rules library yet)'}, and you can post a promo today.`,
     }
   }
@@ -141,6 +146,7 @@ export async function buildToday(db: Db, project: Project, now = new Date()): Pr
       angle: 'lesson',
       promo: false,
       topic,
+      timing: bestPostingTime(anySub.stats, now),
       why: nextPromoAt
         ? 'You used today\'s promo post. A helpful post without a product mention builds trust for the next one.'
         : 'Promotion is not allowed or on cooldown in your watched subs, so share something useful instead.',

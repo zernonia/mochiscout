@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SendIcon } from '@lucide/vue'
+import { ClockIcon, SendIcon } from '@lucide/vue'
 import { toast } from '@/lib/toast'
 
 definePageMeta({ layout: 'app' })
@@ -31,7 +31,8 @@ function message(e: unknown, fallback: string) {
 async function save() {
   busy.value = 'save'
   try {
-    draft.value = await $fetch<Draft>(url, { method: 'PATCH', body: form })
+    // Saving returns the draft alone; the posting time comes with the first load.
+    draft.value = { ...await $fetch<Draft>(url, { method: 'PATCH', body: form }), timing: draft.value?.timing ?? null }
   }
   catch (e) {
     toast.error(message(e, 'Could not save'))
@@ -45,7 +46,7 @@ async function check() {
   if (dirty.value) await save()
   busy.value = 'check'
   try {
-    draft.value = await $fetch<Draft>(`${url}/check`, { method: 'POST' })
+    draft.value = { ...await $fetch<Draft>(`${url}/check`, { method: 'POST' }), timing: draft.value?.timing ?? null }
   }
   catch (e) {
     toast.error(message(e, 'Could not check'))
@@ -54,6 +55,8 @@ async function check() {
     busy.value = null
   }
 }
+
+const bestTime = computed(() => describePostingTime(draft.value?.timing))
 
 async function remove() {
   if (!confirm('Delete this draft?')) return
@@ -129,6 +132,10 @@ async function copy(text: string, what: string) {
         <CheckReport :report="draft.check" />
         <div class="flex flex-col gap-2 rounded-2xl border bg-gradient-to-br from-brand-soft/60 via-card to-card p-4 shadow-xs/5">
           <div class="flex items-center gap-2 text-sm font-medium"><SendIcon class="size-4 text-brand" /> Post it yourself</div>
+          <p v-if="bestTime" class="flex gap-2 rounded-xl bg-background/70 p-2.5 text-xs text-muted-foreground">
+            <ClockIcon class="mt-px size-3.5 shrink-0" :class="bestTime.good ? 'text-emerald-600' : 'text-brand'" />
+            <span>r/{{ draft.subreddit }} is most active between {{ bestTime.window }} your time. {{ bestTime.when }}</span>
+          </p>
           <Button variant="outline" size="sm" @click="copy(form.title, 'Title')">Copy title</Button>
           <Button variant="outline" size="sm" @click="copy(form.body, 'Body')">Copy body</Button>
           <Button as-child size="sm">

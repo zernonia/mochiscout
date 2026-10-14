@@ -3,7 +3,7 @@ import type { SubredditRules } from '@mochiscout/rules'
 import { describe, expect, it } from 'vitest'
 import { refLink, sameSite } from '../src/leads/attribution'
 import { dueJobs } from '../src/schedule'
-import { peakHours, subredditVerdict } from '../src/subreddits/insights'
+import { bestPostingTime, peakHours, subredditVerdict } from '../src/subreddits/insights'
 import { rulesBrief } from '../src/drafter/generate'
 import type { CustomRules } from '../src/subreddits/rules'
 import { applyCustomRules } from '../src/subreddits/rules'
@@ -85,5 +85,32 @@ describe('schedule', () => {
   it('runs insights daily at 05:00', () => {
     expect(dueJobs(new Date('2026-10-10T05:00:00Z'))).toContain('insights')
     expect(dueJobs(new Date('2026-10-10T06:00:00Z'))).not.toContain('insights')
+  })
+})
+
+describe('bestPostingTime', () => {
+  // Busiest at 14:00 and 15:00 UTC (see stats()).
+  it('finds the busiest two-hour window and when it next starts', () => {
+    const t = bestPostingTime(stats(), new Date('2026-10-14T09:30:00Z'))!
+    expect(t.peakStartHour).toBe(14)
+    expect(t.nextPeakAt.toISOString()).toBe('2026-10-14T14:00:00.000Z')
+    expect(t.goodNow).toBe(false)
+  })
+  it('rolls over to tomorrow once today\'s window has passed', () => {
+    expect(bestPostingTime(stats(), new Date('2026-10-14T20:00:00Z'))!.nextPeakAt.toISOString()).toBe('2026-10-15T14:00:00.000Z')
+  })
+  it('says now during the window', () => {
+    const now = new Date('2026-10-14T15:10:00Z')
+    const t = bestPostingTime(stats(), now)!
+    expect(t.nextPeakAt).toBe(now)
+    expect(t.goodNow).toBe(true)
+  })
+  it('wraps past midnight', () => {
+    const hours = Array.from({ length: 24 }, (_, h) => (h === 23 || h === 0 ? 0.4 : 0.2 / 22))
+    expect(bestPostingTime(stats({ hours }), new Date('2026-10-14T10:00:00Z'))!.peakStartHour).toBe(23)
+  })
+  it('gives no answer with too little data', () => {
+    expect(bestPostingTime(stats({ posts30d: 5 }))).toBeNull()
+    expect(bestPostingTime(null)).toBeNull()
   })
 })

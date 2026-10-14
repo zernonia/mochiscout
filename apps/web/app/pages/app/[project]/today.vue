@@ -46,6 +46,8 @@ const draftLink = computed(() => {
   return `/app/${projectId.value}/drafts?${query}`
 })
 
+const suggestionTime = computed(() => describePostingTime(today.value?.suggestion?.timing))
+
 const { user } = useUserSession()
 const firstName = computed(() => user.value?.name?.split(/\s+/)[0] ?? '')
 const greeting = computed(() => {
@@ -187,6 +189,10 @@ function time(d: string | Date) {
             in <span class="font-medium">r/{{ today.suggestion.subreddit }}</span>{{ today.suggestion.promo ? '' : ', without mentioning the product' }}.
           </p>
           <p class="text-sm text-muted-foreground">{{ today.suggestion.why }}</p>
+          <p v-if="suggestionTime" class="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <ClockIcon class="size-3.5 shrink-0" :class="suggestionTime.good ? 'text-emerald-600' : 'text-amber-600'" />
+            Most active between {{ suggestionTime.window }} your time. {{ suggestionTime.when }}
+          </p>
         </div>
         <Button v-if="draftLink" as-child class="shrink-0">
           <NuxtLink :to="draftLink">Draft it</NuxtLink>

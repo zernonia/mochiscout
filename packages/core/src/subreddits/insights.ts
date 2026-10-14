@@ -166,6 +166,38 @@ export function peakHours(stats: SubredditStats, n = 3) {
   return stats.hours.map((share, hour) => ({ hour, share })).sort((a, b) => b.share - a.share).slice(0, n).filter(h => h.share > 0)
 }
 
+/** Below this many posts in 30 days, the hourly pattern is mostly noise. */
+const MIN_POSTS_FOR_TIMING = 30
+
+export interface PostingTime {
+  /** UTC hour that starts the sub's busiest two-hour window. */
+  peakStartHour: number
+  /** When that window next starts (now, if it is under way). */
+  nextPeakAt: Date
+  /** The current hour is one of the sub's six busiest. */
+  goodNow: boolean
+}
+
+/** When a subreddit is most active, from 30 days of post times; null when there is too little data. */
+export function bestPostingTime(stats: Pick<SubredditStats, 'hours' | 'posts30d'> | null | undefined, now = new Date()): PostingTime | null {
+  if (!stats || stats.posts30d < MIN_POSTS_FOR_TIMING || stats.hours.length !== 24) return null
+  const hours = stats.hours
+  // Two-hour windows, wrapping past midnight, smooth out single-hour spikes.
+  let peakStartHour = 0
+  for (let h = 1; h < 24; h++) {
+    if (hours[h]! + hours[(h + 1) % 24]! > hours[peakStartHour]! + hours[(peakStartHour + 1) % 24]!) peakStartHour = h
+  }
+  const nowHour = now.getUTCHours()
+  const inPeak = nowHour === peakStartHour || nowHour === (peakStartHour + 1) % 24
+  let nextPeakAt = now
+  if (!inPeak) {
+    nextPeakAt = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), peakStartHour))
+    if (nextPeakAt <= now) nextPeakAt = new Date(nextPeakAt.getTime() + 86_400_000)
+  }
+  const busiest = hours.map((share, hour) => ({ hour, share })).sort((a, b) => b.share - a.share).slice(0, 6)
+  return { peakStartHour, nextPeakAt, goodNow: busiest.some(b => b.hour === nowHour && b.share > 0) }
+}
+
 export interface PublicSubreddit {
   /** Lowercase, for URLs. */
   name: string

@@ -22,7 +22,7 @@ describe('renderDigest', () => {
         newCount: 3,
         trend: [],
         pendingScoring: 0,
-        suggestion: { subreddit: 'saas', angle: 'story', promo: true, topic: 'Pricing', why: 'Fits best.' },
+        suggestion: { subreddit: 'saas', angle: 'story', promo: true, topic: 'Pricing', why: 'Fits best.', timing: null },
         pacing: { promoToday: 0, promoLimit: 1, nextPromoAt: null, cooldowns: [] },
       },
     }])
