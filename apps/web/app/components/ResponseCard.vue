@@ -100,7 +100,7 @@ async function copyAndOpen() {
       </div>
       <span v-if="asDm" class="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/12 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400"><MailIcon class="size-3" /> Asked for a DM</span>
     </div>
-    <div class="rounded-2xl rounded-tl-md border bg-background px-3.5 py-2.5 text-sm">
+    <div class="rounded-lg border bg-background px-3 py-2 text-sm">
       <p class="whitespace-pre-line text-pretty" :class="long && !expanded && 'line-clamp-4'">{{ response.body }}</p>
       <button v-if="long" type="button" class="mt-1 text-xs font-medium text-muted-foreground hover:text-foreground" @click="expanded = !expanded">{{ expanded ? 'Show less' : 'Show more' }}</button>
     </div>
