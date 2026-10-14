@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { COMPETITORS, FEATURES, findCompetitor, MOCHISCOUT } from '#shared/competitors'
-import { ExternalLinkIcon, InfoIcon } from '@lucide/vue'
+import { ExternalLinkIcon, InfoIcon, TrophyIcon } from '@lucide/vue'
 
 const { edition } = useRuntimeConfig().public
 if (edition !== 'cloud') throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
@@ -79,8 +79,33 @@ useJsonLd([
             <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">Mochiscout</span><LandingCompareMark :cell="MOCHISCOUT[f.key]" :inverted="'inverted' in f" /></div>
             <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">{{ c.name }}</span><LandingCompareMark :cell="c.cells[f.key]" :inverted="'inverted' in f" /></div>
           </div>
+          <div v-for="r in c.extraRows ?? []" :key="r.label" class="grid grid-cols-1 gap-2 border-b px-4 py-3 last:border-b-0 sm:grid-cols-[1fr_1.2fr_1.2fr] sm:gap-4">
+            <div class="text-sm font-medium">{{ r.label }}</div>
+            <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">Mochiscout</span><LandingCompareMark :cell="r.us" /></div>
+            <div class="flex items-start gap-2"><span class="w-20 shrink-0 text-xs text-muted-foreground sm:hidden">{{ c.name }}</span><LandingCompareMark :cell="r.them" /></div>
+          </div>
         </div>
         <p class="text-xs text-muted-foreground">{{ c.name }} details checked on its website on {{ verified }}. Spot something out of date? Email <a :href="`mailto:${site.supportEmail}`" class="underline">{{ site.supportEmail }}</a> and we'll fix it.</p>
+      </section>
+
+      <!-- Where they lead: before anything about us, so the comparison reads fairly. -->
+      <section v-if="c.theyHave?.length || c.chooseThemIf.length" class="flex flex-col gap-6">
+        <div class="flex flex-col gap-1">
+          <h2 class="text-2xl font-semibold tracking-tight">Where {{ c.name }} is ahead</h2>
+          <p class="text-sm text-muted-foreground">Things {{ c.name }} does that Mochiscout doesn't, from its own website.</p>
+        </div>
+        <div v-if="c.theyHave?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div v-for="t in c.theyHave" :key="t.title" class="flex flex-col gap-2 rounded-2xl border p-5">
+            <h3 class="flex items-center gap-2 font-semibold"><TrophyIcon class="size-4 shrink-0 text-amber-600" /> {{ t.title }}</h3>
+            <p class="text-sm text-muted-foreground">{{ t.body }}</p>
+          </div>
+        </div>
+        <div v-if="c.chooseThemIf.length" class="rounded-2xl bg-muted/50 p-5">
+          <h3 class="font-semibold">Pick {{ c.name }} if</h3>
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            <li v-for="r in c.chooseThemIf" :key="r">{{ r }}</li>
+          </ul>
+        </div>
       </section>
 
       <!-- Mapping -->
@@ -96,18 +121,12 @@ useJsonLd([
 
       <!-- Differences -->
       <section class="flex flex-col gap-6">
-        <h2 class="text-2xl font-semibold tracking-tight">Why people choose Mochiscout over {{ c.name }}</h2>
+        <h2 class="text-2xl font-semibold tracking-tight">Where Mochiscout is different</h2>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div v-for="d in c.differences" :key="d.title" class="flex flex-col gap-2 rounded-2xl border p-5">
             <h3 class="font-semibold">{{ d.title }}</h3>
             <p class="text-sm text-muted-foreground">{{ d.body }}</p>
           </div>
-        </div>
-        <div class="rounded-2xl bg-muted/50 p-5">
-          <h3 class="font-semibold">When {{ c.name }} is the better pick</h3>
-          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-            <li v-for="r in c.chooseThemIf" :key="r">{{ r }}</li>
-          </ul>
         </div>
       </section>
 

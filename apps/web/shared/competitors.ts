@@ -4,7 +4,8 @@
  * and keep claims sourced and fair: pages that overstate lose trust (and rank).
  */
 
-export type Mark = 'yes' | 'no' | 'partial'
+/** 'unknown': their site doesn't say. Not knowing is not the same as 'no'. */
+export type Mark = 'yes' | 'no' | 'partial' | 'unknown'
 export interface Cell { mark: Mark, note?: string }
 
 /** Rows compared on every page, in this order. */
@@ -61,6 +62,10 @@ export interface Competitor {
   differences: { title: string, body: string }[]
   /** "What you used X for, and where it lives here" (for products people are leaving). */
   mapping?: { need: string, how: string }[]
+  /** What they do that Mochiscout doesn't, from their own site. Shown before our differences. */
+  theyHave?: { title: string, body: string }[]
+  /** Extra table rows where they lead (beyond FEATURES). */
+  extraRows?: { label: string, us: Cell, them: Cell }[]
   /** Honest: reasons to pick them instead. */
   chooseThemIf: string[]
   faq: { q: string, a: string }[]

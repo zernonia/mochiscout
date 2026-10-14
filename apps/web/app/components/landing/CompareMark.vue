@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { Cell } from '#shared/competitors'
-import { CheckIcon, MinusIcon, XIcon } from '@lucide/vue'
+import { CheckIcon, CircleHelpIcon, MinusIcon, XIcon } from '@lucide/vue'
 
 const props = defineProps<{ cell: Cell, inverted?: boolean }>()
 // For risky features (posting for you), "yes" is shown as a warning and "no" as good.
 const tone = computed(() => {
   const good = props.inverted ? props.cell.mark === 'no' : props.cell.mark === 'yes'
   const bad = props.inverted ? props.cell.mark === 'yes' : props.cell.mark === 'no'
+  if (props.cell.mark === 'unknown') return 'none'
   return good ? 'good' : bad ? (props.inverted ? 'risk' : 'none') : 'partial'
 })
 </script>
@@ -19,9 +20,11 @@ const tone = computed(() => {
     >
       <CheckIcon v-if="cell.mark === 'yes'" class="size-3.5" />
       <MinusIcon v-else-if="cell.mark === 'partial'" class="size-3.5" />
+      <CircleHelpIcon v-else-if="cell.mark === 'unknown'" class="size-3.5" />
       <XIcon v-else class="size-3.5" />
-      <span class="sr-only">{{ cell.mark === 'yes' ? 'Yes' : cell.mark === 'partial' ? 'Partly' : 'No' }}</span>
+      <span class="sr-only">{{ { yes: 'Yes', partial: 'Partly', unknown: 'Not stated', no: 'No' }[cell.mark] }}</span>
     </span>
     <span v-if="cell.note" class="text-sm">{{ cell.note }}</span>
+    <span v-else-if="cell.mark === 'unknown'" class="text-sm text-muted-foreground">Not listed on its site</span>
   </div>
 </template>
